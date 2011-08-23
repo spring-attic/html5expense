@@ -1,0 +1,18 @@
+Project Structure
+-----------------
+the web application
+src - all source code
+	main/java - backend java source code
+	main/webapp/assets - static sources including css, javascript, and image files
+	main/webapp/WEB-INF/views - template sources that generic dynamic views
+	test/ - test code
+	
+To build a deployable web app archive (.war):
+---------------------------------------------
+./gradlew build
+See build/libs/webapp-gradle.war
+
+To run the web app:
+-------------------
+./gradlew jettyRun
+Point your preferred web browser at http://localhost:8080/webapp-gradle

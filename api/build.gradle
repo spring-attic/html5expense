@@ -1,0 +1,43 @@
+apply plugin: 'war'
+apply plugin: 'jetty'
+
+repositories {
+  mavenRepo urls: 'http://maven.springframework.org/release'
+  mavenRepo urls: 'http://maven.springframework.org/milestone'
+  mavenRepo urls: 'http://maven.springframework.org/snapshot'
+  mavenCentral()
+}
+
+configurations {
+  all*.exclude group: 'commons-logging', module: 'commons-logging'
+}
+
+cglibVersion = '2.2'
+logbackVersion = '0.9.29'
+javaxInjectVersion = '1' 
+jspVersion = '2.1'
+servletVersion = '2.5'
+slf4jVersion = '1.6.2'
+springVersion = '3.1.0.BUILD-SNAPSHOT'
+
+dependencies {
+  compile "cglib:cglib-nodep:$cglibVersion"
+  compile "ch.qos.logback:logback-classic:$logbackVersion"
+  compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+  compile "org.springframework:spring-context:$springVersion"
+  compile "org.springframework:spring-webmvc:$springVersion"
+  compile "javax.inject:javax.inject:$javaxInjectVersion"
+  providedCompile "javax.servlet:servlet-api:$servletVersion"
+  providedCompile "javax.servlet.jsp:jsp-api:$jspVersion" 	
+}
+
+sourceSets {
+  main { resources { srcDirs = ['src/main/java'] } }
+  test { resources { srcDirs = ['src/test/java'] } }
+}
+
+jettyRun.contextPath = '/html5expense'
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.0-milestone-3'
+}
