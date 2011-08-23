@@ -6,3 +6,6 @@ build
 bin
 .DS_Store?
 Thumbs.db
+*.iml
+*.iws
+*.ipr

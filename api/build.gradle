@@ -1,5 +1,8 @@
 apply plugin: 'war'
 apply plugin: 'jetty'
+apply plugin: 'idea'
+apply plugin: 'maven'
+
 
 repositories {
   mavenRepo urls: 'http://maven.springframework.org/release'
