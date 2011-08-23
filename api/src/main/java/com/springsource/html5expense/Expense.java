@@ -17,24 +17,29 @@ package com.springsource.html5expense;
 
 import java.math.BigDecimal;
 
+import org.joda.time.LocalDate;
+
 public class Expense {
     
-    private Integer id;
+    private final Integer id;
     
-    private String merchant;
+    private final LocalDate date;
     
-    private String category;
+    private final String merchant;
     
-    private BigDecimal amount;
+    private final String category;
     
-    private Long chargeId;
+    private final BigDecimal amount;
     
-    private String receipt;
+    private final Long chargeId;
+    
+    private final String receipt;
 
-    private String flag;
+    private final String flag;
     
-    public Expense(Integer id, String merchant, String category, BigDecimal amount, Long chargeId, String receipt, String flag) {
+    public Expense(Integer id, LocalDate date, String merchant, String category, BigDecimal amount, Long chargeId, String receipt, String flag) {
         this.id = id;
+        this.date = date;
         this.merchant = merchant;
         this.category = category;
         this.amount = amount;
@@ -45,6 +50,10 @@ public class Expense {
 
     public Integer getId() {
         return id;
+    }
+    
+    public LocalDate getDate() {
+        return date;
     }
     
     public String getMerchant() {

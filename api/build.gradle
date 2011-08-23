@@ -14,8 +14,9 @@ configurations {
 
 cglibVersion = '2.2'
 logbackVersion = '0.9.29'
-javaxInjectVersion = '1' 
+javaxInjectVersion = '1'
 jspVersion = '2.1'
+jodaTimeVersion = '2.0'
 servletVersion = '2.5'
 slf4jVersion = '1.6.2'
 springVersion = '3.1.0.BUILD-SNAPSHOT'
@@ -23,6 +24,7 @@ springVersion = '3.1.0.BUILD-SNAPSHOT'
 dependencies {
   compile "cglib:cglib-nodep:$cglibVersion"
   compile "ch.qos.logback:logback-classic:$logbackVersion"
+  compile "joda-time:joda-time:$jodaTimeVersion"
   compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
   compile "org.springframework:spring-context:$springVersion"
   compile "org.springframework:spring-webmvc:$springVersion"

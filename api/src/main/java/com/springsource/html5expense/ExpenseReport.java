@@ -19,14 +19,15 @@ import java.util.List;
 
 public class ExpenseReport {
     
-    private Long id;
+    private final Long id;
     
-    private String purpose;
+    private final String purpose;
     
-    private List<Expense> expenses;
+    private final List<Expense> expenses;
 
     public ExpenseReport(Long id, String purpose, List<Expense> expenses) {
         this.id = id;
+        this.purpose = purpose;
         this.expenses = expenses;
     }
 

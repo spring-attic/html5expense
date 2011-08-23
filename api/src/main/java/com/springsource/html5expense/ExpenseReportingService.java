@@ -53,7 +53,7 @@ public interface ExpenseReportingService {
      * @param receiptBytes the receipt data as a byte array
      * @return a pointer to the receipt
      */
-    String attachReceipt(Long reportId, Long expenseId, byte[] receiptBytes);
+    String attachReceipt(Long reportId, Integer expenseId, byte[] receiptBytes);
 
     /**
      * Submit the expense report for approval.
