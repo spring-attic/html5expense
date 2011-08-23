@@ -15,6 +15,7 @@
  */
 package com.springsource.html5expense;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public interface ExpenseReportingService {
      * The user is expected to add one or more of these charges to the report.
      * @return the list of eligible charges
      */
-    List<EligibleCharge> getEligibleCharges();
+    Collection<EligibleCharge> getEligibleCharges();
 
     /**
      * Adds the selected charges to the expense report.
@@ -45,7 +46,7 @@ public interface ExpenseReportingService {
      * @param chargeIds the eligible charge ids
      * @return an expense for each charge
      */
-    List<Expense> createExpenses(Long reportId, List<Long> chargeIds);
+    Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds);
 
     /**
      * Attach a receipt to an expense.
