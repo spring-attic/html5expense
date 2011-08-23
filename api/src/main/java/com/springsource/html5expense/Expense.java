@@ -31,13 +31,16 @@ public class Expense {
     
     private String receipt;
 
-    public Expense(Integer id, String merchant, String category, BigDecimal amount, Long chargeId, String receipt) {
+    private String flag;
+    
+    public Expense(Integer id, String merchant, String category, BigDecimal amount, Long chargeId, String receipt, String flag) {
         this.id = id;
         this.merchant = merchant;
         this.category = category;
         this.amount = amount;
         this.chargeId = chargeId;
         this.receipt = receipt;
+        this.flag = flag;
     }
 
     public Integer getId() {
@@ -62,6 +65,10 @@ public class Expense {
 
     public String getReceipt() {
         return receipt;
+    }
+    
+    public String getFlag() {
+        return flag;
     }
 
 }
