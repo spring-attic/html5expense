@@ -16,17 +16,27 @@
 package com.springsource.html5expense.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
+import com.springsource.html5expense.ExpenseReport;
 import org.joda.time.LocalDate;
 
 import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "EXPENSE")
 class ExpenseEntity {
 
+	@GeneratedValue @Id
     private Integer id;
 
-    private LocalDate date;
+	@ManyToOne
+	private ExpenseReportEntity expenseReport;
+
+    private Date date;
 
     private String merchant;
 
@@ -40,9 +50,8 @@ class ExpenseEntity {
 
     private String flag;
 
-    public ExpenseEntity(Integer id, EligibleCharge charge) {
-        this.id = id;
-        this.date = charge.getDate();
+    public ExpenseEntity(  EligibleCharge charge) {
+        this.date = charge.getDate().toDate();
         this.merchant = charge.getMerchant();
         this.category = charge.getCategory();
         this.amount = charge.getAmount();
@@ -69,7 +78,7 @@ class ExpenseEntity {
     }
 
     public Expense data() {
-        return new Expense(id, date, merchant, category, amount, chargeId, receipt, flag);
+        return new Expense(id, new LocalDate( date), merchant, category, amount, chargeId, receipt, flag);
     }
 
 }

@@ -4,16 +4,17 @@ apply plugin: 'idea'
 
 
 repositories {
-  mavenRepo urls: 'http://maven.springframework.org/release'
-  mavenRepo urls: 'http://maven.springframework.org/milestone'
-  mavenRepo urls: 'http://maven.springframework.org/snapshot'
-  mavenCentral()
+    mavenRepo urls: 'http://maven.springframework.org/release'
+    mavenRepo urls: 'http://maven.springframework.org/milestone'
+    mavenRepo urls: 'http://maven.springframework.org/snapshot'
+    mavenCentral()
 }
 
 configurations {
-  all*.exclude group: 'commons-logging', module: 'commons-logging'
+    all*.exclude group: 'commons-logging', module: 'commons-logging'
 }
 
+springVersion = '3.1.0.BUILD-SNAPSHOT'
 cglibVersion = '2.2'
 logbackVersion = '0.9.29'
 javaxInjectVersion = '1'
@@ -21,27 +22,35 @@ jspVersion = '2.1'
 jodaTimeVersion = '2.0'
 servletVersion = '2.5'
 slf4jVersion = '1.6.2'
-springVersion = '3.1.0.BUILD-SNAPSHOT'
+h2Version = '1.2.144'
+junitVersion = '4.7'
+
 
 dependencies {
-  compile "cglib:cglib-nodep:$cglibVersion"
-  compile "ch.qos.logback:logback-classic:$logbackVersion"
-  compile "joda-time:joda-time:$jodaTimeVersion"
-  compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-  compile "org.springframework:spring-context:$springVersion"
-  compile "org.springframework:spring-webmvc:$springVersion"
-  compile "javax.inject:javax.inject:$javaxInjectVersion"
-  providedCompile "javax.servlet:servlet-api:$servletVersion"
-  providedCompile "javax.servlet.jsp:jsp-api:$jspVersion" 	
+    compile "joda-time:joda-time:$jodaTimeVersion"
+    compile "org.hibernate:hibernate-entitymanager:3.6.5.Final"
+    compile "com.h2database:h2:$h2Version"
+    compile "cglib:cglib-nodep:$cglibVersion"
+    compile "ch.qos.logback:logback-classic:$logbackVersion"
+    compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+    compile "org.springframework:spring-context:$springVersion"
+    compile "org.springframework:spring-webmvc:$springVersion"
+    compile "org.springframework:spring-orm:$springVersion"
+    compile "javax.inject:javax.inject:$javaxInjectVersion"
+    compile "joda-time:joda-time:$jodaTimeVersion"
+    testCompile "org.springframework:spring-test:$springVersion"
+    testCompile "junit:junit:$junitVersion"
+    providedCompile "javax.servlet:servlet-api:$servletVersion"
+    providedCompile "javax.servlet.jsp:jsp-api:$jspVersion"
 }
 
 sourceSets {
-  main { resources { srcDirs = ['src/main/java'] } }
-  test { resources { srcDirs = ['src/test/java'] } }
+    main { resources { srcDirs = ['src/main/java', 'src/main/resources'] } }
+    test { resources { srcDirs = ['src/test/java', 'src/test/resources'] } }
 }
 
 jettyRun.contextPath = '/html5expense'
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.0-milestone-3'
+    gradleVersion = '1.0-milestone-3'
 }

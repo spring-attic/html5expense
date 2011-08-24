@@ -63,7 +63,7 @@ public class StubExpenseReportingService implements ExpenseReportingService {
         List<Expense> expenses = new ArrayList<Expense>();
         for (Long chargeId : chargeIds) {
             EligibleCharge charge = eligibleCharges.get(chargeId);
-            expenses.add(report.createExpense(expenseSequence.incrementAndGet(), charge).data());
+            expenses.add(report.createExpense(  charge).data());
             eligibleCharges.remove(chargeId);
         }
         return expenses;
