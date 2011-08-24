@@ -17,6 +17,7 @@
 package com.springsource.html5expense.impl;
 
 
+import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReportingService;
 import com.springsource.html5expense.config.ComponentConfig;
@@ -73,6 +74,12 @@ public class TestJpaExpenseReportingService {
 				return Arrays.asList(inExpensiveExpense.getId(), expensiveExpense.getId());
 			}
 		});
+	}
+
+	@Test
+	public void testIdentifyingEligibleCharges() throws Throwable {
+		Collection<EligibleCharge> eligibleCharges = expenseReportingService.getEligibleCharges();
+		Assert.assertTrue(eligibleCharges.size() == this.charges.size());
 	}
 
 	@Test

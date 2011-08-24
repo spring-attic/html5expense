@@ -53,7 +53,12 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 	}
 
 	public Collection<EligibleCharge> getEligibleCharges() {
-		return null;
+		Collection<EligibleChargeEntity> eces = entityManager.createQuery(String.format("FROM %s", EligibleChargeEntity.class.getName()), EligibleChargeEntity.class).getResultList();
+		List<EligibleCharge> charges = new ArrayList<EligibleCharge>();
+		for (EligibleChargeEntity ece : eces) {
+			charges.add(ece.data());
+		}
+		return charges;
 	}
 
 	@Transactional
@@ -62,9 +67,9 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 		List<Expense> expenses = new ArrayList<Expense>();
 		for (Long chargeId : chargeIds) {
 			EligibleCharge charge = getEligibleCharge(chargeId);
-			ExpenseEntity expense = report.createExpense(charge) ;
+			ExpenseEntity expense = report.createExpense(charge);
 			entityManager.persist(expense);
-			expenses.add( expense .data());
+			expenses.add(expense.data());
 		}
 		return expenses;
 	}

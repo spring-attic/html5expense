@@ -18,29 +18,29 @@ package com.springsource.html5expense;
 import java.util.List;
 
 public class ExpenseReport {
-    
-    private final Long id;
-    
-    private final String purpose;
-    
-    private final List<Expense> expenses;
 
-    public ExpenseReport(Long id, String purpose, List<Expense> expenses) {
-        this.id = id;
-        this.purpose = purpose;
-        this.expenses = expenses;
-    }
+	private final Long id;
 
-    public Long getId() {
-        return id;
-    }
+	private final String purpose;
 
-    public String getPurpose() {
-        return purpose;
-    }
+	private final List<Expense> expenses;
 
-    public List<Expense> getExpenses() {
-        return expenses;
-    }
-    
+	public ExpenseReport(Long id, String purpose, List<Expense> expenses) {
+		this.id = id;
+		this.purpose = purpose;
+		this.expenses = expenses;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getPurpose() {
+		return purpose;
+	}
+
+	public List<Expense> getExpenses() {
+		return expenses;
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.springsource.html5expense.impl;
 
+import com.springsource.html5expense.EligibleCharge;
 import org.joda.time.LocalDate;
 
 import javax.persistence.Entity;
@@ -53,4 +54,9 @@ class EligibleChargeEntity {
 	public BigDecimal getAmount() {
 		return amount;
 	}
+
+	public EligibleCharge data() {
+		return new EligibleCharge(this.id, new LocalDate(this.date), this.merchant, this.category, this.amount);
+	}
+
 }

@@ -15,48 +15,48 @@
  */
 package com.springsource.html5expense;
 
-import java.math.BigDecimal;
-
 import org.joda.time.LocalDate;
 
+import java.math.BigDecimal;
+
 public class EligibleCharge {
-    
-    private final Long id;
-    
-    private final LocalDate date;
-    
-    private final String merchant;
-    
-    private final String category;
-    
-    private final BigDecimal amount;
 
-    public EligibleCharge(Long id, LocalDate date, String merchant, String category, BigDecimal amount) {
-        this.id = id;
-        this.date = date;
-        this.merchant = merchant;
-        this.category = category;
-        this.amount = amount;
-    }
+	private final Long id;
 
-    public Long getId() {
-        return id;
-    }
+	private final LocalDate date;
 
-    public LocalDate getDate() {
-        return date;
-    }
-    
-    public String getMerchant() {
-        return merchant;
-    }
+	private final String merchant;
 
-    public String getCategory() {
-        return category;
-    }
+	private final String category;
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
-        
+	private final BigDecimal amount;
+
+	public EligibleCharge(Long id, LocalDate date, String merchant, String category, BigDecimal amount) {
+		this.id = id;
+		this.date = date;
+		this.merchant = merchant;
+		this.category = category;
+		this.amount = amount;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public String getMerchant() {
+		return merchant;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
 }

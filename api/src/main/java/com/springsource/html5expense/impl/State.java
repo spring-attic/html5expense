@@ -16,5 +16,5 @@
 package com.springsource.html5expense.impl;
 
 enum State {
-    NEW, IN_REVIEW, REJECTED, APPROVED;
+	NEW, IN_REVIEW, REJECTED, APPROVED;
 }

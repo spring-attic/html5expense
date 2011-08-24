@@ -41,7 +41,9 @@ class ExpenseReportEntity {
 
 	private BigDecimal receiptRequiredAmount = new BigDecimal("25.00");
 
-	/** hibernate */
+	/**
+	 * hibernate
+	 */
 	ExpenseReportEntity() {
 	}
 

@@ -15,69 +15,69 @@
  */
 package com.springsource.html5expense;
 
-import java.math.BigDecimal;
-
 import org.joda.time.LocalDate;
 
+import java.math.BigDecimal;
+
 public class Expense {
-    
-    private final Integer id;
-    
-    private final LocalDate date;
-    
-    private final String merchant;
-    
-    private final String category;
-    
-    private final BigDecimal amount;
-    
-    private final Long chargeId;
-    
-    private final String receipt;
 
-    private final String flag;
-    
-    public Expense(Integer id, LocalDate date, String merchant, String category, BigDecimal amount, Long chargeId, String receipt, String flag) {
-        this.id = id;
-        this.date = date;
-        this.merchant = merchant;
-        this.category = category;
-        this.amount = amount;
-        this.chargeId = chargeId;
-        this.receipt = receipt;
-        this.flag = flag;
-    }
+	private final Integer id;
 
-    public Integer getId() {
-        return id;
-    }
-    
-    public LocalDate getDate() {
-        return date;
-    }
-    
-    public String getMerchant() {
-        return merchant;
-    }
+	private final LocalDate date;
 
-    public String getCategory() {
-        return category;
-    }
+	private final String merchant;
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+	private final String category;
 
-    public Long getChargeId() {
-        return chargeId;
-    }
+	private final BigDecimal amount;
 
-    public String getReceipt() {
-        return receipt;
-    }
-    
-    public String getFlag() {
-        return flag;
-    }
+	private final Long chargeId;
+
+	private final String receipt;
+
+	private final String flag;
+
+	public Expense(Integer id, LocalDate date, String merchant, String category, BigDecimal amount, Long chargeId, String receipt, String flag) {
+		this.id = id;
+		this.date = date;
+		this.merchant = merchant;
+		this.category = category;
+		this.amount = amount;
+		this.chargeId = chargeId;
+		this.receipt = receipt;
+		this.flag = flag;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public String getMerchant() {
+		return merchant;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public Long getChargeId() {
+		return chargeId;
+	}
+
+	public String getReceipt() {
+		return receipt;
+	}
+
+	public String getFlag() {
+		return flag;
+	}
 
 }
