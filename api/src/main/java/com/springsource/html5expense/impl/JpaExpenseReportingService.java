@@ -97,6 +97,9 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
             entityManager.persist(expense);
             expenses.add(expense.data());
         }
+
+        deleteCharges(chargeIds);
+
         return expenses;
     }
 
@@ -141,5 +144,9 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     //TODO !!! grab the relevant package from greenhouse
     protected String receipt(byte[] receiptBytes) {
         return "receipt for bytes";
+    }
+
+    protected void deleteCharges(List<Long> chargeIds){
+       jdbcTemplate.execute(" DELETE FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString( chargeIds.toArray( new Long[chargeIds.size()]), ",") + " ) " );
     }
 }
