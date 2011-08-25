@@ -84,17 +84,10 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         ExpenseReportEntity report = getReport(reportId);
         List<Expense> expenses = new ArrayList<Expense>();
 
-        // cache all the charges for this operation
         List<EligibleCharge> charges = getEligibleCharges(chargeIds.toArray(new Long[chargeIds.size()]));
 
-        Map<Long, EligibleCharge> chargeMap = new HashMap<Long, EligibleCharge>();
-        for (EligibleCharge ec : charges) {
-            chargeMap.put(ec.getId(), ec);
-        }
-
-        for (Long chargeId : chargeIds) {
-
-            ExpenseEntity expense = report.createExpense(chargeMap.get(chargeId));
+        for (EligibleCharge charge  : charges) {
+            ExpenseEntity expense = report.createExpense( charge );
 
             entityManager.persist(expense);
             expenses.add(expense.data());
