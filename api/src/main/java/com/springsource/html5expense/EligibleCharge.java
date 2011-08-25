@@ -17,23 +17,39 @@ package com.springsource.html5expense;
 
 import org.joda.time.LocalDate;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.Date;
 
+@Entity
 public class EligibleCharge {
 
-    private final Long id;
+    @GeneratedValue @Id
+    private Long id;
 
-    private final LocalDate date;
+    private Date date;
 
-    private final String merchant;
+    private String merchant;
 
-    private final String category;
+    private String category;
 
-    private final BigDecimal amount;
+    private BigDecimal amount;
+
+    EligibleCharge() {
+    }
+
+    public EligibleCharge(LocalDate date, String merchant, String category, BigDecimal amount) {
+        this.date = date.toDate();
+        this.merchant = merchant;
+        this.category = category;
+        this.amount = amount;
+    }
 
     public EligibleCharge(Long id, LocalDate date, String merchant, String category, BigDecimal amount) {
         this.id = id;
-        this.date = date;
+        this.date = date.toDate();
         this.merchant = merchant;
         this.category = category;
         this.amount = amount;
@@ -44,7 +60,7 @@ public class EligibleCharge {
     }
 
     public LocalDate getDate() {
-        return date;
+        return new LocalDate(date);
     }
 
     public String getMerchant() {

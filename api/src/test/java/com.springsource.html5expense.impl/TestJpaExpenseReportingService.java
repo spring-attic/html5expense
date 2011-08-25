@@ -23,10 +23,10 @@ import com.springsource.html5expense.ExpenseReportingService;
 import com.springsource.html5expense.State;
 import com.springsource.html5expense.config.ComponentConfig;
 import junit.framework.Assert;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -40,7 +40,11 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = ComponentConfig.class)
@@ -56,42 +60,38 @@ public class TestJpaExpenseReportingService {
 
     @Inject private DataSource dataSource;
 
-    private TransactionTemplate transactionTemplate;
-
-    private JdbcTemplate template;
-
     private String itsMission = "\"to go... where no man... has gone before!\"";
 
-    private List<Long> charges = new ArrayList<Long>();
+    private List<EligibleCharge> charges;
 
     @Before
     public void installSomeCharges() throws Throwable {
+        final List<EligibleCharge> chargesToAdd = Arrays.asList(new EligibleCharge(new LocalDate(), "Starbucks", "food", new BigDecimal(4)), new EligibleCharge(new LocalDate(), "dinner at Morton's Steak House", "food", new BigDecimal(59.99)));
 
-        template = new JdbcTemplate(this.dataSource);
-        // kind of cheating since i dont want to expose a separate Charge service, so we'll force-feed the database some sample data
-        transactionTemplate = new TransactionTemplate(this.transactionManager);
+        // clean out the data
+        TransactionTemplate transactionTemplate = new TransactionTemplate(this.transactionManager);
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-                // first clear out the table
-                template.execute("TRUNCATE TABLE ELIGIBLE_CHARGE");
 
-                // then load some
-                template.update("INSERT INTO ELIGIBLE_CHARGE(AMOUNT, CATEGORY, DATE, MERCHANT) VALUES(?,?,?,?) ", 4, "food", new Date(), "Starbucks");
-                template.update("INSERT INTO ELIGIBLE_CHARGE(AMOUNT, CATEGORY, DATE, MERCHANT) VALUES(?,?,?,?) ", 59.99, "food", new Date(), "dinner at Morton's Steak House");
+                entityManager.createQuery("DELETE FROM " + ExpenseEntity.class.getName()).executeUpdate();
+                entityManager.createQuery("DELETE FROM " + ExpenseReportEntity.class.getName()).executeUpdate();
+                entityManager.createQuery("DELETE FROM " + EligibleCharge.class.getName()).executeUpdate();
+                return null;
+            }
+        });
+        // install charges
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+
+                for (EligibleCharge ec : chargesToAdd) {
+                    entityManager.persist(ec);
+                }
                 return null;
             }
         });
 
-        charges = new ArrayList<Long>();
-
-        List<EligibleCharge> chargesFromService = new ArrayList<EligibleCharge>(expenseReportingService.getEligibleCharges());
-        for (EligibleCharge ec : chargesFromService) {
-            charges.add(ec.getId());
-        }
-
-
-        expensiveCharge = chargesFromService.get(1);
-
+        charges = new ArrayList<EligibleCharge>(expenseReportingService.getEligibleCharges());
+        expensiveCharge = charges.get(1);
     }
 
     @Test
@@ -111,7 +111,11 @@ public class TestJpaExpenseReportingService {
     @Test
     public void testCreateExpenses() throws Throwable {
         Long expenseReportId = expenseReportingService.createReport(itsMission);
-        Collection<Expense> expenseCollection = expenseReportingService.createExpenses(expenseReportId, this.charges);
+        List<Long> chargeIds = new ArrayList<Long>();
+        for (EligibleCharge ec : charges) {
+            chargeIds.add(ec.getId());
+        }
+        Collection<Expense> expenseCollection = expenseReportingService.createExpenses(expenseReportId, chargeIds);
         Assert.assertNotNull(expenseCollection);
         Assert.assertTrue(expenseCollection.size() == 2);
     }

@@ -31,7 +31,9 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.Driver;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Configuration for application @Components such as @Services, @Repositories, and @Controllers.
@@ -45,10 +47,9 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @PropertySource("/services.properties")
-@ComponentScan(basePackages = ComponentConfig.IMPLEMENTATION_PACKAGE)
+@ComponentScan(basePackages = "com.springsource.html5expense.impl")
 public class ComponentConfig {
 
-    public static final String IMPLEMENTATION_PACKAGE = "com.springsource.html5expense.impl";
 
     @Inject
     private Environment environment;
@@ -71,6 +72,8 @@ public class ComponentConfig {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
 
+
+
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         jpaVendorAdapter.setGenerateDdl(true);
         jpaVendorAdapter.setShowSql(true);
@@ -82,7 +85,7 @@ public class ComponentConfig {
         emFactory.setJpaVendorAdapter(jpaVendorAdapter);
         emFactory.setJpaPropertyMap(mapOfJpaProperties);
         emFactory.setDataSource(dataSource());
-        emFactory.setPackagesToScan(IMPLEMENTATION_PACKAGE);
+        emFactory.setPackagesToScan("com.springsource.html5expense");
 
         // look ma, no persistence.xml !
         return emFactory;

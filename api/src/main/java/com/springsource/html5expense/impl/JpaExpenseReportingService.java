@@ -16,21 +16,14 @@
 package com.springsource.html5expense.impl;
 
 import com.springsource.html5expense.*;
-import org.joda.time.LocalDate;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Josh Long
@@ -38,34 +31,7 @@ import java.util.*;
 @Service
 public class JpaExpenseReportingService implements ExpenseReportingService {
 
-    private DataSource dataSource;
-
     @PersistenceContext private EntityManager entityManager;
-
-    private JdbcTemplate jdbcTemplate;
-
-    /**
-     * {@link RowMapper} that knows how to map a {@link ResultSet} int a {@link EligibleCharge}.
-     *
-     * Not all things map perfectly onto JPA, thankfully Spring makes it easy to work with JDBC, too.
-     *
-     */
-    private RowMapper<EligibleCharge> eligibleChargeRowMapper = new RowMapper<EligibleCharge>() {
-        public EligibleCharge mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new EligibleCharge(rs.getLong("ID"),
-                                             new LocalDate(rs.getDate("DATE")),
-                                             rs.getString("MERCHANT"),
-                                             rs.getString("CATEGORY"),
-                                             new BigDecimal(rs.getDouble("AMOUNT")));
-        }
-    };
-
-    @Inject
-    public JpaExpenseReportingService(DataSource dataSource ) {
-        this.dataSource = dataSource;
-        jdbcTemplate = new JdbcTemplate(this.dataSource);
-    }
-
 
     @Transactional
     public Long createReport(String purpose) {
@@ -76,25 +42,20 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @Transactional(readOnly = true)
     public Collection<EligibleCharge> getEligibleCharges() {
-        return jdbcTemplate.query("SELECT ID, AMOUNT, CATEGORY, DATE, MERCHANT FROM ELIGIBLE_CHARGE", eligibleChargeRowMapper);
+        return entityManager.createQuery("SELECT ec FROM EligibleCharge ec" , EligibleCharge.class).getResultList();
     }
 
     @Transactional
     public Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds) {
         ExpenseReportEntity report = getReport(reportId);
         List<Expense> expenses = new ArrayList<Expense>();
-
-        List<EligibleCharge> charges = getEligibleCharges(chargeIds );
-
-        for (EligibleCharge charge  : charges) {
+        List<EligibleCharge> c = getEligibleCharges(chargeIds );
+        for (EligibleCharge charge  : c) {
             ExpenseEntity expense = report.createExpense(charge);
-
             entityManager.persist(expense);
             expenses.add(expense.data());
         }
-
-        deleteCharges(charges);
-
+        entityManager.createQuery("DELETE FROM EligibleCharge ec WHERE ec.id IN :IDS").setParameter("IDS", chargeIds).executeUpdate();
         return expenses;
     }
 
@@ -133,19 +94,13 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @Transactional(readOnly = true)
     protected List<EligibleCharge> getEligibleCharges(List<Long> ecIds) {
-        return jdbcTemplate.query(" SELECT ID, AMOUNT, CATEGORY, DATE, MERCHANT FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ecIds.toArray(new Long[ecIds.size()]), ",") + " ) ", eligibleChargeRowMapper);
+        return entityManager.createQuery("SELECT ec FROM EligibleCharge ec WHERE ec.id IN :ids", EligibleCharge.class)
+                .setParameter("ids", ecIds)
+                .getResultList();
     }
 
     //TODO !!! grab the relevant package from greenhouse
     protected String receipt(byte[] receiptBytes) {
         return "receipt for bytes";
-    }
-
-    protected void deleteCharges(List<EligibleCharge> chargeIds){
-        List<Long> ids = new ArrayList<Long>();
-        for( EligibleCharge ec : chargeIds)
-            ids.add(ec.getId());
-
-       jdbcTemplate.execute(" DELETE FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ids.toArray(new Long[chargeIds.size()]), ",") + " ) ");
     }
 }
