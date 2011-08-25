@@ -93,7 +93,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
             expenses.add(expense.data());
         }
 
-        deleteCharges(chargeIds);
+        deleteCharges(charges);
 
         return expenses;
     }
