@@ -84,7 +84,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         ExpenseReportEntity report = getReport(reportId);
         List<Expense> expenses = new ArrayList<Expense>();
 
-        List<EligibleCharge> charges = getEligibleCharges(chargeIds.toArray(new Long[chargeIds.size()]));
+        List<EligibleCharge> charges = getEligibleCharges(chargeIds );
 
         for (EligibleCharge charge  : charges) {
             ExpenseEntity expense = report.createExpense( charge );
@@ -132,8 +132,8 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     }
 
     @Transactional(readOnly = true)
-    protected List<EligibleCharge> getEligibleCharges(final Long[] ecIds) {
-        return jdbcTemplate.query(" SELECT ID, AMOUNT, CATEGORY, DATE, MERCHANT FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ecIds, ",") + " ) ", eligibleChargeRowMapper);
+    protected List<EligibleCharge> getEligibleCharges(List<Long> ecIds) {
+        return jdbcTemplate.query(" SELECT ID, AMOUNT, CATEGORY, DATE, MERCHANT FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ecIds.toArray(new Long[ecIds.size()]), ",") + " ) ", eligibleChargeRowMapper);
     }
 
     //TODO !!! grab the relevant package from greenhouse
