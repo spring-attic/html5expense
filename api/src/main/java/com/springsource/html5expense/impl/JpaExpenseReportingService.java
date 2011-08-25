@@ -39,9 +39,17 @@ import java.util.*;
 @Service
 public class JpaExpenseReportingService implements ExpenseReportingService {
     @Inject private DataSource dataSource;
+
     @PersistenceContext private EntityManager entityManager;
+
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * {@link RowMapper} that knows how to map a {@link ResultSet} int a {@link EligibleCharge}.
+     *
+     * Not all things map perfectly onto JPA, thankfully Spring makes it easy to work with JDBC, too.
+     *
+     */
     private RowMapper<EligibleCharge> eligibleChargeRowMapper = new RowMapper<EligibleCharge>() {
         public EligibleCharge mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new EligibleCharge(rs.getLong("ID"),
@@ -116,9 +124,8 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @Transactional(readOnly = true)
     public List<ExpenseReport> getOpenReports() {
         List<ExpenseReportEntity> entities = entityManager.createQuery(
-                                                                              "SELECT em FROM " + ExpenseReportEntity.class.getName() + " em WHERE em.state = :state",
-                                                                              ExpenseReportEntity.class)
-                                                     .setParameter("state", State.NEW).getResultList();
+          "SELECT em FROM com.springsource.html5expense.impl.ExpenseReportEntity em WHERE em.state = :state", ExpenseReportEntity.class)
+         .setParameter("state", State.NEW).getResultList();
 
         List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
         for (ExpenseReportEntity er : entities) {
