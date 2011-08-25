@@ -65,7 +65,6 @@ public interface ExpenseReportingService {
 	 * Submit the expense report for approval.
 	 *
 	 * @param reportId the id of the report to file
-	 * @return the result of filing
 	 */
 	void submitReport(Long reportId);
 

@@ -15,10 +15,7 @@
  */
 package com.springsource.html5expense.impl;
 
-import com.springsource.html5expense.EligibleCharge;
-import com.springsource.html5expense.Expense;
-import com.springsource.html5expense.ExpenseReport;
-import com.springsource.html5expense.ExpenseReportingService;
+import com.springsource.html5expense.*;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +65,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 		for (Long chargeId : chargeIds) {
 			EligibleCharge charge = getEligibleCharge(chargeId);
 			ExpenseEntity expense = report.createExpense(charge);
+
 			entityManager.persist(expense);
 			expenses.add(expense.data());
 		}
@@ -76,11 +74,23 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
 	@Transactional
 	public String attachReceipt(Long reportId, Integer expenseId, byte[] receiptBytes) {
-		return null;
+		ExpenseReportEntity report = getReport(reportId);
+		String receipt = receipt(receiptBytes);
+		report.attachReceipt(expenseId, receipt);
+		entityManager.merge(report);
+		return receipt;
+	}
+
+	//TODO !!! grab the relevant package from greenhouse
+	protected String receipt(byte[] receiptBytes) {
+		return "receipt for bytes";
 	}
 
 	@Transactional
 	public void submitReport(Long reportId) {
+		ExpenseReportEntity entity = getReport(reportId);
+		entity.markInReview();
+		entityManager.merge(entity);
 	}
 
 	@Transactional(readOnly = true)

@@ -47,12 +47,17 @@ class ExpenseEntity {
 
 	private String flag;
 
-	public ExpenseEntity(EligibleCharge charge) {
+	/* hibernate */
+	ExpenseEntity() {
+	}
+
+	public ExpenseEntity(ExpenseReportEntity erEntity, EligibleCharge charge) {
 		this.date = charge.getDate().toDate();
 		this.merchant = charge.getMerchant();
 		this.category = charge.getCategory();
 		this.amount = charge.getAmount();
 		this.chargeId = charge.getId();
+		this.expenseReport = erEntity;
 	}
 
 	public Integer getId() {
@@ -65,6 +70,10 @@ class ExpenseEntity {
 
 	public void flag(String flag) {
 		this.flag = flag;
+	}
+
+	public String getReceipt() {
+		return receipt;
 	}
 
 	public void attachReceipt(String receipt) {

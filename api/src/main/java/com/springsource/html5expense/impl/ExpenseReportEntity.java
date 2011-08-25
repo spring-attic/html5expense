@@ -18,6 +18,7 @@ package com.springsource.html5expense.impl;
 import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReport;
+import com.springsource.html5expense.State;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -70,7 +71,7 @@ class ExpenseReportEntity {
 
 	public ExpenseEntity createExpense(EligibleCharge charge) {
 		assertOpen();
-		ExpenseEntity expense = new ExpenseEntity(charge);
+		ExpenseEntity expense = new ExpenseEntity(this, charge);
 		if (charge.getAmount().compareTo(receiptRequiredAmount) == 1) {
 			expense.flag("receiptRequired");
 		}
@@ -109,7 +110,7 @@ class ExpenseReportEntity {
 		for (ExpenseEntity expense : this.expenses) {
 			expenses.add(expense.data());
 		}
-		return new ExpenseReport(id, purpose, expenses);
+		return new ExpenseReport(id, purpose, this.state, expenses);
 	}
 
 	// internal helpers

@@ -20,6 +20,7 @@ package com.springsource.html5expense.impl;
 import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReportingService;
+import com.springsource.html5expense.State;
 import com.springsource.html5expense.config.ComponentConfig;
 import junit.framework.Assert;
 import org.joda.time.LocalDate;
@@ -31,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -56,22 +58,22 @@ public class TestJpaExpenseReportingService {
 	private TransactionTemplate transactionTemplate;
 
 	private String itsMission = "\"to go... where no man... has gone before!\"";
-	private EligibleChargeEntity inExpensiveExpense, expensiveExpense;
+	private EligibleChargeEntity inExpensiveCharge, expensiveCharge;
 	private List<Long> charges = new ArrayList<Long>();
 
 	@Before
 	public void installSomeCharges() throws Throwable {
 
-		// kind of cheating since i dont want to expose a separate Charge service, so well force-feed the database some sample data
+		// kind of cheating since i dont want to expose a separate Charge service, so we'll force-feed the database some sample data
 		transactionTemplate = new TransactionTemplate(this.transactionManager);
 		this.charges = transactionTemplate.execute(new TransactionCallback<List<Long>>() {
 			public List<Long> doInTransaction(TransactionStatus status) {
-				inExpensiveExpense = new EligibleChargeEntity(new LocalDate(), "Starbucks", "food", new BigDecimal(4));
-				entityManager.persist(inExpensiveExpense);
+				inExpensiveCharge = new EligibleChargeEntity(new LocalDate(), "Starbucks", "food", new BigDecimal(4));
+				entityManager.persist(inExpensiveCharge);
 
-				expensiveExpense = new EligibleChargeEntity(new LocalDate(), "dinner at Morton's Steak House", "food", new BigDecimal(59.99));
-				entityManager.persist(expensiveExpense);
-				return Arrays.asList(inExpensiveExpense.getId(), expensiveExpense.getId());
+				expensiveCharge = new EligibleChargeEntity(new LocalDate(), "dinner at Morton's Steak House", "food", new BigDecimal(59.99));
+				entityManager.persist(expensiveCharge);
+				return Arrays.asList(inExpensiveCharge.getId(), expensiveCharge.getId());
 			}
 		});
 	}
@@ -87,11 +89,7 @@ public class TestJpaExpenseReportingService {
 		Long expenseReportId = expenseReportingService.createReport(itsMission);
 		Assert.assertTrue("the ID must be greater than 0", expenseReportId > 0);
 		Assert.assertEquals(1, expenseReportingService.getOpenReports().size());
-
-		// cheating, a bit, i fear
-		if (expenseReportingService instanceof JpaExpenseReportingService) {
-			Assert.assertEquals(((JpaExpenseReportingService) expenseReportingService).getReport(expenseReportId).getPurpose(), itsMission);
-		}
+		Assert.assertEquals(entityManager.find(ExpenseReportEntity.class, expenseReportId).getPurpose(), itsMission);
 	}
 
 	@Test
@@ -100,6 +98,27 @@ public class TestJpaExpenseReportingService {
 		Collection<Expense> expenseCollection = expenseReportingService.createExpenses(expenseReportId, this.charges);
 		Assert.assertNotNull(expenseCollection);
 		Assert.assertTrue(expenseCollection.size() == 2);
+	}
+
+	@Test
+	public void testAttachingReceipts () throws  Throwable {
+		Long expenseReportId = expenseReportingService.createReport( itsMission);
+		Collection<Expense> expenses = expenseReportingService.createExpenses(expenseReportId, Arrays.asList(expensiveCharge.getId()));
+		Integer  expenseId  = expenses.iterator().next().getId();
+		String receiptClaim = expenseReportingService.attachReceipt(expenseReportId,  expenseId , new byte[0] ) ;
+		Assert.assertNotNull(receiptClaim);
+		ExpenseEntity entity = entityManager.find( ExpenseEntity.class, expenseId);
+		Assert.assertFalse(entity.isFlagged());
+		Assert.assertEquals( receiptClaim , entity.getReceipt() );
+	}
+
+	@Test
+	@Transactional
+	public void testSubmittingReports() throws Throwable {
+		Long expenseReportId = expenseReportingService.createReport(itsMission);
+		expenseReportingService.submitReport(expenseReportId);
+		ExpenseReportEntity erEntity = entityManager.find(ExpenseReportEntity.class, expenseReportId);
+		Assert.assertEquals(erEntity.data().getState(), State.IN_REVIEW);
 	}
 
 }
