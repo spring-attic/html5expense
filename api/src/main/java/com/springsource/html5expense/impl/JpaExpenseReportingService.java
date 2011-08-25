@@ -37,6 +37,7 @@ import java.util.*;
  */
 @Service
 public class JpaExpenseReportingService implements ExpenseReportingService {
+
     private DataSource dataSource;
 
     @PersistenceContext private EntityManager entityManager;
