@@ -109,11 +109,6 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return receipt;
     }
 
-    //TODO !!! grab the relevant package from greenhouse
-    protected String receipt(byte[] receiptBytes) {
-        return "receipt for bytes";
-    }
-
     @Transactional
     public void submitReport(Long reportId) {
         ExpenseReportEntity entity = getReport(reportId);
@@ -141,5 +136,10 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @Transactional(readOnly = true)
     protected List<EligibleCharge> getEligibleCharges(final Long[] ecIds) {
         return jdbcTemplate.query(" SELECT * FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ecIds, ",") + " ) ", eligibleChargeRowMapper);
+    }
+
+    //TODO !!! grab the relevant package from greenhouse
+    protected String receipt(byte[] receiptBytes) {
+        return "receipt for bytes";
     }
 }
