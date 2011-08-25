@@ -30,8 +30,6 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Implementation of the {@link ExpenseReportingService} that delegates to JPA to provide persistence
- *
  * @author Josh Long
  */
 @Service
@@ -47,11 +45,13 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 		return report.getId();
 	}
 
+	@Transactional(readOnly = true)
 	protected EligibleCharge getEligibleCharge(Long ecId) {
 		EligibleChargeEntity ece = entityManager.find(EligibleChargeEntity.class, ecId);
 		return new EligibleCharge(ece.getId(), new LocalDate(ece.getDate().getTime()), ece.getMerchant(), ece.getCategory(), ece.getAmount());
 	}
 
+	@Transactional(readOnly = true)
 	public Collection<EligibleCharge> getEligibleCharges() {
 		Collection<EligibleChargeEntity> eces = entityManager.createQuery(String.format("FROM %s", EligibleChargeEntity.class.getName()), EligibleChargeEntity.class).getResultList();
 		List<EligibleCharge> charges = new ArrayList<EligibleCharge>();
@@ -74,15 +74,25 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 		return expenses;
 	}
 
+	@Transactional
 	public String attachReceipt(Long reportId, Integer expenseId, byte[] receiptBytes) {
 		return null;
 	}
 
+	@Transactional
 	public void submitReport(Long reportId) {
 	}
 
+	@Transactional(readOnly = true)
 	public List<ExpenseReport> getOpenReports() {
-		return null;
+		String query = String.format("FROM %s em WHERE em.state = :state", ExpenseReportEntity.class.getName());
+		List<ExpenseReportEntity> entities = entityManager.createQuery(query, ExpenseReportEntity.class).setParameter("state", State.NEW).getResultList();
+
+		List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
+		for (ExpenseReportEntity er : entities) {
+			reports.add(er.data());
+		}
+		return reports;
 	}
 
 	protected ExpenseReportEntity getReport(Long reportId) {

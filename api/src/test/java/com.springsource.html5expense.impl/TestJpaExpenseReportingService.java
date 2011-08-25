@@ -86,6 +86,12 @@ public class TestJpaExpenseReportingService {
 	public void testCreateReport() throws Throwable {
 		Long expenseReportId = expenseReportingService.createReport(itsMission);
 		Assert.assertTrue("the ID must be greater than 0", expenseReportId > 0);
+		Assert.assertEquals(1, expenseReportingService.getOpenReports().size());
+
+		// cheating, a bit, i fear
+		if (expenseReportingService instanceof JpaExpenseReportingService) {
+			Assert.assertEquals(((JpaExpenseReportingService) expenseReportingService).getReport(expenseReportId).getPurpose(), itsMission);
+		}
 	}
 
 	@Test
