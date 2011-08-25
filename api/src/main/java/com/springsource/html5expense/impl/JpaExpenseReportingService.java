@@ -17,95 +17,122 @@ package com.springsource.html5expense.impl;
 
 import com.springsource.html5expense.*;
 import org.joda.time.LocalDate;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import javax.sql.DataSource;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * @author Josh Long
  */
 @Service
 public class JpaExpenseReportingService implements ExpenseReportingService {
+    @Inject private DataSource dataSource;
+    @PersistenceContext private EntityManager entityManager;
+    private JdbcTemplate jdbcTemplate;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    private RowMapper<EligibleCharge> eligibleChargeRowMapper = new RowMapper<EligibleCharge>() {
+        public EligibleCharge mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new EligibleCharge(rs.getLong("ID"),
+                                             new LocalDate(rs.getDate("DATE")),
+                                             rs.getString("MERCHANT"),
+                                             rs.getString("CATEGORY"),
+                                             new BigDecimal(rs.getDouble("AMOUNT")));
+        }
+    };
 
-	@Transactional
-	public Long createReport(String purpose) {
-		ExpenseReportEntity report = new ExpenseReportEntity(purpose);
-		entityManager.persist(report);
-		return report.getId();
-	}
+    @PostConstruct
+    public void construct() throws Exception {
+        jdbcTemplate = new JdbcTemplate(this.dataSource);
+    }
 
-	@Transactional(readOnly = true)
-	protected EligibleCharge getEligibleCharge(Long ecId) {
-		EligibleChargeEntity ece = entityManager.find(EligibleChargeEntity.class, ecId);
-		return new EligibleCharge(ece.getId(), new LocalDate(ece.getDate().getTime()), ece.getMerchant(), ece.getCategory(), ece.getAmount());
-	}
+    @Transactional
+    public Long createReport(String purpose) {
+        ExpenseReportEntity report = new ExpenseReportEntity(purpose);
+        entityManager.persist(report);
+        return report.getId();
+    }
 
-	@Transactional(readOnly = true)
-	public Collection<EligibleCharge> getEligibleCharges() {
-		Collection<EligibleChargeEntity> eces = entityManager.createQuery(String.format("FROM %s", EligibleChargeEntity.class.getName()), EligibleChargeEntity.class).getResultList();
-		List<EligibleCharge> charges = new ArrayList<EligibleCharge>();
-		for (EligibleChargeEntity ece : eces) {
-			charges.add(ece.data());
-		}
-		return charges;
-	}
+    @Transactional(readOnly = true)
+    public Collection<EligibleCharge> getEligibleCharges() {
+        return jdbcTemplate.query("SELECT * FROM ELIGIBLE_CHARGE", eligibleChargeRowMapper);
+    }
 
-	@Transactional
-	public Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds) {
-		ExpenseReportEntity report = getReport(reportId);
-		List<Expense> expenses = new ArrayList<Expense>();
-		for (Long chargeId : chargeIds) {
-			EligibleCharge charge = getEligibleCharge(chargeId);
-			ExpenseEntity expense = report.createExpense(charge);
+    @Transactional
+    public Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds) {
+        ExpenseReportEntity report = getReport(reportId);
+        List<Expense> expenses = new ArrayList<Expense>();
 
-			entityManager.persist(expense);
-			expenses.add(expense.data());
-		}
-		return expenses;
-	}
+        // cache all the charges for this operation
+        List<EligibleCharge> charges = getEligibleCharges(chargeIds.toArray(new Long[chargeIds.size()]));
 
-	@Transactional
-	public String attachReceipt(Long reportId, Integer expenseId, byte[] receiptBytes) {
-		ExpenseReportEntity report = getReport(reportId);
-		String receipt = receipt(receiptBytes);
-		report.attachReceipt(expenseId, receipt);
-		entityManager.merge(report);
-		return receipt;
-	}
+        Map<Long, EligibleCharge> chargeMap = new HashMap<Long, EligibleCharge>();
+        for (EligibleCharge ec : charges) {
+            chargeMap.put(ec.getId(), ec);
+        }
 
-	//TODO !!! grab the relevant package from greenhouse
-	protected String receipt(byte[] receiptBytes) {
-		return "receipt for bytes";
-	}
+        for (Long chargeId : chargeIds) {
 
-	@Transactional
-	public void submitReport(Long reportId) {
-		ExpenseReportEntity entity = getReport(reportId);
-		entity.markInReview();
-		entityManager.merge(entity);
-	}
+            ExpenseEntity expense = report.createExpense(chargeMap.get(chargeId));
 
-	@Transactional(readOnly = true)
-	public List<ExpenseReport> getOpenReports() {
-		String query = String.format("FROM %s em WHERE em.state = :state", ExpenseReportEntity.class.getName());
-		List<ExpenseReportEntity> entities = entityManager.createQuery(query, ExpenseReportEntity.class).setParameter("state", State.NEW).getResultList();
+            entityManager.persist(expense);
+            expenses.add(expense.data());
+        }
+        return expenses;
+    }
 
-		List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
-		for (ExpenseReportEntity er : entities) {
-			reports.add(er.data());
-		}
-		return reports;
-	}
+    @Transactional
+    public String attachReceipt(Long reportId, Integer expenseId, byte[] receiptBytes) {
+        ExpenseReportEntity report = getReport(reportId);
+        String receipt = receipt(receiptBytes);
+        report.attachReceipt(expenseId, receipt);
+        entityManager.merge(report);
+        return receipt;
+    }
 
-	protected ExpenseReportEntity getReport(Long reportId) {
-		return entityManager.find(ExpenseReportEntity.class, reportId);
-	}
+    //TODO !!! grab the relevant package from greenhouse
+    protected String receipt(byte[] receiptBytes) {
+        return "receipt for bytes";
+    }
+
+    @Transactional
+    public void submitReport(Long reportId) {
+        ExpenseReportEntity entity = getReport(reportId);
+        entity.markInReview();
+        entityManager.merge(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ExpenseReport> getOpenReports() {
+        List<ExpenseReportEntity> entities = entityManager.createQuery(
+                                                                              "SELECT em FROM " + ExpenseReportEntity.class.getName() + " em WHERE em.state = :state",
+                                                                              ExpenseReportEntity.class)
+                                                     .setParameter("state", State.NEW).getResultList();
+
+        List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
+        for (ExpenseReportEntity er : entities) {
+            reports.add(er.data());
+        }
+        return reports;
+    }
+
+    protected ExpenseReportEntity getReport(Long reportId) {
+        return entityManager.find(ExpenseReportEntity.class, reportId);
+    }
+
+    @Transactional(readOnly = true)
+    protected List<EligibleCharge> getEligibleCharges(final Long[] ecIds) {
+        return jdbcTemplate.query(" SELECT * FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ecIds, ",") + " ) ", eligibleChargeRowMapper);
+    }
 }

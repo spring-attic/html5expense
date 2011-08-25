@@ -18,32 +18,32 @@ package com.springsource.html5expense;
 import java.util.List;
 
 public class ExpenseReport {
-	private final Long id;
-	private final String purpose;
-	private final State state;
-	private final List<Expense> expenses;
+    private final Long id;
+    private final String purpose;
+    private final State state;
+    private final List<Expense> expenses;
 
-	public ExpenseReport(Long id, String purpose, State state, List<Expense> expenses) {
-		this.id = id;
-		this.state = state;
-		this.purpose = purpose;
-		this.expenses = expenses;
-	}
+    public ExpenseReport(Long id, String purpose, State state, List<Expense> expenses) {
+        this.id = id;
+        this.state = state;
+        this.purpose = purpose;
+        this.expenses = expenses;
+    }
 
-	public State getState() {
-		return state;
-	}
+    public State getState() {
+        return state;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getPurpose() {
-		return purpose;
-	}
+    public String getPurpose() {
+        return purpose;
+    }
 
-	public List<Expense> getExpenses() {
-		return expenses;
-	}
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
 
 }

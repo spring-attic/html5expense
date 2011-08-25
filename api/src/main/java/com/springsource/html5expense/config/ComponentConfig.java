@@ -48,44 +48,44 @@ import java.util.Map;
 @ComponentScan(basePackages = ComponentConfig.IMPLEMENTATION_PACKAGE)
 public class ComponentConfig {
 
-	public static final String IMPLEMENTATION_PACKAGE = "com.springsource.html5expense.impl";
+    public static final String IMPLEMENTATION_PACKAGE = "com.springsource.html5expense.impl";
 
-	@Inject
-	private Environment environment;
+    @Inject
+    private Environment environment;
 
-	@Bean
-	public DataSource dataSource() throws Exception {
-		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-		dataSource.setPassword(environment.getProperty("dataSource.password"));
-		dataSource.setUrl(environment.getProperty("dataSource.url"));
-		dataSource.setUsername(environment.getProperty("dataSource.user"));
-		dataSource.setDriverClass((Class<Driver>) Class.forName(environment.getProperty("dataSource.driverClass")));
-		return dataSource;
-	}
+    @Bean
+    public DataSource dataSource() throws Exception {
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+        dataSource.setPassword(environment.getProperty("dataSource.password"));
+        dataSource.setUrl(environment.getProperty("dataSource.url"));
+        dataSource.setUsername(environment.getProperty("dataSource.user"));
+        dataSource.setDriverClass((Class<Driver>) Class.forName(environment.getProperty("dataSource.driverClass")));
+        return dataSource;
+    }
 
-	@Bean
-	public PlatformTransactionManager transactionManager() throws Exception {
-		return new JpaTransactionManager(entityManagerFactory().getObject());
-	}
+    @Bean
+    public PlatformTransactionManager transactionManager() throws Exception {
+        return new JpaTransactionManager(entityManagerFactory().getObject());
+    }
 
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
 
-		HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-		jpaVendorAdapter.setGenerateDdl(true);
-		jpaVendorAdapter.setShowSql(true);
+        HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+        jpaVendorAdapter.setGenerateDdl(true);
+        jpaVendorAdapter.setShowSql(true);
 
-		Map<String, String> mapOfJpaProperties = new HashMap<String, String>();
-		mapOfJpaProperties.put("hibernate.hbm2ddl.auto", "create");
+        Map<String, String> mapOfJpaProperties = new HashMap<String, String>();
+        mapOfJpaProperties.put("hibernate.hbm2ddl.auto", "create");
 
-		LocalContainerEntityManagerFactoryBean emFactory = new LocalContainerEntityManagerFactoryBean();
-		emFactory.setJpaVendorAdapter(jpaVendorAdapter);
-		emFactory.setJpaPropertyMap(mapOfJpaProperties);
-		emFactory.setDataSource(dataSource());
-		emFactory.setPackagesToScan(IMPLEMENTATION_PACKAGE);
+        LocalContainerEntityManagerFactoryBean emFactory = new LocalContainerEntityManagerFactoryBean();
+        emFactory.setJpaVendorAdapter(jpaVendorAdapter);
+        emFactory.setJpaPropertyMap(mapOfJpaProperties);
+        emFactory.setDataSource(dataSource());
+        emFactory.setPackagesToScan(IMPLEMENTATION_PACKAGE);
 
-		// look ma, no persistence.xml !
-		return emFactory;
-	}
+        // look ma, no persistence.xml !
+        return emFactory;
+    }
 
 }

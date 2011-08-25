@@ -27,64 +27,64 @@ import java.util.Date;
 @Table(name = "EXPENSE")
 class ExpenseEntity {
 
-	@GeneratedValue @Id
-	private Integer id;
+    @GeneratedValue @Id
+    private Integer id;
 
-	@ManyToOne
-	private ExpenseReportEntity expenseReport;
+    @ManyToOne
+    private ExpenseReportEntity expenseReport;
 
-	private Date date;
+    private Date date;
 
-	private String merchant;
+    private String merchant;
 
-	private String category;
+    private String category;
 
-	private BigDecimal amount;
+    private BigDecimal amount;
 
-	private Long chargeId;
+    private Long chargeId;
 
-	private String receipt;
+    private String receipt;
 
-	private String flag;
+    private String flag;
 
-	/* hibernate */
-	ExpenseEntity() {
-	}
+    /* hibernate */
+    ExpenseEntity() {
+    }
 
-	public ExpenseEntity(ExpenseReportEntity erEntity, EligibleCharge charge) {
-		this.date = charge.getDate().toDate();
-		this.merchant = charge.getMerchant();
-		this.category = charge.getCategory();
-		this.amount = charge.getAmount();
-		this.chargeId = charge.getId();
-		this.expenseReport = erEntity;
-	}
+    public ExpenseEntity(ExpenseReportEntity erEntity, EligibleCharge charge) {
+        this.date = charge.getDate().toDate();
+        this.merchant = charge.getMerchant();
+        this.category = charge.getCategory();
+        this.amount = charge.getAmount();
+        this.chargeId = charge.getId();
+        this.expenseReport = erEntity;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public boolean isFlagged() {
-		return flag != null;
-	}
+    public boolean isFlagged() {
+        return flag != null;
+    }
 
-	public void flag(String flag) {
-		this.flag = flag;
-	}
+    public void flag(String flag) {
+        this.flag = flag;
+    }
 
-	public String getReceipt() {
-		return receipt;
-	}
+    public String getReceipt() {
+        return receipt;
+    }
 
-	public void attachReceipt(String receipt) {
-		this.receipt = receipt;
-		if (isFlagged() && this.flag.equals("receiptRequired")) {
-			this.flag = null;
-		}
-	}
+    public void attachReceipt(String receipt) {
+        this.receipt = receipt;
+        if (isFlagged() && this.flag.equals("receiptRequired")) {
+            this.flag = null;
+        }
+    }
 
-	public Expense data() {
-		return new Expense(id, new LocalDate(date), merchant, category, amount, chargeId, receipt, flag);
-	}
+    public Expense data() {
+        return new Expense(id, new LocalDate(date), merchant, category, amount, chargeId, receipt, flag);
+    }
 
 }

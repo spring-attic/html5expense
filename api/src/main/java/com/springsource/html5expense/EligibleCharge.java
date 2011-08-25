@@ -21,42 +21,42 @@ import java.math.BigDecimal;
 
 public class EligibleCharge {
 
-	private final Long id;
+    private final Long id;
 
-	private final LocalDate date;
+    private final LocalDate date;
 
-	private final String merchant;
+    private final String merchant;
 
-	private final String category;
+    private final String category;
 
-	private final BigDecimal amount;
+    private final BigDecimal amount;
 
-	public EligibleCharge(Long id, LocalDate date, String merchant, String category, BigDecimal amount) {
-		this.id = id;
-		this.date = date;
-		this.merchant = merchant;
-		this.category = category;
-		this.amount = amount;
-	}
+    public EligibleCharge(Long id, LocalDate date, String merchant, String category, BigDecimal amount) {
+        this.id = id;
+        this.date = date;
+        this.merchant = merchant;
+        this.category = category;
+        this.amount = amount;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public LocalDate getDate() {
-		return date;
-	}
+    public LocalDate getDate() {
+        return date;
+    }
 
-	public String getMerchant() {
-		return merchant;
-	}
+    public String getMerchant() {
+        return merchant;
+    }
 
-	public String getCategory() {
-		return category;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
 }

@@ -28,80 +28,80 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class StubExpenseReportingService implements ExpenseReportingService {
 
-	private final Map<Long, EligibleCharge> eligibleCharges = new HashMap<Long, EligibleCharge>();
+    private final Map<Long, EligibleCharge> eligibleCharges = new HashMap<Long, EligibleCharge>();
 
-	private final Map<Long, ExpenseReportEntity> reports = new HashMap<Long, ExpenseReportEntity>();
+    private final Map<Long, ExpenseReportEntity> reports = new HashMap<Long, ExpenseReportEntity>();
 
-	private final AtomicLong reportSequence = new AtomicLong();
+    private final AtomicLong reportSequence = new AtomicLong();
 
-	private final AtomicInteger expenseSequence = new AtomicInteger();
+    private final AtomicInteger expenseSequence = new AtomicInteger();
 
-	public StubExpenseReportingService() {
-		eligibleCharges.put(1L, new EligibleCharge(1L, new LocalDate(2011, 7, 31), "Delta", "Air Travel", new BigDecimal("431.00")));
-		eligibleCharges.put(2L, new EligibleCharge(2L, new LocalDate(2011, 8, 22), "Hilton", "Lodging", new BigDecimal("639.00")));
-		eligibleCharges.put(3L, new EligibleCharge(3L, new LocalDate(2011, 8, 22), "Chipotle", "Meals", new BigDecimal("24.00")));
-	}
+    public StubExpenseReportingService() {
+        eligibleCharges.put(1L, new EligibleCharge(1L, new LocalDate(2011, 7, 31), "Delta", "Air Travel", new BigDecimal("431.00")));
+        eligibleCharges.put(2L, new EligibleCharge(2L, new LocalDate(2011, 8, 22), "Hilton", "Lodging", new BigDecimal("639.00")));
+        eligibleCharges.put(3L, new EligibleCharge(3L, new LocalDate(2011, 8, 22), "Chipotle", "Meals", new BigDecimal("24.00")));
+    }
 
-	public Long createReport(String purpose) {
-		ExpenseReportEntity report = new ExpenseReportEntity(reportSequence.incrementAndGet(), purpose);
-		reports.put(report.getId(), report);
-		return report.getId();
-	}
+    public Long createReport(String purpose) {
+        ExpenseReportEntity report = new ExpenseReportEntity(reportSequence.incrementAndGet(), purpose);
+        reports.put(report.getId(), report);
+        return report.getId();
+    }
 
-	public Collection<EligibleCharge> getEligibleCharges() {
-		return Collections.unmodifiableCollection(eligibleCharges.values());
-	}
+    public Collection<EligibleCharge> getEligibleCharges() {
+        return Collections.unmodifiableCollection(eligibleCharges.values());
+    }
 
-	public Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds) {
-		ExpenseReportEntity report = getReport(reportId);
-		List<Expense> expenses = new ArrayList<Expense>();
-		for (Long chargeId : chargeIds) {
-			EligibleCharge charge = eligibleCharges.get(chargeId);
-			expenses.add(report.createExpense(charge).data());
-			eligibleCharges.remove(chargeId);
-		}
-		return expenses;
-	}
+    public Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds) {
+        ExpenseReportEntity report = getReport(reportId);
+        List<Expense> expenses = new ArrayList<Expense>();
+        for (Long chargeId : chargeIds) {
+            EligibleCharge charge = eligibleCharges.get(chargeId);
+            expenses.add(report.createExpense(charge).data());
+            eligibleCharges.remove(chargeId);
+        }
+        return expenses;
+    }
 
-	public String attachReceipt(Long reportId, Integer expenseId, byte[] receiptBytes) {
-		ExpenseReportEntity report = getReport(reportId);
-		String receipt = receipt(receiptBytes);
-		report.attachReceipt(expenseId, receipt);
-		return receipt;
-	}
+    public String attachReceipt(Long reportId, Integer expenseId, byte[] receiptBytes) {
+        ExpenseReportEntity report = getReport(reportId);
+        String receipt = receipt(receiptBytes);
+        report.attachReceipt(expenseId, receipt);
+        return receipt;
+    }
 
-	public void submitReport(Long reportId) {
-		getReport(reportId).markInReview();
-	}
+    public void submitReport(Long reportId) {
+        getReport(reportId).markInReview();
+    }
 
-	public List<ExpenseReport> getOpenReports() {
-		List<ExpenseReport> openReports = new ArrayList<ExpenseReport>();
-		for (ExpenseReportEntity report : reports.values()) {
-			if (report.isOpen()) {
-				openReports.add(report.data());
-			}
-		}
-		return openReports;
-	}
+    public List<ExpenseReport> getOpenReports() {
+        List<ExpenseReport> openReports = new ArrayList<ExpenseReport>();
+        for (ExpenseReportEntity report : reports.values()) {
+            if (report.isOpen()) {
+                openReports.add(report.data());
+            }
+        }
+        return openReports;
+    }
 
-	// expense review only (not currently part of reporting interface)
+    // expense review only (not currently part of reporting interface)
 
-	public void reject(Long reportId, List<Flag> flags) {
-		getReport(reportId).markRejected(flags);
-	}
+    public void reject(Long reportId, List<Flag> flags) {
+        getReport(reportId).markRejected(flags);
+    }
 
-	public void approve(Long reportId) {
-		getReport(reportId).markApproved();
-	}
+    public void approve(Long reportId) {
+        getReport(reportId).markApproved();
+    }
 
-	// helpers
+    // helpers
 
-	private ExpenseReportEntity getReport(Long reportId) {
-		return reports.get(reportId);
-	}
+    private ExpenseReportEntity getReport(Long reportId) {
+        return reports.get(reportId);
+    }
 
-	private String receipt(byte[] receiptBytes) {
-		return "receiptReference";
-	}
+    private String receipt(byte[] receiptBytes) {
+        return "receiptReference";
+    }
 
 }

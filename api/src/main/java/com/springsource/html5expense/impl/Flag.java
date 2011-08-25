@@ -17,21 +17,21 @@ package com.springsource.html5expense.impl;
 
 public class Flag {
 
-	private final Integer expenseId;
+    private final Integer expenseId;
 
-	private final String value;
+    private final String value;
 
-	public Flag(Integer expenseId, String value) {
-		this.expenseId = expenseId;
-		this.value = value;
-	}
+    public Flag(Integer expenseId, String value) {
+        this.expenseId = expenseId;
+        this.value = value;
+    }
 
-	public Integer getExpenseId() {
-		return expenseId;
-	}
+    public Integer getExpenseId() {
+        return expenseId;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
 }

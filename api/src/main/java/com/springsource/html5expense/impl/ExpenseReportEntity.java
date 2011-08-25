@@ -29,120 +29,120 @@ import java.util.List;
 @Table(name = "EXPENSE_REPORT")
 class ExpenseReportEntity {
 
-	@GeneratedValue @Id
-	private Long id;
+    @GeneratedValue @Id
+    private Long id;
 
-	private String purpose;
+    private String purpose;
 
-	@OneToMany(mappedBy = "expenseReport")
-	private List<ExpenseEntity> expenses = new ArrayList<ExpenseEntity>();
+    @OneToMany(mappedBy = "expenseReport")
+    private List<ExpenseEntity> expenses = new ArrayList<ExpenseEntity>();
 
-	@Enumerated(EnumType.STRING)
-	private State state = State.NEW;
+    @Enumerated(EnumType.STRING)
+    private State state = State.NEW;
 
-	private BigDecimal receiptRequiredAmount = new BigDecimal("25.00");
+    private BigDecimal receiptRequiredAmount = new BigDecimal("25.00");
 
-	/**
-	 * hibernate
-	 */
-	ExpenseReportEntity() {
-	}
+    /**
+     * hibernate
+     */
+    ExpenseReportEntity() {
+    }
 
-	public ExpenseReportEntity(String purpose) {
-		this.purpose = purpose;
-	}
+    public ExpenseReportEntity(String purpose) {
+        this.purpose = purpose;
+    }
 
-	public ExpenseReportEntity(Long id, String purpose) {
-		this.id = id;
-		this.purpose = purpose;
-	}
+    public ExpenseReportEntity(Long id, String purpose) {
+        this.id = id;
+        this.purpose = purpose;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getPurpose() {
-		return purpose;
-	}
+    public String getPurpose() {
+        return purpose;
+    }
 
-	public boolean isOpen() {
-		return state == State.NEW || state == State.REJECTED;
-	}
+    public boolean isOpen() {
+        return state == State.NEW || state == State.REJECTED;
+    }
 
-	public ExpenseEntity createExpense(EligibleCharge charge) {
-		assertOpen();
-		ExpenseEntity expense = new ExpenseEntity(this, charge);
-		if (charge.getAmount().compareTo(receiptRequiredAmount) == 1) {
-			expense.flag("receiptRequired");
-		}
-		expenses.add(expense);
-		return expense;
-	}
+    public ExpenseEntity createExpense(EligibleCharge charge) {
+        assertOpen();
+        ExpenseEntity expense = new ExpenseEntity(this, charge);
+        if (charge.getAmount().compareTo(receiptRequiredAmount) == 1) {
+            expense.flag("receiptRequired");
+        }
+        expenses.add(expense);
+        return expense;
+    }
 
-	public void attachReceipt(Integer expenseId, String receipt) {
-		assertOpen();
-		getExpense(expenseId).attachReceipt(receipt);
-	}
+    public void attachReceipt(Integer expenseId, String receipt) {
+        assertOpen();
+        getExpense(expenseId).attachReceipt(receipt);
+    }
 
-	public void markInReview() {
-		assertOpen();
-		if (isFlagged()) {
-			throw new IllegalStateException("Report is flagged");
-		}
-		this.state = State.IN_REVIEW;
-	}
+    public void markInReview() {
+        assertOpen();
+        if (isFlagged()) {
+            throw new IllegalStateException("Report is flagged");
+        }
+        this.state = State.IN_REVIEW;
+    }
 
-	public void markRejected(List<Flag> flags) {
-		assertInReview();
-		for (Flag flag : flags) {
-			getExpense(flag.getExpenseId()).flag(flag.getValue());
-		}
-		this.state = State.REJECTED;
-	}
+    public void markRejected(List<Flag> flags) {
+        assertInReview();
+        for (Flag flag : flags) {
+            getExpense(flag.getExpenseId()).flag(flag.getValue());
+        }
+        this.state = State.REJECTED;
+    }
 
-	public void markApproved() {
-		assertInReview();
-		this.state = State.APPROVED;
-	}
+    public void markApproved() {
+        assertInReview();
+        this.state = State.APPROVED;
+    }
 
-	public ExpenseReport data() {
-		List<Expense> expenses = new ArrayList<Expense>();
-		for (ExpenseEntity expense : this.expenses) {
-			expenses.add(expense.data());
-		}
-		return new ExpenseReport(id, purpose, this.state, expenses);
-	}
+    public ExpenseReport data() {
+        List<Expense> expenses = new ArrayList<Expense>();
+        for (ExpenseEntity expense : this.expenses) {
+            expenses.add(expense.data());
+        }
+        return new ExpenseReport(id, purpose, this.state, expenses);
+    }
 
-	// internal helpers
+    // internal helpers
 
-	private void assertOpen() {
-		if (!isOpen()) {
-			throw new IllegalStateException("Report not open");
-		}
-	}
+    private void assertOpen() {
+        if (!isOpen()) {
+            throw new IllegalStateException("Report not open");
+        }
+    }
 
-	private void assertInReview() {
-		if (state != State.IN_REVIEW) {
-			throw new IllegalStateException("Report not in review");
-		}
-	}
+    private void assertInReview() {
+        if (state != State.IN_REVIEW) {
+            throw new IllegalStateException("Report not in review");
+        }
+    }
 
-	private boolean isFlagged() {
-		for (ExpenseEntity expense : expenses) {
-			if (expense.isFlagged()) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean isFlagged() {
+        for (ExpenseEntity expense : expenses) {
+            if (expense.isFlagged()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private ExpenseEntity getExpense(Integer id) {
-		for (ExpenseEntity expense : expenses) {
-			if (expense.getId().equals(id)) {
-				return expense;
-			}
-		}
-		throw new IllegalArgumentException("No such expense");
-	}
+    private ExpenseEntity getExpense(Integer id) {
+        for (ExpenseEntity expense : expenses) {
+            if (expense.getId().equals(id)) {
+                return expense;
+            }
+        }
+        throw new IllegalArgumentException("No such expense");
+    }
 
 }
