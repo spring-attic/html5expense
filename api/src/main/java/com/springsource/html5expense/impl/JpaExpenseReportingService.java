@@ -87,7 +87,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         List<EligibleCharge> charges = getEligibleCharges(chargeIds );
 
         for (EligibleCharge charge  : charges) {
-            ExpenseEntity expense = report.createExpense( charge );
+            ExpenseEntity expense = report.createExpense(charge);
 
             entityManager.persist(expense);
             expenses.add(expense.data());
@@ -141,7 +141,11 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return "receipt for bytes";
     }
 
-    protected void deleteCharges(List<Long> chargeIds){
-       jdbcTemplate.execute(" DELETE FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(chargeIds.toArray(new Long[chargeIds.size()]), ",") + " ) ");
+    protected void deleteCharges(List<EligibleCharge> chargeIds){
+        List<Long> ids = new ArrayList<Long>();
+        for( EligibleCharge ec : chargeIds)
+            ids.add(ec.getId());
+
+       jdbcTemplate.execute(" DELETE FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ids.toArray(new Long[chargeIds.size()]), ",") + " ) ");
     }
 }
