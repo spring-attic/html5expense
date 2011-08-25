@@ -17,6 +17,7 @@ package com.springsource.html5expense.impl;
 
 import com.springsource.html5expense.*;
 import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -60,10 +61,12 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         }
     };
 
-    @PostConstruct
-    public void construct() throws Exception {
+    @Autowired
+    public JpaExpenseReportingService(DataSource dataSource ) {
+        this.dataSource = dataSource;
         jdbcTemplate = new JdbcTemplate(this.dataSource);
     }
+
 
     @Transactional
     public Long createReport(String purpose) {
@@ -147,6 +150,6 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     }
 
     protected void deleteCharges(List<Long> chargeIds){
-       jdbcTemplate.execute(" DELETE FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString( chargeIds.toArray( new Long[chargeIds.size()]), ",") + " ) " );
+       jdbcTemplate.execute(" DELETE FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(chargeIds.toArray(new Long[chargeIds.size()]), ",") + " ) ");
     }
 }
