@@ -17,14 +17,12 @@ package com.springsource.html5expense.impl;
 
 import com.springsource.html5expense.*;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -39,7 +37,7 @@ import java.util.*;
  */
 @Service
 public class JpaExpenseReportingService implements ExpenseReportingService {
-    @Inject private DataSource dataSource;
+    private DataSource dataSource;
 
     @PersistenceContext private EntityManager entityManager;
 
@@ -61,7 +59,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         }
     };
 
-    @Autowired
+    @Inject
     public JpaExpenseReportingService(DataSource dataSource ) {
         this.dataSource = dataSource;
         jdbcTemplate = new JdbcTemplate(this.dataSource);
@@ -77,7 +75,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @Transactional(readOnly = true)
     public Collection<EligibleCharge> getEligibleCharges() {
-        return jdbcTemplate.query("SELECT * FROM ELIGIBLE_CHARGE", eligibleChargeRowMapper);
+        return jdbcTemplate.query("SELECT ID, AMOUNT, CATEGORY, DATE, MERCHANT FROM ELIGIBLE_CHARGE", eligibleChargeRowMapper);
     }
 
     @Transactional
@@ -141,7 +139,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @Transactional(readOnly = true)
     protected List<EligibleCharge> getEligibleCharges(final Long[] ecIds) {
-        return jdbcTemplate.query(" SELECT * FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ecIds, ",") + " ) ", eligibleChargeRowMapper);
+        return jdbcTemplate.query(" SELECT ID, AMOUNT, CATEGORY, DATE, MERCHANT FROM ELIGIBLE_CHARGE WHERE ID IN( " + StringUtils.arrayToDelimitedString(ecIds, ",") + " ) ", eligibleChargeRowMapper);
     }
 
     //TODO !!! grab the relevant package from greenhouse
