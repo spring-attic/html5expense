@@ -117,7 +117,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @Transactional(readOnly = true)
     public List<ExpenseReport> getOpenReports() {
         List<ExpenseReportEntity> entities = entityManager.createQuery(
-          "SELECT em FROM com.springsource.html5expense.impl.ExpenseReportEntity em WHERE em.state = :state", ExpenseReportEntity.class)
+          "SELECT em FROM ExpenseReportEntity em WHERE em.state = :state", ExpenseReportEntity.class)
          .setParameter("state", State.NEW).getResultList();
 
         List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
