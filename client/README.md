@@ -37,3 +37,9 @@ Download and install the [Android SDK](http://developer.android.com/sdk/index.ht
 Install the [ADT Plugin](http://developer.android.com/sdk/eclipse-adt.html#installing) in Eclipse.
 
 #### PhoneGap ####
+
+## Project Structure ##
+
+The 'www' directory contains the HTML, CSS, and JavaScript that is being used within the iOS and Android Phonegap projects.  A symbolic link is used within each project to point back to this folder.  In the iOS project, the symlink is 'iphone/www'.  In the Android project it is located at 'android/assets/www'.
+
+This Phonegap [wiki page](http://wiki.phonegap.com/w/page/28103995/phonegap%20project%20structure) mentions this solution, but no details are provided.

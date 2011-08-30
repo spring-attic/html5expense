@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8182770D140D3E0C005EDA33 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 8182770C140D3E0C005EDA33 /* www */; };
+		810E949C140D893F0000EDEF /* www in Resources */ = {isa = PBXBuildFile; fileRef = 810E949B140D893F0000EDEF /* www */; };
 		81C87C03140D36E90060C17A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81C87C02140D36E90060C17A /* Foundation.framework */; };
 		81C87C05140D36E90060C17A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81C87C04140D36E90060C17A /* UIKit.framework */; };
 		81C87C07140D36E90060C17A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81C87C06140D36E90060C17A /* CoreGraphics.framework */; };
@@ -37,7 +37,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8182770C140D3E0C005EDA33 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../www; sourceTree = "<group>"; };
+		810E949B140D893F0000EDEF /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../www; sourceTree = "<group>"; };
 		81C87BFE140D36E90060C17A /* html5expense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = html5expense.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		81C87C02140D36E90060C17A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		81C87C04140D36E90060C17A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -106,7 +106,7 @@
 		81C87BF0140D36E90060C17A = {
 			isa = PBXGroup;
 			children = (
-				8182770C140D3E0C005EDA33 /* www */,
+				810E949B140D893F0000EDEF /* www */,
 				81C87C1C140D36E90060C17A /* html5expense */,
 				81C87C01140D36E90060C17A /* Frameworks */,
 				81C87BFF140D36E90060C17A /* Products */,
@@ -293,7 +293,7 @@
 				81C87C3B140D36EA0060C17A /* Default@2x.png in Resources */,
 				81C87C3D140D36EA0060C17A /* Capture.bundle in Resources */,
 				81C87C3F140D36EA0060C17A /* PhoneGap.plist in Resources */,
-				8182770D140D3E0C005EDA33 /* www in Resources */,
+				810E949C140D893F0000EDEF /* www in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
