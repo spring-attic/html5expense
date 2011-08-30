@@ -4,7 +4,7 @@ build
 .project
 .settings
 bin
-.DS_Store?
+.DS_Store
 Thumbs.db
 *.iml
 *.iws
