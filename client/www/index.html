@@ -1,57 +1,63 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
-
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-
-	<!-- iPad/iPhone specific css below, add after your main css >
-	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
-	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
-	-->
-	<!-- If your application is targeting iOS BEFORE 4.0 you MUST put json2.js from http://www.JSON.org/json2.js into your www directory and include it here -->
-	<script type="text/javascript" charset="utf-8" src="phonegap-1.0.0.js"></script>
-    <script type="text/javascript" charset="utf-8">
-
-
-	// If you want to prevent dragging, uncomment this section
-	/*
-	function preventBehavior(e) 
-	{ 
-      e.preventDefault(); 
-    };
-	document.addEventListener("touchmove", preventBehavior, false);
-	*/
-	
-	/* If you are supporting your own protocol, the var invokeString will contain any arguments to the app launch.
-	see http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
-	for more details -jm */
-	/*
-	function handleOpenURL(url)
-	{
-		// TODO: do something with the url passed in.
-	}
-	*/
-	
-	function onBodyLoad()
-	{		
-		document.addEventListener("deviceready",onDeviceReady,false);
-	}
-	
-	/* When this function is called, PhoneGap has been initialized and is ready to roll */
-	/* If you are supporting your own protocol, the var invokeString will contain any arguments to the app launch.
-	see http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
-	for more details -jm */
-	function onDeviceReady()
-	{
-		// do your thing!
-		navigator.notification.alert("PhoneGap is working")
-	}
+<!DOCTYPE html> 
+<html> 
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+        <title>html5expense</title> 
+        <link rel="stylesheet" href="styles/jquery.mobile-1.0b2.min.css" />
+        <script src="scripts/jquery-1.6.2.min.js"></script>
+        <script src="scripts/jquery.mobile-1.0b2.min.js"></script>
+    </head> 
     
-    </script>
-  </head>
-  <body onload="onBodyLoad()">
-  	  <h1>Hey, it's PhoneGap!</h1>
-	  <p>Don't know how to get started? Check out <em><a href="http://github.com/phonegap/phonegap-start">PhoneGap Start</a></em>  	
-  </body>
+    <body> 
+        <!-- Start of first page -->
+        <div data-role="page" id="signin">
+            
+            <div data-role="header">
+                <h1>Sign In</h1>
+            </div><!-- /header -->
+            
+            <div data-role="content" class="ui-content ui-body">
+                <form method="get" action="#">
+                    <div data-role="fieldcontain" class="ui-field-contain">
+                        <label for="username">Username:</label>
+                        <input type="text" name="username" id="username" value="" />
+                    </div>
+                    <div data-role="fieldcontain" class="ui-field-contain">
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" id="password" value="" />
+                    </div>
+                    <div class="ui-btn ui-btn-corner-all ui-shadow" aria-disabled="false">
+                        <span class="ui-btn-inner ui-btn-corner-all">
+                            <span class="ui-btn-text">Sign In</span>
+                        </span>
+                        <input type="hidden" value="Sign In">
+                        <input class="ui-btn-hidden" type="submit" value="Sign In" aria-disabled="false">
+                    </div>
+                </form>
+            </div><!-- /content -->
+            
+            <div data-role="footer">
+                <h4>Page Footer</h4>
+            </div><!-- /footer -->
+        </div><!-- /page -->
+        
+        
+        <!-- Start of second page -->
+        <div data-role="page" id="home">
+            
+            <div data-role="header">
+                <h1>Home</h1>
+            </div><!-- /header -->
+            
+            <div data-role="content">	
+                <p>I'm first in the source order so I'm shown as the page.</p>		
+                <p><a href="#signing">Back to Sign In</a></p>	
+            </div><!-- /content -->
+            
+            <div data-role="footer">
+                <h4>Page Footer</h4>
+            </div><!-- /footer -->
+        </div><!-- /page -->
+    </body>
 </html>
