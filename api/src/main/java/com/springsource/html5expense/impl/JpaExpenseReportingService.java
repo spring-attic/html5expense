@@ -15,15 +15,21 @@
  */
 package com.springsource.html5expense.impl;
 
-import com.springsource.html5expense.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.springsource.html5expense.EligibleCharge;
+import com.springsource.html5expense.Expense;
+import com.springsource.html5expense.ExpenseReport;
+import com.springsource.html5expense.ExpenseReportingService;
+import com.springsource.html5expense.State;
 
 /**
  * @author Josh Long
@@ -31,7 +37,8 @@ import java.util.List;
 @Service
 public class JpaExpenseReportingService implements ExpenseReportingService {
 
-    @PersistenceContext private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     public Long createReport(String purpose) {
@@ -42,20 +49,20 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @Transactional(readOnly = true)
     public Collection<EligibleCharge> getEligibleCharges() {
-        return entityManager.createQuery("SELECT ec FROM EligibleCharge ec" , EligibleCharge.class).getResultList();
+        return entityManager.createQuery("from EligibleCharge", EligibleCharge.class).getResultList();
     }
 
     @Transactional
     public Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds) {
         ExpenseReportEntity report = getReport(reportId);
         List<Expense> expenses = new ArrayList<Expense>();
-        List<EligibleCharge> c = getEligibleCharges(chargeIds );
-        for (EligibleCharge charge  : c) {
+        List<EligibleCharge> charges = getEligibleCharges(chargeIds);
+        for (EligibleCharge charge : charges) {
             ExpenseEntity expense = report.createExpense(charge);
             entityManager.persist(expense);
             expenses.add(expense.data());
         }
-        entityManager.createQuery("DELETE FROM EligibleCharge ec WHERE ec.id IN :IDS").setParameter("IDS", chargeIds).executeUpdate();
+        removeAddedCharges(chargeIds);
         return expenses;
     }
 
@@ -77,30 +84,30 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @Transactional(readOnly = true)
     public List<ExpenseReport> getOpenReports() {
-        List<ExpenseReportEntity> entities = entityManager.createQuery(
-          "SELECT em FROM ExpenseReportEntity em WHERE em.state = :state", ExpenseReportEntity.class)
-         .setParameter("state", State.NEW).getResultList();
-
         List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
-        for (ExpenseReportEntity er : entities) {
-            reports.add(er.data());
+        List<ExpenseReportEntity> entities = entityManager.createQuery("from ExpenseReportEntity where state = :state", ExpenseReportEntity.class).setParameter("state", State.NEW).getResultList();
+        for (ExpenseReportEntity report : entities) {
+            reports.add(report.data());
         }
         return reports;
     }
 
-    protected ExpenseReportEntity getReport(Long reportId) {
+    // internal helpers
+    
+    private ExpenseReportEntity getReport(Long reportId) {
         return entityManager.find(ExpenseReportEntity.class, reportId);
     }
 
-    @Transactional(readOnly = true)
-    protected List<EligibleCharge> getEligibleCharges(List<Long> ecIds) {
-        return entityManager.createQuery("SELECT ec FROM EligibleCharge ec WHERE ec.id IN :ids", EligibleCharge.class)
-                .setParameter("ids", ecIds)
-                .getResultList();
+    private List<EligibleCharge> getEligibleCharges(List<Long> chargeIds) {
+        return entityManager.createQuery("from EligibleCharge where id in :ids", EligibleCharge.class).setParameter("ids", chargeIds).getResultList();
     }
 
-    //TODO !!! grab the relevant package from greenhouse
-    protected String receipt(byte[] receiptBytes) {
+    private void removeAddedCharges(List<Long> chargeIds) {
+        entityManager.createQuery("delete from EligibleCharge where id in :ids").setParameter("ids", chargeIds).executeUpdate();        
+    }
+    
+    private String receipt(byte[] receiptBytes) {
+        // TODO
         return "receipt for bytes";
     }
 }

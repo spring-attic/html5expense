@@ -24,14 +24,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "EXPENSE")
+@Table(name="EXPENSE")
 class ExpenseEntity {
 
     @GeneratedValue @Id
     private Integer id;
-
-    @ManyToOne
-    private ExpenseReportEntity expenseReport;
 
     private Date date;
 
@@ -47,17 +44,12 @@ class ExpenseEntity {
 
     private String flag;
 
-    /* hibernate */
-    ExpenseEntity() {
-    }
-
-    public ExpenseEntity(ExpenseReportEntity erEntity, EligibleCharge charge) {
+    public ExpenseEntity(EligibleCharge charge) {
         this.date = charge.getDate().toDate();
         this.merchant = charge.getMerchant();
         this.category = charge.getCategory();
         this.amount = charge.getAmount();
         this.chargeId = charge.getId();
-        this.expenseReport = erEntity;
     }
 
     public Integer getId() {
@@ -86,5 +78,13 @@ class ExpenseEntity {
     public Expense data() {
         return new Expense(id, new LocalDate(date), merchant, category, amount, chargeId, receipt, flag);
     }
+
+    // hibernate
+    
+    ExpenseEntity() {
+    }
+
+    @ManyToOne
+    ExpenseReportEntity expenseReport;
 
 }

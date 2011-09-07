@@ -20,15 +20,13 @@ import java.util.List;
 
 /**
  * Manages user expense reports.
- *
- * @author Josh Long
  * @author Keith Donald
+ * @author Josh Long
  */
 public interface ExpenseReportingService {
 
     /**
      * Creates a new expense report.
-     *
      * @param purpose the purpose for this report, e.g., "Palo Alto Face to Face Meeting"
      * @return the unique ID of the expense report
      */
@@ -37,7 +35,6 @@ public interface ExpenseReportingService {
     /**
      * Retrieves the charges that are eligible to be expensed.
      * The user is expected to add one or more of these charges to the report.
-     *
      * @return the list of eligible charges
      */
     Collection<EligibleCharge> getEligibleCharges();
@@ -45,7 +42,6 @@ public interface ExpenseReportingService {
     /**
      * Adds the selected charges to the expense report.
      * Creates and returns a new expense for each charge.
-     *
      * @param reportId  the expense report id
      * @param chargeIds the eligible charge ids
      * @return an expense for each charge
@@ -54,8 +50,7 @@ public interface ExpenseReportingService {
 
     /**
      * Attach a receipt to an expense.
-     *
-     * @param reportId     the expense report id
+     * @param reportId the expense report id
      * @param receiptBytes the receipt data as a byte array
      * @return a pointer to the receipt
      */
@@ -63,7 +58,6 @@ public interface ExpenseReportingService {
 
     /**
      * Submit the expense report for approval.
-     *
      * @param reportId the id of the report to file
      */
     void submitReport(Long reportId);
@@ -72,7 +66,6 @@ public interface ExpenseReportingService {
      * Returns all the expense reports the user has open.
      * An open report is not under review and is not closed.
      * It can be edited by the user and {@link #submitReport(Long) submitted}.
-     *
      * @return the user's open expense reports
      */
     List<ExpenseReport> getOpenReports();

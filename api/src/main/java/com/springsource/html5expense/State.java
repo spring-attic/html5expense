@@ -15,6 +15,29 @@
  */
 package com.springsource.html5expense;
 
+/**
+ * Various expense report states.
+ * @author Keith Donald
+ */
 public enum State {
-    NEW, IN_REVIEW, REJECTED, APPROVED;
+    
+    /**
+     * The expense report is new and has not yet been submitted. 
+     */
+    NEW, 
+
+    /**
+     * The expense report has been submitted and is locked under review.
+     */
+    IN_REVIEW, 
+
+    /**
+     * The expense report was rejected and can be modified.
+     */
+    REJECTED, 
+
+    /**
+     * The expense report has been approved and is now closed.
+     */
+    APPROVED;
 }

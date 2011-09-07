@@ -15,53 +15,40 @@
  */
 package com.springsource.html5expense.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import java.sql.Driver;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Configuration for application @Components such as @Services, @Repositories, and @Controllers.
  * Loads externalized property values required to configure the various application properties.
  * Not much else here, as we rely on @Component scanning in conjunction with @Inject by-type autowiring.
- *
  * @author Keith Donald
  * @author Josh Long
  */
-@SuppressWarnings("unchecked")
 @Configuration
 @EnableTransactionManagement
-@PropertySource("/services.properties")
-@ComponentScan(basePackages = "com.springsource.html5expense.impl")
+@ComponentScan(basePackages="com.springsource.html5expense.impl")
 public class ComponentConfig {
-
-
-    @Inject
-    private Environment environment;
 
     @Bean
     public DataSource dataSource() throws Exception {
-        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setPassword(environment.getProperty("dataSource.password"));
-        dataSource.setUrl(environment.getProperty("dataSource.url"));
-        dataSource.setUsername(environment.getProperty("dataSource.user"));
-        dataSource.setDriverClass((Class<Driver>) Class.forName(environment.getProperty("dataSource.driverClass")));
-        return dataSource;
+        EmbeddedDatabaseFactory factory = new EmbeddedDatabaseFactory();
+        factory.setDatabaseName("html5expense");
+        factory.setDatabaseType(EmbeddedDatabaseType.H2);
+        return factory.getDatabase();
     }
 
     @Bean
@@ -71,24 +58,21 @@ public class ComponentConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
-
-
-
+        // TODO clean this up with the new Spring 3.1 support for configuring JPA/Hibernate
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         jpaVendorAdapter.setGenerateDdl(true);
         jpaVendorAdapter.setShowSql(true);
 
-        Map<String, String> mapOfJpaProperties = new HashMap<String, String>();
-        mapOfJpaProperties.put("hibernate.hbm2ddl.auto", "create");
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put("hibernate.hbm2ddl.auto", "create");
+        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
 
-        LocalContainerEntityManagerFactoryBean emFactory = new LocalContainerEntityManagerFactoryBean();
-        emFactory.setJpaVendorAdapter(jpaVendorAdapter);
-        emFactory.setJpaPropertyMap(mapOfJpaProperties);
-        emFactory.setDataSource(dataSource());
-        emFactory.setPackagesToScan("com.springsource.html5expense");
-
-        // look ma, no persistence.xml !
-        return emFactory;
+        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+        factory.setJpaVendorAdapter(jpaVendorAdapter);
+        factory.setJpaPropertyMap(properties);
+        factory.setDataSource(dataSource());
+        factory.setPackagesToScan("com.springsource.html5expense");
+        return factory;
     }
 
 }

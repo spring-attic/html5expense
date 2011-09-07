@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.springsource.html5expense.impl;
-
 
 import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
@@ -52,13 +50,17 @@ public class TestJpaExpenseReportingService {
 
     private EligibleCharge expensiveCharge;
 
-    @Inject private ExpenseReportingService expenseReportingService;
+    @Inject
+    private ExpenseReportingService expenseReportingService;
 
-    @Inject private PlatformTransactionManager transactionManager;
+    @Inject
+    private PlatformTransactionManager transactionManager;
 
-    @PersistenceContext private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    @Inject private DataSource dataSource;
+    @Inject
+    private DataSource dataSource;
 
     private String itsMission = "\"to go... where no man... has gone before!\"";
 

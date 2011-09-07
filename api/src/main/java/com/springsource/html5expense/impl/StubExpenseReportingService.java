@@ -15,16 +15,21 @@
  */
 package com.springsource.html5expense.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.joda.time.LocalDate;
+
 import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReport;
 import com.springsource.html5expense.ExpenseReportingService;
-import org.joda.time.LocalDate;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class StubExpenseReportingService implements ExpenseReportingService {
 
@@ -33,8 +38,6 @@ public class StubExpenseReportingService implements ExpenseReportingService {
     private final Map<Long, ExpenseReportEntity> reports = new HashMap<Long, ExpenseReportEntity>();
 
     private final AtomicLong reportSequence = new AtomicLong();
-
-    private final AtomicInteger expenseSequence = new AtomicInteger();
 
     public StubExpenseReportingService() {
         eligibleCharges.put(1L, new EligibleCharge(1L, new LocalDate(2011, 7, 31), "Delta", "Air Travel", new BigDecimal("431.00")));

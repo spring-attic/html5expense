@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "EXPENSE_REPORT")
+@Table(name="EXPENSE_REPORT")
 class ExpenseReportEntity {
 
     @GeneratedValue @Id
@@ -41,12 +41,6 @@ class ExpenseReportEntity {
     private State state = State.NEW;
 
     private BigDecimal receiptRequiredAmount = new BigDecimal("25.00");
-
-    /**
-     * hibernate
-     */
-    ExpenseReportEntity() {
-    }
 
     public ExpenseReportEntity(String purpose) {
         this.purpose = purpose;
@@ -71,11 +65,11 @@ class ExpenseReportEntity {
 
     public ExpenseEntity createExpense(EligibleCharge charge) {
         assertOpen();
-        ExpenseEntity expense = new ExpenseEntity(this, charge);
+        ExpenseEntity expense = new ExpenseEntity(charge);
         if (charge.getAmount().compareTo(receiptRequiredAmount) == 1) {
             expense.flag("receiptRequired");
         }
-        expenses.add(expense);
+        addExpense(expense);
         return expense;
     }
 
@@ -143,6 +137,16 @@ class ExpenseReportEntity {
             }
         }
         throw new IllegalArgumentException("No such expense");
+    }
+
+    private void addExpense(ExpenseEntity expense) {
+        expense.expenseReport = this;
+        expenses.add(expense);        
+    }
+    
+    // Hibernate
+    
+    ExpenseReportEntity() {
     }
 
 }
