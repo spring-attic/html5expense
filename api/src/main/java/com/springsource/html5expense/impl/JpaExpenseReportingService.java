@@ -47,7 +47,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return report.getId();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly=true)
     public Collection<EligibleCharge> getEligibleCharges() {
         return entityManager.createQuery("from EligibleCharge", EligibleCharge.class).getResultList();
     }
@@ -82,10 +82,11 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         entityManager.merge(entity);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly=true)
     public List<ExpenseReport> getOpenReports() {
         List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
-        List<ExpenseReportEntity> entities = entityManager.createQuery("from ExpenseReportEntity where state = :state", ExpenseReportEntity.class).setParameter("state", State.NEW).getResultList();
+        List<ExpenseReportEntity> entities = entityManager.createQuery("from ExpenseReportEntity where state = :new or state = :rejected", ExpenseReportEntity.class)
+                .setParameter("new", State.NEW).setParameter("rejected", State.REJECTED).getResultList();
         for (ExpenseReportEntity report : entities) {
             reports.add(report.data());
         }

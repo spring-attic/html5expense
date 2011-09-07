@@ -71,7 +71,7 @@ public class ComponentConfig {
         factory.setJpaVendorAdapter(jpaVendorAdapter);
         factory.setJpaPropertyMap(properties);
         factory.setDataSource(dataSource());
-        factory.setPackagesToScan("com.springsource.html5expense");
+        factory.setPackagesToScan("com.springsource.html5expense.impl");
         return factory;
     }
 

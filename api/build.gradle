@@ -45,8 +45,8 @@ dependencies {
 }
 
 sourceSets {
-    main { resources { srcDirs = ['src/main/java', 'src/main/resources'] } }
-    test { resources { srcDirs = ['src/test/java', 'src/test/resources'] } }
+    main { resources { srcDirs = ['src/main/java'] } }
+    test { resources { srcDirs = ['src/test/java'] } }
 }
 
 jettyRun.contextPath = '/html5expense'
