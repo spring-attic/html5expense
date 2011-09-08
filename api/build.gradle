@@ -24,6 +24,7 @@ servletVersion = '2.5'
 slf4jVersion = '1.6.2'
 h2Version = '1.2.144'
 junitVersion = '4.7'
+jacksonVersion = '1.8.5'
 
 
 dependencies {
@@ -37,7 +38,7 @@ dependencies {
     compile "org.springframework:spring-webmvc:$springVersion"
     compile "org.springframework:spring-orm:$springVersion"
     compile "javax.inject:javax.inject:$javaxInjectVersion"
-    compile "joda-time:joda-time:$jodaTimeVersion"
+    compile "org.codehaus.jackson:jackson-mapper-asl:$jacksonVersion"
     testCompile "org.springframework:spring-test:$springVersion"
     testCompile "junit:junit:$junitVersion"
     providedCompile "javax.servlet:servlet-api:$servletVersion"
