@@ -46,9 +46,8 @@ public class ExpenseReportingController {
      * @param purpose the reason for the expense report. i.e. conference, business meal, etc.
      * @return the ID of the new expense report
      */
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    public @ResponseBody
-    Long createReport(@RequestParam(required = true) String purpose) {
+    @RequestMapping(method = RequestMethod.POST)
+    public @ResponseBody Long createReport(@RequestParam(required = true) String purpose) {
         return service.createReport(purpose);
     }
 
@@ -98,7 +97,7 @@ public class ExpenseReportingController {
      * Retrieves all of the open, or incomplete, expense reports for the user
      * @return list of {@link ExpenseReport} objects
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody List<ExpenseReport> getOpenReports() {
         return service.getOpenReports();
     }
