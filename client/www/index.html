@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html> 
     <head>
         <meta charset="utf-8">
@@ -76,6 +76,37 @@
             </div><!-- /footer -->
         </div><!-- /page -->
         
+        <script>
+            var reportId;
+            
+            function onSuccess(data, status) {
+                reportId = $.trim(data);
+                $.mobile.changePage($("#create-new-expenses"));
+            }
+
+            function onError(data, status) {
+                //TODO: handle error
+            }
+
+            $('#create-new-purpose').live('pagecreate', function(event){
+                $("#create-new-next").click(function(){
+
+                    var formData = $("#create-new-purpose-form").serialize();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "http://10.0.2.2:8080/api/reports/",
+                        cache: false,
+                        data: formData,
+                        success: onSuccess,
+                        error: onError
+                    });
+
+                    return false;
+                });
+            });
+        </script>
+        
         <!-- Start of Create New - Purpose page -->
         <div data-role="page" id="create-new-purpose" data-add-back-btn="true">
             
@@ -84,15 +115,15 @@
             </div><!-- /header -->
             
             <div data-role="content">
-                <form method="get" action="#create-new-expenses">
+                <form id="create-new-purpose-form">
                     <div data-role="fieldcontain" class="ui-field-contain">
                         <label for="purpose">Purpose:</label>
                         <input type="text" name="purpose" id="purpose" value="" />
                     </div>
                     <div class="ui-body">
                         <fieldset class="ui-grid-a">
-                            <div class="ui-block-a"><button type="submit">Cancel</button></div>
-                            <div class="ui-block-b"><button type="submit">Next</button></div>    
+                            <div class="ui-block-a"><a href="#home" data-role="button">Cancel</a></div>
+                            <div class="ui-block-b"><button id="create-new-next" type="submit">Next</button></div>    
                         </fieldset>
                     </div>
                 </form>
@@ -103,6 +134,38 @@
             </div><!-- /footer -->
         </div><!-- /page -->
         
+        <script>
+            $('#create-new-expenses').live('pagecreate', function(event){
+                $("#create-new-expenses-next").click(function(){
+                    $.mobile.changePage($("#create-new-add-receipt"));
+                    return false;
+                });
+            });
+            
+            $('#create-new-expenses').live('pageshow', function(event, ui){
+                
+                // display loading spinner
+                $.mobile.showPageLoadingMsg();
+            
+                // dynamically create the list of checkboxes
+                $.getJSON("http://10.0.2.2:8080/api/reports/eligible-charges",
+                    function(data){
+                        content = '<fieldset data-role="controlgroup">';
+                        $.each(data, function(i, charge){
+                            content += '<input type="checkbox" name="checkbox-' + i + '" id="checkbox-' + i  + '" class="custom" />';
+                            content += '<label for="checkbox-' + i + '">' + charge.merchant + ' ($' + charge.amount + ') </label>';
+                        });
+                        content += '</fieldset>';
+                        
+                        // set the content and trigger the create event to refresh and format the list properly 
+                        $('#charges-list').append(content).trigger('create');
+                        
+                        // hide loading spinner
+                        $.mobile.hidePageLoadingMsg();
+                });
+            });
+        </script>
+        
         <!-- Start of Create New - Expenses page -->
         <div data-role="page" id="create-new-expenses" data-add-back-btn="true">
             
@@ -111,12 +174,13 @@
             </div><!-- /header -->
             
             <div data-role="content">
-                <form method="get" action="#create-new-add-receipt">
-                    <p>TODO: add table and checkboxes for expenses</p>
+                <form id="create-new-expenses-form">
+                    <div data-role="fieldcontain" id="charges-list">
+                    </div>
                     <div class="ui-body">
                         <fieldset class="ui-grid-a">
-                            <div class="ui-block-a"><button type="submit">Cancel</button></div>
-                            <div class="ui-block-b"><button type="submit">Next</button></div>    
+                            <div class="ui-block-a"><a href="#home" data-role="button">Cancel</a></div>
+                            <div class="ui-block-b"><button id="create-new-expenses-next" type="submit">Next</button></div>    
                         </fieldset>
                     </div>
                 </form>
@@ -174,8 +238,6 @@
                 <h4>Page Footer</h4>
             </div><!-- /footer -->
         </div><!-- /page -->
-
-
         
         <!-- Start of Review Status page -->
         <div data-role="page" id="review-status" data-add-back-btn="true">
