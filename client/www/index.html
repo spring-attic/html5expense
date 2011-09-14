@@ -5,8 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"> 
         <title>html5expense</title> 
         <link rel="stylesheet" href="jquery.mobile-1.0b2.min.css" />
-        <script src="jquery-1.6.2.min.js"></script>
-        <script src="jquery.mobile-1.0b2.min.js"></script>
+        <script type="text/javascript" src="jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="jquery.mobile-1.0b2.min.js"></script>
+        <script type="text/javascript" src="jquery.formatCurrency-1.4.0.js"></script>
     </head> 
     
     <body>
@@ -76,7 +77,7 @@
             </div><!-- /footer -->
         </div><!-- /page -->
         
-        <script>
+        <script type="text/javascript">
             var reportId;
             
             function onSuccess(data, status) {
@@ -134,7 +135,7 @@
             </div><!-- /footer -->
         </div><!-- /page -->
         
-        <script>
+        <script type="text/javascript">
             $('#create-new-expenses').live('pagecreate', function(event){
                 $("#create-new-expenses-next").click(function(){
                     $.mobile.changePage($("#create-new-add-receipt"));
@@ -150,10 +151,11 @@
                 // dynamically create the list of checkboxes
                 $.getJSON("http://10.0.2.2:8080/api/reports/eligible-charges",
                     function(data){
-                        content = '<fieldset data-role="controlgroup">';
+                        var content = '<fieldset data-role="controlgroup">';
                         $.each(data, function(i, charge){
-                            content += '<input type="checkbox" name="checkbox-' + i + '" id="checkbox-' + i  + '" class="custom" />';
-                            content += '<label for="checkbox-' + i + '">' + charge.merchant + ' ($' + charge.amount + ') </label>';
+                            var id = 'checkbox-' + i;
+                            content += '<input type="checkbox" name="' + id + '" id="' + id + '" class="custom" />';
+                            content += '<label for="' + id + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
                         });
                         content += '</fieldset>';
                         
@@ -239,6 +241,31 @@
             </div><!-- /footer -->
         </div><!-- /page -->
         
+        <script type="text/javascript">
+            $('#review-status').live('pageshow', function(event, ui){
+
+                // display loading spinner
+                $.mobile.showPageLoadingMsg();
+
+                // dynamically create the list of open reports
+                $.getJSON("http://10.0.2.2:8080/api/reports",
+                    function(data){
+                        var content = "";
+                        $.each(data, function(i, report){
+                            if (report.purpose != null) {
+                                content += '<li><a href="#create-new-confirm">' + report.purpose + '</a></li>';
+                            }
+                        });
+
+                        // set the new content and refresh the UI
+                        $('#reports-list').append(content).listview('refresh');
+                        
+                        // hide loading spinner
+                        $.mobile.hidePageLoadingMsg();
+                });
+            });
+        </script>
+        
         <!-- Start of Review Status page -->
         <div data-role="page" id="review-status" data-add-back-btn="true">
             
@@ -247,7 +274,8 @@
             </div><!-- /header -->
             
             <div data-role="content">
-                <p>TODO: display items in review</p>
+                <ul data-role="listview" id="reports-list">
+                </ul>
             </div><!-- /content -->
             
             <div data-role="footer">
