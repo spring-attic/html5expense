@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="jquery.mobile-1.0b3.min.css" />
         <script type="text/javascript" src="jquery-1.6.4.min.js"></script>
         <script type="text/javascript" src="jquery.mobile-1.0b3.min.js"></script>
-        <script type="text/javascript" src="jquery.formatCurrency-1.4.0.js"></script>
+        <script type="text/javascript" src="controller.js"></script>
     </head> 
     
     <body>
@@ -77,37 +77,6 @@
             </div><!-- /footer -->
         </div><!-- /page -->
         
-        <script type="text/javascript">
-            var reportId;
-            
-            function onSuccess(data, status) {
-                reportId = $.trim(data);
-                $.mobile.changePage($("#create-new-expenses"));
-            }
-
-            function onError(data, status) {
-                //TODO: handle error
-            }
-
-            $('#create-new-purpose').live('pagecreate', function(event){
-                $("#create-new-next").click(function(){
-
-                    var formData = $("#create-new-purpose-form").serialize();
-
-                    $.ajax({
-                        type: "POST",
-                        url: "http://10.0.2.2:8080/api/reports/",
-                        cache: false,
-                        data: formData,
-                        success: onSuccess,
-                        error: onError
-                    });
-
-                    return false;
-                });
-            });
-        </script>
-        
         <!-- Start of Create New - Purpose page -->
         <div data-role="page" id="create-new-purpose" data-add-back-btn="true">
             
@@ -134,39 +103,6 @@
                 <h4>Page Footer</h4>
             </div><!-- /footer -->
         </div><!-- /page -->
-        
-        <script type="text/javascript">
-            $('#create-new-expenses').live('pagecreate', function(event){
-                $("#create-new-expenses-next").click(function(){
-                    $.mobile.changePage($("#create-new-add-receipt"));
-                    return false;
-                });
-            });
-            
-            $('#create-new-expenses').live('pageshow', function(event, ui){
-                
-                // display loading spinner
-                $.mobile.showPageLoadingMsg();
-            
-                // dynamically create the list of checkboxes
-                $.getJSON("http://10.0.2.2:8080/api/reports/eligible-charges",
-                    function(data){
-                        var content = '<fieldset data-role="controlgroup">';
-                        $.each(data, function(i, charge){
-                            var id = 'checkbox-' + i;
-                            content += '<input type="checkbox" name="' + id + '" id="' + id + '" class="custom" />';
-                            content += '<label for="' + id + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
-                        });
-                        content += '</fieldset>';
-                        
-                        // set the content and trigger the create event to refresh and format the list properly 
-                        $('#charges-list').append(content).trigger('create');
-                        
-                        // hide loading spinner
-                        $.mobile.hidePageLoadingMsg();
-                });
-            });
-        </script>
         
         <!-- Start of Create New - Expenses page -->
         <div data-role="page" id="create-new-expenses" data-add-back-btn="true">
@@ -240,31 +176,6 @@
                 <h4>Page Footer</h4>
             </div><!-- /footer -->
         </div><!-- /page -->
-        
-        <script type="text/javascript">
-            $('#review-status').live('pageshow', function(event, ui){
-
-                // display loading spinner
-                $.mobile.showPageLoadingMsg();
-
-                // dynamically create the list of open reports
-                $.getJSON("http://10.0.2.2:8080/api/reports",
-                    function(data){
-                        var content = "";
-                        $.each(data, function(i, report){
-                            if (report.purpose != null) {
-                                content += '<li><a href="#create-new-confirm">' + report.purpose + '</a></li>';
-                            }
-                        });
-
-                        // set the new content and refresh the UI
-                        $('#reports-list').append(content).listview('refresh');
-                        
-                        // hide loading spinner
-                        $.mobile.hidePageLoadingMsg();
-                });
-            });
-        </script>
         
         <!-- Start of Review Status page -->
         <div data-role="page" id="review-status" data-add-back-btn="true">
