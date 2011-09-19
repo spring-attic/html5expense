@@ -5,10 +5,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"> 
         <title>html5expense</title> 
         <link rel="stylesheet" href="jquery.mobile-1.0b3.min.css" />
-        <script type="text/javascript" src="jquery-1.6.4.min.js"></script>
-        <script type="text/javascript" src="jquery.mobile-1.0b3.min.js"></script>
-        <script type="text/javascript" src="controller.js"></script>
-    </head> 
+        <script type="text/javascript" charset="utf-8" src="phonegap-android-1.0.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="jquery-1.6.4.js"></script>
+        <script type="text/javascript" charset="utf-8" src="jquery.mobile-1.0b3.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var pictureSource;
+            var destinationType;
+            var imageQuality = 50;
+        
+            document.addEventListener("deviceready", onDeviceReady, false);
+        
+            function onDeviceReady() {
+                pictureSource = navigator.camera.PictureSourceType;
+                destinationType = navigator.camera.DestinationType;
+            }
+        </script>
+        <script type="text/javascript" charset="utf-8" src="controller.js"></script>
+</head>
     
     <body>
                 
@@ -21,7 +34,7 @@
             
             <div data-role="content">
                 <ul data-role="listview">
-                    <li><a href="#create-new-purpose">Create New</a></li>
+                    <li><a href="#create-new-add-receipt">Create New</a></li>
                     <li><a href="#review-status">Review Status</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#sign-in" data-rel="dialog">Sign Out</a></li>
@@ -137,12 +150,36 @@
             </div><!-- /header -->
             
             <div data-role="content">
-                <form method="get" action="#create-new-confirm">
-                    <p>TODO: add option to capture photo</p>
+                <form id="create-new-add-receipt-form">
                     <div class="ui-body">
+                        <button id="create-new-add-receipt-capture-photo" type="submit">Capture Photo</button>
                         <fieldset class="ui-grid-a">
-                            <div class="ui-block-a"><button type="submit">Cancel</button></div>
-                            <div class="ui-block-b"><button type="submit">Next</button></div>    
+                            <div class="ui-block-a"><a href="#home" data-role="button">Cancel</a></div>
+                            <div class="ui-block-b"><button id="create-new-add-receipt-next" type="submit">Next</button></div>    
+                        </fieldset>
+                    </div>
+                </form>
+            </div><!-- /content -->
+            
+            <div data-role="footer">
+                <h4>Page Footer</h4>
+            </div><!-- /footer -->
+        </div><!-- /page -->
+        
+        <!-- Start of Create New - Review Receipt page -->
+        <div data-role="page" id="create-new-review-receipt" data-add-back-btn="true">
+            
+            <div data-role="header">
+                <h1>Add Receipt</h1>
+            </div><!-- /header -->
+            
+            <div data-role="content">
+                <form id="create-new-review-receipt-form">
+                    <div class="ui-body">
+                        <img id="receiptImage" src="" />
+                        <fieldset class="ui-grid-a">
+                            <div class="ui-block-a"><a href="#home" data-role="button">Cancel</a></div>
+                            <div class="ui-block-b"><button id="create-new-review-receipt-next" type="submit">Next</button></div>    
                         </fieldset>
                     </div>
                 </form>
