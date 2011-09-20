@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="jquery.mobile-1.0b3.min.css" />
         <script type="text/javascript" charset="utf-8" src="phonegap-android-1.0.0.js"></script>
         <script type="text/javascript" charset="utf-8" src="jquery-1.6.4.js"></script>
+        <script type="text/javascript" charset="utf-8" src="jquery.validate-1.8.1.js"></script>
         <script type="text/javascript" charset="utf-8" src="jquery.mobile-1.0b3.js"></script>
         <script type="text/javascript" charset="utf-8">
             var pictureSource;
@@ -34,7 +35,7 @@
             
             <div data-role="content">
                 <ul data-role="listview">
-                    <li><a href="#create-new-add-receipt">Create New</a></li>
+                    <li><a href="#create-new-purpose">Create New</a></li>
                     <li><a href="#review-status">Review Status</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#sign-in" data-rel="dialog">Sign Out</a></li>
@@ -101,7 +102,7 @@
                 <form id="create-new-purpose-form">
                     <div data-role="fieldcontain" class="ui-field-contain">
                         <label for="purpose">Purpose:</label>
-                        <input type="text" name="purpose" id="purpose" value="" />
+                        <input type="text" name="purpose" id="purpose" value="" class="required" />
                     </div>
                     <div class="ui-body">
                         <fieldset class="ui-grid-a">

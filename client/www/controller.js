@@ -16,35 +16,55 @@
 
 var reportId;
 
+//var apiUrl = "http://192.168.0.4:8080/api/";
+var apiUrl = "http://10.0.2.2:8080/api/";
+
+function getApiUrl(path) {
+    return apiUrl + path;
+}
+
 // ***************************************
 // Create New - Purpose
 // ***************************************
 
 $('#create-new-purpose').live('pagecreate', function(event) {
-    $("#create-new-next").click(function() {
-
-        var formData = $("#create-new-purpose-form").serialize();
-
-        $.ajax({
-            type : "POST",
-            url : "http://10.0.2.2:8080/api/reports/",
-            cache : false,
-            data : formData,
-            success : onCreateReportSuccess,
-            error : onCreateReportError
-        });
-
-        return false;
+    $("#create-new-purpose-form").validate({
+        submitHandler : function(form) {
+            console.log("Create New Purpose Submitted");
+            submitCreateNewReportForm();
+        }
     });
 });
 
+// $("#create-new-next").click(function() {
+
+function submitCreateNewReportForm() {
+    $.mobile.showPageLoadingMsg();
+
+    var formData = $("#create-new-purpose-form").serialize();
+
+    $.ajax({
+        type : "POST",
+        url : getApiUrl("reports"),
+        cache : false,
+        data : formData,
+        success : onCreateReportSuccess,
+        error : onCreateReportError
+    });
+
+    return false;
+}
+
 function onCreateReportSuccess(data, status) {
+    $.mobile.hidePageLoadingMsg();
     reportId = $.trim(data);
     $.mobile.changePage($("#create-new-expenses"));
 }
 
 function onCreateReportError(data, status) {
+    $.mobile.hidePageLoadingMsg();
     // TODO: handle error
+    alert(status)
 }
 
 // ***************************************
@@ -60,11 +80,10 @@ $('#create-new-expenses').live('pagecreate', function(event) {
 
 $('#create-new-expenses').live('pageshow', function(event, ui) {
 
-    // display loading spinner
     $.mobile.showPageLoadingMsg();
 
     // dynamically create the list of checkboxes
-    $.getJSON("http://10.0.2.2:8080/api/reports/eligible-charges", function(data) {
+    $.getJSON(getApiUrl("reports/eligible-charges"), function(data) {
         var content = '<fieldset data-role="controlgroup">';
         $.each(data, function(i, charge) {
             var id = 'checkbox-' + i;
@@ -73,11 +92,9 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
         });
         content += '</fieldset>';
 
-        // set the content and trigger the create event to refresh and format
-        // the list properly
+        // set the content and trigger the create event to refresh and format the list properly
         $('#charges-list').html(content).trigger('create');
 
-        // hide loading spinner
         $.mobile.hidePageLoadingMsg();
     });
 });
@@ -128,12 +145,10 @@ $('#create-new-review-receipt').live('pagecreate', function(event) {
 // ***************************************
 
 $('#review-status').live('pageshow', function(event, ui) {
-
-    // display loading spinner
     $.mobile.showPageLoadingMsg();
 
     // dynamically create the list of open reports
-    $.getJSON("http://10.0.2.2:8080/api/reports", function(data) {
+    $.getJSON(getApiUrl("reports"), function(data) {
         var content = '';
         $.each(data, function(i, expenseReport) {
             if (expenseReport.purpose != null) {
@@ -144,7 +159,6 @@ $('#review-status').live('pageshow', function(event, ui) {
         // set the new content and refresh the UI
         $('#reports-list').append(content).listview('refresh');
 
-        // hide loading spinner
         $.mobile.hidePageLoadingMsg();
     });
 });
