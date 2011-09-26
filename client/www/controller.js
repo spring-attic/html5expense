@@ -215,18 +215,35 @@ $('#create-new-review-receipt').live('pagecreate', function(event) {
 $('#review-status').live('pageshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
-    // dynamically create the list of open reports
-    $.getJSON(getApiUrl("reports"), function(data) {
-        var content = '';
-        $.each(data, function(i, expenseReport) {
-            if (expenseReport.purpose != null) {
-                content += '<li><a href="#create-new-confirm">' + expenseReport.purpose + '</a></li>';
-            }
-        });
+    var url = getApiUrl("reports");
+    var data;
 
-        // set the new content and refresh the UI
-        $('#reports-list').append(content).listview('refresh');
-
-        $.mobile.hidePageLoadingMsg();
+    $.ajax({
+        type : 'GET',
+        url : url,
+        cache : false,
+        dataType : 'json',
+        data : data,
+        success : onFetchOpenExpenseReportsSuccess,
+        error : onFetchOpenExpenseReportsError
     });
 });
+
+function onFetchOpenExpenseReportsSuccess(data, status) {
+    var content = '';
+    $.each(data, function(i, expenseReport) {
+        if (expenseReport.purpose != null) {
+            content += '<li><a href="#create-new-confirm">' + expenseReport.purpose + '</a></li>';
+        }
+    });
+
+    // set the new content and refresh the UI
+    $('#reports-list').html(content).listview('refresh');
+
+    $.mobile.hidePageLoadingMsg();
+}
+
+function onFetchOpenExpenseReportsError(data, status) {
+    $.mobile.hidePageLoadingMsg();
+    alert("Error fetching open expense reports");
+}
