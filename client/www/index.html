@@ -1,236 +1,278 @@
 <!DOCTYPE html>
-<html> 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1"> 
-        <title>html5expense</title> 
-        <link rel="stylesheet" href="jquery.mobile-1.0b3.min.css" />
-        <script type="text/javascript" charset="utf-8" src="phonegap-android-1.0.0.js"></script>
-        <script type="text/javascript" charset="utf-8" src="jquery-1.6.4.js"></script>
-        <script type="text/javascript" charset="utf-8" src="jquery.validate-1.8.1.js"></script>
-        <script type="text/javascript" charset="utf-8" src="jquery.mobile-1.0b3.js"></script>
-        <script type="text/javascript" charset="utf-8">
-            var pictureSource;
-            var destinationType;
-            var imageQuality = 50;
-        
-            document.addEventListener("deviceready", onDeviceReady, false);
-        
-            function onDeviceReady() {
-                pictureSource = navigator.camera.PictureSourceType;
-                destinationType = navigator.camera.DestinationType;
-            }
-        </script>
-        <script type="text/javascript" charset="utf-8" src="controller.js"></script>
-</head>
-    
-    <body>
-                
-        <!-- Start of Home page -->
-        <div data-role="page" id="home">
-            
-            <div data-role="header">
-                <h1>Home</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <ul data-role="listview">
-                    <li><a href="#create-new-purpose">Create New</a></li>
-                    <li><a href="#review-status">Review Status</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#sign-in" data-rel="dialog">Sign Out</a></li>
-                </ul>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
-        
-        <!-- Start of Sign In page -->
-        <div data-role="page" id="sign-in">
-            <div data-role="header">
-                <h1>Sign In</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <form method="get" action="#home" data-transition="slidedown">
-                    <div data-role="fieldcontain" class="ui-field-contain">
-                        <label for="username">Username:</label>
-                        <input type="text" name="username" id="username" value="" />
-                    </div>
-                    <div data-role="fieldcontain" class="ui-field-contain">
-                        <label for="password">Password:</label>
-                        <input type="password" name="password" id="password" value="" />
-                    </div>
-                    <div class="ui-body">
-                        <button type="submit">Sign In</button>
-                    </div>
-                </form>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
-        
-        <!-- Start of Review Status page -->
-        <div data-role="page" id="about" data-add-back-btn="true">
-            
-            <div data-role="header">
-                <h1>About</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <p>Copyright 2011 SpringSource</p>
-                <p>TODO: Add about info</p>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
-        
-        <!-- Start of Create New - Purpose page -->
-        <div data-role="page" id="create-new-purpose" data-add-back-btn="true">
-            
-            <div data-role="header">
-                <h1>Create New</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <form id="create-new-purpose-form">
-                    <div data-role="fieldcontain" class="ui-field-contain">
-                        <label for="purpose">Purpose:</label>
-                        <input type="text" name="purpose" id="purpose" value="" class="required" />
-                    </div>
-                    <div class="ui-body">
-                        <fieldset class="ui-grid-a">
-                            <div class="ui-block-a"><a href="#home" data-role="button">Cancel</a></div>
-                            <div class="ui-block-b"><button id="create-new-next" type="submit">Next</button></div>    
-                        </fieldset>
-                    </div>
-                </form>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
-        
-        <!-- Start of Create New - Expenses page -->
-        <div data-role="page" id="create-new-expenses" data-add-back-btn="true">
-            
-            <div data-role="header">
-                <h1>Select Expenses</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <form id="create-new-expenses-form">
-                    <div data-role="fieldcontain" id="charges-list">
-                    </div>
-                    <div class="ui-body">
-                        <fieldset class="ui-grid-a">
-                            <div class="ui-block-a"><a href="#home" data-role="button">Cancel</a></div>
-                            <div class="ui-block-b"><button id="create-new-expenses-next" type="submit">Next</button></div>    
-                        </fieldset>
-                    </div>
-                </form>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
-        
-        <!-- Start of Create New - Add Receipt page -->
-        <div data-role="page" id="create-new-add-receipt" data-add-back-btn="true">
-            
-            <div data-role="header">
-                <h1>Add Receipt</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <form id="create-new-add-receipt-form">
-                    <div class="ui-body">
-                        <button id="create-new-add-receipt-capture-photo" type="submit">Capture Photo</button>
-                        <fieldset class="ui-grid-a">
-                            <div class="ui-block-a"><a href="#home" data-role="button">Cancel</a></div>
-                            <div class="ui-block-b"><button id="create-new-add-receipt-next" type="submit">Next</button></div>    
-                        </fieldset>
-                    </div>
-                </form>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
-        
-        <!-- Start of Create New - Review Receipt page -->
-        <div data-role="page" id="create-new-review-receipt" data-add-back-btn="true">
-            
-            <div data-role="header">
-                <h1>Add Receipt</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <form id="create-new-review-receipt-form">
-                    <div class="ui-body">
-                        <img id="receiptImage" src="" />
-                        <fieldset class="ui-grid-a">
-                            <div class="ui-block-a"><a href="#home" data-role="button">Cancel</a></div>
-                            <div class="ui-block-b"><button id="create-new-review-receipt-next" type="submit">Next</button></div>    
-                        </fieldset>
-                    </div>
-                </form>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
+<html>
 
-        <!-- Start of Create New - Confirm page -->
-        <div data-role="page" id="create-new-confirm" data-add-back-btn="true">
-            
-            <div data-role="header">
-                <h1>Confirm</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <form method="get" action="#home">
-                    <p>TODO: display list of expenses</p>
-                    <div class="ui-body">
-                        <fieldset class="ui-grid-a">
-                            <div class="ui-block-a"><button type="submit">Cancel</button></div>
-                            <div class="ui-block-b"><button type="submit">Save</button></div>    
-                        </fieldset>
-                    </div>
-                </form>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
-        
-        <!-- Start of Review Status page -->
-        <div data-role="page" id="review-status" data-add-back-btn="true">
-            
-            <div data-role="header">
-                <h1>Review Status</h1>
-            </div><!-- /header -->
-            
-            <div data-role="content">
-                <ul data-role="listview" id="reports-list">
-                </ul>
-            </div><!-- /content -->
-            
-            <div data-role="footer">
-                <h4>Page Footer</h4>
-            </div><!-- /footer -->
-        </div><!-- /page -->
-        
-    </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>html5expense</title>
+<link rel="stylesheet" href="jquery.mobile-1.0b3.min.css" />
+<script type="text/javascript" charset="utf-8" src="phonegap-android-1.0.0.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery-1.6.4.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery.validate-1.8.1.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery.json-2.3.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery.mobile-1.0b3.js"></script>
+<script type="text/javascript" charset="utf-8" src="controller.js"></script>
+</head>
+
+<body>
+
+    <!-- Start of Home page -->
+    <div data-role="page" id="home">
+
+        <div data-role="header">
+            <h1>Home</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <ul data-role="listview">
+                <li><a href="#create-new-purpose">Create New</a></li>
+                <li><a href="#review-status">Review Status</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#sign-in" data-rel="dialog">Sign Out</a></li>
+            </ul>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Sign In page -->
+    <div data-role="page" id="sign-in">
+        <div data-role="header">
+            <h1>Sign In</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <form method="get" action="#home" data-transition="slidedown">
+                <div data-role="fieldcontain" class="ui-field-contain">
+                    <label for="username">Username:</label> <input type="text" name="username" id="username" value="" />
+                </div>
+                <div data-role="fieldcontain" class="ui-field-contain">
+                    <label for="password">Password:</label> <input type="password" name="password" id="password" value="" />
+                </div>
+                <div class="ui-body">
+                    <button type="submit">Sign In</button>
+                </div>
+            </form>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Review Status page -->
+    <div data-role="page" id="about" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>About</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <p>Copyright 2011 SpringSource</p>
+            <p>TODO: Add about info</p>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Create New - Purpose page -->
+    <div data-role="page" id="create-new-purpose" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>Create New</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <form id="create-new-purpose-form">
+                <div data-role="fieldcontain" class="ui-field-contain">
+                    <label for="purpose">Purpose:</label> <input type="text" name="purpose" id="purpose" value="" class="required" />
+                </div>
+                <div class="ui-body">
+                    <fieldset class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a href="#home" data-role="button">Cancel</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <button id="create-new-next" type="submit">Next</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Create New - Expenses page -->
+    <div data-role="page" id="create-new-expenses" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>Select Expenses</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <form id="create-new-expenses-form">
+                <div data-role="fieldcontain" id="charges-list"></div>
+                <div class="ui-body">
+                    <fieldset class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a href="#home" data-role="button">Cancel</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <button id="create-new-expenses-next" type="submit">Next</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Create New - Add Receipt page -->
+    <div data-role="page" id="create-new-add-receipt" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>Add Receipt</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <form id="create-new-add-receipt-form">
+                <div class="ui-body">
+                    <button id="create-new-add-receipt-capture-photo" type="submit">Capture Photo</button>
+                    <fieldset class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a href="#home" data-role="button">Cancel</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <button id="create-new-add-receipt-next" type="submit">Next</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Create New - Review Receipt page -->
+    <div data-role="page" id="create-new-review-receipt" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>Add Receipt</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <form id="create-new-review-receipt-form">
+                <div class="ui-body">
+                    <img id="receiptImage" src="" />
+                    <fieldset class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a href="#home" data-role="button">Cancel</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <button id="create-new-review-receipt-next" type="submit">Next</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Create New - Confirm page -->
+    <div data-role="page" id="create-new-confirm" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>Confirm</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <form method="get" action="#home">
+                <p>TODO: display list of expenses</p>
+                <div class="ui-body">
+                    <fieldset class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <button type="submit">Cancel</button>
+                        </div>
+                        <div class="ui-block-b">
+                            <button type="submit">Save</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Review Status page -->
+    <div data-role="page" id="review-status" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>Review Status</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <ul data-role="listview" id="reports-list">
+            </ul>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+</body>
 </html>

@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +48,7 @@ public class ExpenseReportingController {
      * @return the ID of the new expense report
      */
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Long createReport(@RequestParam(required = true) String purpose) {
+    public @ResponseBody Long createReport(@RequestParam String purpose) {
         return service.createReport(purpose);
     }
 
@@ -65,11 +66,11 @@ public class ExpenseReportingController {
      * Associate expenses with an {@link ExpenseReport}
      * @param reportId the ID of the {@link ExpenseReport}
      * @param chargeIds the IDs of the {@link EligibleCharge} objects to associate with the expense report
-     * @return 
+     * @return list of {@link Expense} items associated with the expense report
      */
-    @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
-    public @ResponseBody Collection<Expense> createExpenses(@PathVariable Long reportId, @RequestParam(required = true) List<Long> chargeIds) {
-        return service.createExpenses(reportId, chargeIds);
+    @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public @ResponseBody Collection<Expense> createExpenses(@PathVariable Long reportId, @RequestBody EligibleChargeList charges) {
+        return service.createExpenses(reportId, charges.getChargeIds());
     }
 
     /**
@@ -80,7 +81,7 @@ public class ExpenseReportingController {
      * @return the URI of the image
      */
     @RequestMapping(value = "/{reportId}/expenses/{expenseId}/receipt", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public @ResponseBody String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestParam(required = true) byte[] receiptBytes) {
+    public @ResponseBody String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestBody byte[] receiptBytes) {
         return service.attachReceipt(reportId, expenseId, receiptBytes);
     }
 

@@ -14,13 +14,34 @@
  * limitations under the License.
  */
 
+// ***************************************
+// Variables
+// ***************************************
 var reportId;
+var pictureSource;
+var destinationType;
+var imageQuality = 50;
 
-//var apiUrl = "http://192.168.0.4:8080/api/";
+// to test on a device, you need to modify the IP for the local instance of the API service
+// var apiUrl = "http://192.168.0.4:8080/api/";
+
+// use this address when running on the Android emulator
 var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
+}
+
+// ***************************************
+// Initialization
+// ***************************************
+
+// In order to use the camera hardware, we need to hook into the device
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function onDeviceReady() {
+    pictureSource = navigator.camera.PictureSourceType;
+    destinationType = navigator.camera.DestinationType;
 }
 
 // ***************************************
@@ -36,15 +57,13 @@ $('#create-new-purpose').live('pagecreate', function(event) {
     });
 });
 
-// $("#create-new-next").click(function() {
-
 function submitCreateNewReportForm() {
     $.mobile.showPageLoadingMsg();
 
     var formData = $("#create-new-purpose-form").serialize();
 
     $.ajax({
-        type : "POST",
+        type : 'POST',
         url : getApiUrl("reports"),
         cache : false,
         data : formData,
@@ -58,13 +77,12 @@ function submitCreateNewReportForm() {
 function onCreateReportSuccess(data, status) {
     $.mobile.hidePageLoadingMsg();
     reportId = $.trim(data);
-    $.mobile.changePage($("#create-new-expenses"));
+    $.mobile.changePage($('#create-new-expenses'));
 }
 
 function onCreateReportError(data, status) {
     $.mobile.hidePageLoadingMsg();
-    // TODO: handle error
-    alert(status)
+    alert('Error creating report: ' + status);
 }
 
 // ***************************************
@@ -73,7 +91,34 @@ function onCreateReportError(data, status) {
 
 $('#create-new-expenses').live('pagecreate', function(event) {
     $("#create-new-expenses-next").click(function() {
-        $.mobile.changePage($("#create-new-add-receipt"));
+
+        // collect the ids for the selected charges
+        var a = [];
+        $('#charges-list :checked').each(function() {
+            a.push(Number($(this).val()));
+        });
+
+        // $.mobile.showPageLoadingMsg();
+
+        var chargeIds = {
+            chargeIds : a
+        };
+
+        var postData = $.toJSON(chargeIds);
+        alert(postData);
+        var url = getApiUrl('reports/' + reportId + '/expenses');
+
+        $.ajax({
+            type : 'POST',
+            url : url,
+            cache : false,
+            dataType : 'json',
+            data : postData,
+            contentType : 'application/json; charset=utf-8',
+            success : onAssociateExpensesSuccess,
+            error : onAssociateExpensesError
+        });
+
         return false;
     });
 });
@@ -86,9 +131,9 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
     $.getJSON(getApiUrl("reports/eligible-charges"), function(data) {
         var content = '<fieldset data-role="controlgroup">';
         $.each(data, function(i, charge) {
-            var id = 'checkbox-' + i;
-            content += '<input type="checkbox" name="' + id + '" id="' + id + '" class="custom" />';
-            content += '<label for="' + id + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
+            var cbId = 'checkbox-' + i;
+            content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
+            content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
         });
         content += '</fieldset>';
 
@@ -98,6 +143,18 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
         $.mobile.hidePageLoadingMsg();
     });
 });
+
+function onAssociateExpensesSuccess(data, status) {
+    alert(data);
+    // $.mobile.hidePageLoadingMsg();
+    // TODO: a collection of expenses is returned
+    // $.mobile.changePage($("#create-new-add-receipt"));
+}
+
+function onAssociateExpensesError(data, status) {
+    $.mobile.hidePageLoadingMsg();
+    alert("Error associating expenses: " + status);
+}
 
 // ***************************************
 // Create New - Add Receipt
