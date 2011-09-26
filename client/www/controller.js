@@ -233,7 +233,7 @@ function onFetchOpenExpenseReportsSuccess(data, status) {
     var content = '';
     $.each(data, function(i, expenseReport) {
         if (expenseReport.purpose != null) {
-            content += '<li><a href="#create-new-confirm">' + expenseReport.purpose + '</a></li>';
+            content += '<li><a href="#create-new-confirm">' + expenseReport.purpose + '</a><span class=ui-li-count>' + expenseReport.expenses.length + '</span></li>';
         }
     });
 
