@@ -23,10 +23,10 @@ var destinationType;
 var imageQuality = 50;
 
 // to test on a device, you need to modify the IP for the local instance of the API service
-// var apiUrl = "http://192.168.0.4:8080/api/";
+var apiUrl = "http://192.168.0.8:8080/api/";
 
 // use this address when running on the Android emulator
-var apiUrl = "http://10.0.2.2:8080/api/";
+// var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -91,22 +91,18 @@ function onCreateReportError(data, status) {
 
 $('#create-new-expenses').live('pagecreate', function(event) {
     $("#create-new-expenses-next").click(function() {
+        $.mobile.showPageLoadingMsg();
 
         // collect the ids for the selected charges
-        var a = [];
+        var arrayIds = [];
         $('#charges-list :checked').each(function() {
-            a.push(Number($(this).val()));
+            arrayIds.push(Number($(this).val()));
         });
 
-        // $.mobile.showPageLoadingMsg();
-
-        var chargeIds = {
-            chargeIds : a
-        };
-
-        var postData = $.toJSON(chargeIds);
-        alert(postData);
         var url = getApiUrl('reports/' + reportId + '/expenses');
+        var postData = $.toJSON({
+            chargeIds : arrayIds
+        });
 
         $.ajax({
             type : 'POST',
@@ -124,36 +120,51 @@ $('#create-new-expenses').live('pagecreate', function(event) {
 });
 
 $('#create-new-expenses').live('pageshow', function(event, ui) {
-
     $.mobile.showPageLoadingMsg();
 
-    // dynamically create the list of checkboxes
-    $.getJSON(getApiUrl("reports/eligible-charges"), function(data) {
-        var content = '<fieldset data-role="controlgroup">';
-        $.each(data, function(i, charge) {
-            var cbId = 'checkbox-' + i;
-            content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
-            content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
-        });
-        content += '</fieldset>';
+    var url = getApiUrl("reports/eligible-charges");
+    var data;
 
-        // set the content and trigger the create event to refresh and format the list properly
-        $('#charges-list').html(content).trigger('create');
-
-        $.mobile.hidePageLoadingMsg();
+    $.ajax({
+        type : 'GET',
+        url : url,
+        cache : false,
+        dataType : 'json',
+        data : data,
+        success : onFetchEligibleExpensesSuccess,
+        error : onFetchEligibleExpensesError
     });
 });
 
 function onAssociateExpensesSuccess(data, status) {
-    alert(data);
-    // $.mobile.hidePageLoadingMsg();
+    $.mobile.hidePageLoadingMsg();
     // TODO: a collection of expenses is returned
-    // $.mobile.changePage($("#create-new-add-receipt"));
+    $.mobile.changePage($("#create-new-add-receipt"));
 }
 
 function onAssociateExpensesError(data, status) {
     $.mobile.hidePageLoadingMsg();
-    alert("Error associating expenses: " + status);
+    alert("Error associating expenses");
+}
+
+function onFetchEligibleExpensesSuccess(data, status) {
+    var content = '<fieldset data-role="controlgroup">';
+    $.each(data, function(i, charge) {
+        var cbId = 'checkbox-' + i;
+        content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
+        content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
+    });
+    content += '</fieldset>';
+
+    // set the content and trigger the create event to refresh and format the list properly
+    $('#charges-list').html(content).trigger('create');
+
+    $.mobile.hidePageLoadingMsg();
+}
+
+function onFetchEligibleExpensesError(data, status) {
+    $.mobile.hidePageLoadingMsg();
+    alert("Error fetching eligible expenses");
 }
 
 // ***************************************
