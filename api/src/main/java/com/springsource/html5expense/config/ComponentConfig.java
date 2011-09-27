@@ -20,6 +20,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import com.springsource.html5expense.EligibleCharge;
+import com.springsource.html5expense.Expense;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -72,7 +74,8 @@ public class ComponentConfig {
         factory.setJpaVendorAdapter(jpaVendorAdapter);
         factory.setJpaPropertyMap(properties);
         factory.setDataSource(dataSource());
-        factory.setPackagesToScan("com.springsource.html5expense.impl");
+        factory.setPackagesToScan( Expense.class.getPackage().getName(), EligibleCharge.class.getPackage().getName());
+
         return factory;
     }
 

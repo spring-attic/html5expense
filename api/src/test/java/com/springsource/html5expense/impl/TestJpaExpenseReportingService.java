@@ -32,12 +32,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,32 +59,29 @@ public class TestJpaExpenseReportingService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Inject
-    private DataSource dataSource;
-
     private String itsMission = "\"to go... where no man... has gone before!\"";
 
     private List<EligibleCharge> charges;
 
     @Before
     public void installSomeCharges() throws Throwable {
-        final List<EligibleCharge> chargesToAdd = Arrays.asList(new EligibleCharge(new LocalDate(), "Starbucks", "food", new BigDecimal(4)), new EligibleCharge(new LocalDate(), "dinner at Morton's Steak House", "food", new BigDecimal(59.99)));
+        final List<EligibleCharge> chargesToAdd = Arrays.asList(
+                                   new EligibleCharge(new LocalDate(), "Starbucks", "food", new BigDecimal(4)),
+                                   new EligibleCharge(new LocalDate(), "dinner at Morton's Steak House", "food", new BigDecimal(59.99)));
 
         // clean out the data
         TransactionTemplate transactionTemplate = new TransactionTemplate(this.transactionManager);
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-
-                entityManager.createQuery("DELETE FROM " + ExpenseEntity.class.getName()).executeUpdate();
-                entityManager.createQuery("DELETE FROM " + ExpenseReportEntity.class.getName()).executeUpdate();
-                entityManager.createQuery("DELETE FROM " + EligibleCharge.class.getName()).executeUpdate();
-                return null;
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                for (Class t : new Class[]{ExpenseEntity.class, ExpenseReportEntity.class, EligibleCharge.class}) {
+                    entityManager.createQuery(String.format("DELETE FROM %s", t.getName())).executeUpdate();
+                }
             }
         });
         // install charges
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-
                 for (EligibleCharge ec : chargesToAdd) {
                     entityManager.persist(ec);
                 }
