@@ -148,18 +148,20 @@ function onAssociateExpensesError(data, status) {
 }
 
 function onFetchEligibleExpensesSuccess(data, status) {
-    var content = '<fieldset data-role="controlgroup">';
-    $.each(data, function(i, charge) {
-        var cbId = 'checkbox-' + i;
-        content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
-        content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
-    });
-    content += '</fieldset>';
-
-    // set the content and trigger the create event to refresh and format the list properly
-    $('#charges-list').html(content).trigger('create');
-
     $.mobile.hidePageLoadingMsg();
+    if (data.length == 0) {
+        alert("There are no available expenses!");
+    } else {
+        var content = '<fieldset data-role="controlgroup">';
+        $.each(data, function(i, charge) {
+            var cbId = 'checkbox-' + i;
+            content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
+            content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
+        });
+        content += '</fieldset>';
+        // set the content and trigger the create event to refresh and format the list properly
+        $('#charges-list').html(content).trigger('create');
+    }
 }
 
 function onFetchEligibleExpensesError(data, status) {
