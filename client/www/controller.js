@@ -23,10 +23,10 @@ var destinationType;
 var imageQuality = 50;
 
 // to test on a device, you need to modify the IP for the local instance of the API service
-var apiUrl = "http://192.168.0.8:8080/api/";
+// var apiUrl = "http://192.168.0.8:8080/api/";
 
 // use this address when running on the Android emulator
-// var apiUrl = "http://10.0.2.2:8080/api/";
+var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -148,8 +148,9 @@ function onAssociateExpensesError(data, status) {
 }
 
 function onFetchEligibleExpensesSuccess(data, status) {
-    $.mobile.hidePageLoadingMsg();
     if (data.length == 0) {
+        $.mobile.hidePageLoadingMsg();
+        $('#create-new-expenses-next').button('disable');
         alert("There are no available expenses!");
     } else {
         var content = '<fieldset data-role="controlgroup">';
@@ -161,6 +162,8 @@ function onFetchEligibleExpensesSuccess(data, status) {
         content += '</fieldset>';
         // set the content and trigger the create event to refresh and format the list properly
         $('#charges-list').html(content).trigger('create');
+        $('#create-new-expenses-next').button('enable');
+        $.mobile.hidePageLoadingMsg();
     }
 }
 
@@ -229,28 +232,51 @@ $('#review-status').live('pageshow', function(event, ui) {
         success : onFetchOpenExpenseReportsSuccess,
         error : onFetchOpenExpenseReportsError
     });
+
+    $('.expense-report-list-item').live('click', function() {
+        var expenseReportId = $(this).jqmData('id');
+        $('#review-status-details').jqmData('expenseReportId', expenseReportId);
+        $.mobile.changePage('#review-status-details');
+    });
 });
 
 function onFetchOpenExpenseReportsSuccess(data, status) {
-    var content = '';
-    $.each(data, function(i, expenseReport) {
-        if (expenseReport.purpose != null) {
-            content += '<li><a href="#create-new-confirm">';
-            content += '<p class="ui-li-count">' + expenseReport.expenses.length + '</p>';
-            content += '<h3>' + expenseReport.purpose + '</h3>';
-            content += '<p>Status: ' + expenseReport.state + '</p>';
-            content += '</a></li>';
+    if (data.length == 0) {
+        $.mobile.hidePageLoadingMsg();
+        alert("There are no open expense reports");
+    } else {
+        var content = '';
+        $.each(data, function(i, expenseReport) {
+            if (expenseReport.purpose != null) {
+                content += '<li data-id=' + expenseReport.id + ' class="expense-report-list-item"><a href="#">';
+                content += '<p class="ui-li-count">' + expenseReport.expenses.length + '</p>';
+                content += '<h3>' + expenseReport.purpose + '</h3>';
+                content += '<p>Status: ' + expenseReport.state + '</p>';
+                content += '</a></li>';
+            }
 
-        }
-    });
+            // set the new content and refresh the UI
+            $('#reports-list').html(content).listview('refresh');
 
-    // set the new content and refresh the UI
-    $('#reports-list').html(content).listview('refresh');
-
-    $.mobile.hidePageLoadingMsg();
+            $.mobile.hidePageLoadingMsg();
+        });
+    }
 }
 
 function onFetchOpenExpenseReportsError(data, status) {
     $.mobile.hidePageLoadingMsg();
     alert("Error fetching open expense reports");
 }
+
+// ***************************************
+// Review Status Details
+// ***************************************
+
+$('#review-status-details').live('pagebeforeshow', function(event, ui) {
+    var expenseReportId = $('#review-status-details').jqmData('expenseReportId');
+    if (expenseReportId != null) {
+        $('#review-status-details-text').text("Details about expense report #" + expenseReportId + " here.");
+    } else {
+        alert("No expense report available to display");
+    }
+});
