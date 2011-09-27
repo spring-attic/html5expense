@@ -65,7 +65,6 @@ public class ExpenseReportingController {
     /**
      * Associate expenses with an {@link ExpenseReport}
      * @param reportId the ID of the {@link ExpenseReport}
-     * @param chargeIds the IDs of the {@link EligibleCharge} objects to associate with the expense report
      * @return list of {@link Expense} items associated with the expense report
      */
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")

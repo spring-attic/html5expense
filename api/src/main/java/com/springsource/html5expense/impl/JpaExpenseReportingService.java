@@ -85,8 +85,11 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @Transactional(readOnly=true)
     public List<ExpenseReport> getOpenReports() {
         List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
-        List<ExpenseReportEntity> entities = entityManager.createQuery("from ExpenseReportEntity where state = :new or state = :rejected", ExpenseReportEntity.class)
-                .setParameter("new", State.NEW).setParameter("rejected", State.REJECTED).getResultList();
+        List<ExpenseReportEntity> entities = entityManager.createQuery("from ExpenseReportEntity er where er.state = :new or er.state = :rejected", ExpenseReportEntity.class)
+                 .setParameter("new", State.NEW)
+                 .setParameter("rejected", State.REJECTED)
+                 .getResultList();
+
         for (ExpenseReportEntity report : entities) {
             reports.add(report.data());
         }
@@ -104,7 +107,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     }
 
     private void removeAddedCharges(List<Long> chargeIds) {
-        entityManager.createQuery("delete from EligibleCharge where id in :ids").setParameter("ids", chargeIds).executeUpdate();        
+        entityManager.createQuery("delete from EligibleCharge where id in :ids").setParameter("ids", chargeIds).executeUpdate();
     }
     
     private String receipt(byte[] receiptBytes) {
