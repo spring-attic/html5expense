@@ -15,6 +15,8 @@
  */
 package com.springsource.html5expense.config;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +28,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -51,6 +56,15 @@ public class ComponentConfig {
         EmbeddedDatabaseFactory factory = new EmbeddedDatabaseFactory();
         factory.setDatabaseName("html5expense");
         factory.setDatabaseType(EmbeddedDatabaseType.H2);
+        factory.setDatabasePopulator(new DatabasePopulator() {
+            @Override
+            public void populate(Connection connection) throws SQLException {
+                SingleConnectionDataSource connectionDataSource = new SingleConnectionDataSource(connection,false);
+                JdbcTemplate jdbcTemplate = new JdbcTemplate( connectionDataSource);
+                jdbcTemplate.execute("INSERT INTO ELIGIBLE_CHARGE");
+
+            }
+        })  ;
         return factory.getDatabase();
     }
 
@@ -67,7 +81,7 @@ public class ComponentConfig {
         jpaVendorAdapter.setShowSql(true);
 
         Map<String, String> properties = new HashMap<String, String>();
-        properties.put("hibernate.hbm2ddl.auto", "create");
+        properties.put("hibernate.hbm2ddl.auto", "update");
         properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
