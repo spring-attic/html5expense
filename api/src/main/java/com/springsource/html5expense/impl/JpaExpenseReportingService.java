@@ -62,7 +62,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
             entityManager.persist(expense);
             expenses.add(expense.data());
         }
-        // todo restore removeAddedCharges(chargeIds);
+        removeAddedCharges(chargeIds);
         return expenses;
     }
 

@@ -89,8 +89,9 @@ public class ExpenseReportingController {
      * @param reportId the ID of the {@link ExpenseReport}
      */
     @RequestMapping(value = "/{reportId}", method = RequestMethod.POST)
-    public void submitReport(@PathVariable Long reportId) {
+    public @ResponseBody Long submitReport(@PathVariable Long reportId) {
         service.submitReport(reportId);
+        return reportId;
     }
 
     /**

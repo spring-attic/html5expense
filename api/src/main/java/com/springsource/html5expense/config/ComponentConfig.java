@@ -64,9 +64,9 @@ public class ComponentConfig {
     }
 
     // this allows the user to connect to jdbc:h2:tcp://localhost/mem:html5expense in the H2 console and interrogate the data
-    @Bean
+    @Bean(destroyMethod = "stop",initMethod = "start")
     public Server server () throws Exception {
-        return Server.createTcpServer().start();
+        return Server.createTcpServer();
     }
 
     @Bean
