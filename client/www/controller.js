@@ -75,19 +75,15 @@ function submitCreateNewReportForm() {
 }
 
 function onCreateReportSuccess(data, textStatus, jqXHR) {
-    if (jqXHR.status == 200) {
-        $.mobile.hidePageLoadingMsg();
-        expenseReport = {};
-        expenseReport.id = $.trim(data);
-        $.mobile.changePage($('#create-new-expenses'));
-    } else {
-        alert("Http Status: " + jqXHR.status);
-    }
+    $.mobile.hidePageLoadingMsg();
+    expenseReport = {};
+    expenseReport.id = $.trim(data);
+    $.mobile.changePage($('#create-new-expenses'));
 }
 
 function onCreateReportError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
-    alert('Error creating report: ' + status);
+    alert('Error creating report');
 }
 
 // ***************************************
@@ -142,14 +138,9 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
 });
 
 function onAssociateExpensesSuccess(data, textStatus, jqXHR) {
-    if (jqXHR.status == 200) {
-        alert("Http Status: " + jqXHR.status);
-        $.mobile.hidePageLoadingMsg();
-        expenseReport.expenses = data;
-        $.mobile.changePage($("#create-new-confirm"));
-    } else {
-        alert("Http Status: " + jqXHR.status);
-    }
+    $.mobile.hidePageLoadingMsg();
+    expenseReport.expenses = data;
+    $.mobile.changePage($("#create-new-confirm"));
 }
 
 function onAssociateExpensesError(jqXHR, textStatus, errorThrown) {
@@ -158,27 +149,23 @@ function onAssociateExpensesError(jqXHR, textStatus, errorThrown) {
 }
 
 function onFetchEligibleExpensesSuccess(data, textStatus, jqXHR) {
-    if (jqXHR.status == 200) {
-        if (data.length == 0) {
-            $.mobile.hidePageLoadingMsg();
-            $('#create-new-expenses-next').button('disable');
-            alert("There are no available expenses!");
-        } else {
-            var content = '<fieldset data-role="controlgroup">';
-            $.each(data, function(i, charge) {
-                var cbId = 'checkbox-' + i;
-                content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
-                content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
-            });
-            content += '</fieldset>';
-            // set the content and trigger the create event to refresh and format the list properly
-            $('#charges-list').html(content).trigger('create');
-            $('#create-new-expenses-next').button('enable');
-            $.mobile.hidePageLoadingMsg();
-        }
+    if (data.length == 0) {
+        $.mobile.hidePageLoadingMsg();
+        $('#create-new-expenses-next').button('disable');
+        alert("There are no available expenses!");
     } else {
-        alert("Http Status: " + jqXHR.status);
-    }        
+        var content = '<fieldset data-role="controlgroup">';
+        $.each(data, function(i, charge) {
+            var cbId = 'checkbox-' + i;
+            content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
+            content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
+        });
+        content += '</fieldset>';
+        // set the content and trigger the create event to refresh and format the list properly
+        $('#charges-list').html(content).trigger('create');
+        $('#create-new-expenses-next').button('enable');
+        $.mobile.hidePageLoadingMsg();
+    }
 }
 
 function onFetchEligibleExpensesError(jqXHR, textStatus, errorThrown) {
@@ -207,7 +194,7 @@ $('#create-new-confirm').live('pageshow', function(event) {
         content += '<p>' + expense.date + '</p>';
         content += '</li>';
     });
-    
+
     // set the content and trigger the create event to refresh and format the list properly
     $('#expenses-list').html(content).listview('refresh');
 });
