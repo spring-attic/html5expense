@@ -17,16 +17,16 @@
 // ***************************************
 // Variables
 // ***************************************
-var reportId;
+var expenseReport;
 var pictureSource;
 var destinationType;
 var imageQuality = 50;
 
 // to test on a device, you need to modify the IP for the local instance of the API service
-// var apiUrl = "http://192.168.0.8:8080/api/";
+var apiUrl = "http://192.168.0.8:8080/api/";
 
 // use this address when running on the Android emulator
-var apiUrl = "http://10.0.2.2:8080/api/";
+// var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -74,13 +74,18 @@ function submitCreateNewReportForm() {
     return false;
 }
 
-function onCreateReportSuccess(data, status) {
-    $.mobile.hidePageLoadingMsg();
-    reportId = $.trim(data);
-    $.mobile.changePage($('#create-new-expenses'));
+function onCreateReportSuccess(data, textStatus, jqXHR) {
+    if (jqXHR.status == 200) {
+        $.mobile.hidePageLoadingMsg();
+        expenseReport = {};
+        expenseReport.id = $.trim(data);
+        $.mobile.changePage($('#create-new-expenses'));
+    } else {
+        alert("Http Status: " + jqXHR.status);
+    }
 }
 
-function onCreateReportError(data, status) {
+function onCreateReportError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
     alert('Error creating report: ' + status);
 }
@@ -99,7 +104,7 @@ $('#create-new-expenses').live('pagecreate', function(event) {
             arrayIds.push(Number($(this).val()));
         });
 
-        var url = getApiUrl('reports/' + reportId + '/expenses');
+        var url = getApiUrl('reports/' + expenseReport.id + '/expenses');
         var postData = $.toJSON({
             chargeIds : arrayIds
         });
@@ -136,41 +141,76 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
     });
 });
 
-function onAssociateExpensesSuccess(data, status) {
-    $.mobile.hidePageLoadingMsg();
-    // TODO: a collection of expenses is returned
-    $.mobile.changePage($("#create-new-add-receipt"));
+function onAssociateExpensesSuccess(data, textStatus, jqXHR) {
+    if (jqXHR.status == 200) {
+        alert("Http Status: " + jqXHR.status);
+        $.mobile.hidePageLoadingMsg();
+        expenseReport.expenses = data;
+        $.mobile.changePage($("#create-new-confirm"));
+    } else {
+        alert("Http Status: " + jqXHR.status);
+    }
 }
 
-function onAssociateExpensesError(data, status) {
+function onAssociateExpensesError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
     alert("Error associating expenses");
 }
 
-function onFetchEligibleExpensesSuccess(data, status) {
-    if (data.length == 0) {
-        $.mobile.hidePageLoadingMsg();
-        $('#create-new-expenses-next').button('disable');
-        alert("There are no available expenses!");
+function onFetchEligibleExpensesSuccess(data, textStatus, jqXHR) {
+    if (jqXHR.status == 200) {
+        if (data.length == 0) {
+            $.mobile.hidePageLoadingMsg();
+            $('#create-new-expenses-next').button('disable');
+            alert("There are no available expenses!");
+        } else {
+            var content = '<fieldset data-role="controlgroup">';
+            $.each(data, function(i, charge) {
+                var cbId = 'checkbox-' + i;
+                content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
+                content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
+            });
+            content += '</fieldset>';
+            // set the content and trigger the create event to refresh and format the list properly
+            $('#charges-list').html(content).trigger('create');
+            $('#create-new-expenses-next').button('enable');
+            $.mobile.hidePageLoadingMsg();
+        }
     } else {
-        var content = '<fieldset data-role="controlgroup">';
-        $.each(data, function(i, charge) {
-            var cbId = 'checkbox-' + i;
-            content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
-            content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
-        });
-        content += '</fieldset>';
-        // set the content and trigger the create event to refresh and format the list properly
-        $('#charges-list').html(content).trigger('create');
-        $('#create-new-expenses-next').button('enable');
-        $.mobile.hidePageLoadingMsg();
-    }
+        alert("Http Status: " + jqXHR.status);
+    }        
 }
 
-function onFetchEligibleExpensesError(data, status) {
+function onFetchEligibleExpensesError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
     alert("Error fetching eligible expenses");
 }
+
+// ***************************************
+// Create New - Confirm
+// ***************************************
+
+$('#create-new-confirm').live('pagecreate', function(event) {
+    $("#create-new-confirm-save").click(function() {
+        $.mobile.changePage($("#home"));
+        return false;
+    });
+});
+
+$('#create-new-confirm').live('pageshow', function(event) {
+    var content = '<li data-role="list-divider">Expenses</li>';
+    $.each(expenseReport.expenses, function(i, expense) {
+        content += '<li>';
+        content += '<p class="ui-li-aside">' + expense.amount + '</p>';
+        content += '<h3>' + expense.merchant + '</h3>';
+        content += '<p>' + expense.category + '</p>';
+        content += '<p>' + expense.date + '</p>';
+        content += '</li>';
+    });
+    
+    // set the content and trigger the create event to refresh and format the list properly
+    $('#expenses-list').html(content).listview('refresh');
+});
 
 // ***************************************
 // Create New - Add Receipt
@@ -240,9 +280,10 @@ $('#review-status').live('pageshow', function(event, ui) {
     });
 });
 
-function onFetchOpenExpenseReportsSuccess(data, status) {
+function onFetchOpenExpenseReportsSuccess(data, textStatus, jqXHR) {
     if (data.length == 0) {
         $.mobile.hidePageLoadingMsg();
+        $('#reports-list').html('').listview('refresh');
         alert("There are no open expense reports");
     } else {
         var content = '';
@@ -263,7 +304,7 @@ function onFetchOpenExpenseReportsSuccess(data, status) {
     }
 }
 
-function onFetchOpenExpenseReportsError(data, status) {
+function onFetchOpenExpenseReportsError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
     alert("Error fetching open expense reports");
 }

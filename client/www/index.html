@@ -230,15 +230,15 @@
         <!-- /header -->
 
         <div data-role="content">
-            <form method="get" action="#home">
-                <p>TODO: display list of expenses</p>
+            <form id="create-new-confirm-form">
+                <ul data-role="listview" data-inset="true" id="expenses-list"></ul>
                 <div class="ui-body">
                     <fieldset class="ui-grid-a">
                         <div class="ui-block-a">
-                            <button type="submit">Cancel</button>
+                            <a href="#home" data-role="button">Cancel</a>
                         </div>
                         <div class="ui-block-b">
-                            <button type="submit">Save</button>
+                            <button id="create-new-confirm-next" type="submit">Submit</button>
                         </div>
                     </fieldset>
                 </div>
