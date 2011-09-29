@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name="EXPENSE")
+@Table(name = "EXPENSE")
 class ExpenseEntity {
 
     @GeneratedValue @Id
@@ -45,7 +45,7 @@ class ExpenseEntity {
     private String flag;
 
     public ExpenseEntity(EligibleCharge charge) {
-        this.date = charge.getDate() .toDate() ;
+        this.date = charge.getDate().toDate();
         this.merchant = charge.getMerchant();
         this.category = charge.getCategory();
         this.amount = charge.getAmount();
@@ -80,7 +80,7 @@ class ExpenseEntity {
     }
 
     // hibernate
-    
+
     ExpenseEntity() {
     }
 

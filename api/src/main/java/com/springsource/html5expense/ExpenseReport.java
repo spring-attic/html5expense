@@ -18,16 +18,17 @@ package com.springsource.html5expense;
 import java.util.List;
 
 public class ExpenseReport {
-    
+
     private Long id;
-    
+
     private String purpose;
-    
+
     private State state;
-    
+
     private List<Expense> expenses;
 
-    private ExpenseReport() {}
+    private ExpenseReport() {
+    }
 
     public ExpenseReport(Long id, String purpose, State state, List<Expense> expenses) {
         this.id = id;

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="EXPENSE_REPORT")
+@Table(name = "EXPENSE_REPORT")
 class ExpenseReportEntity {
 
     @GeneratedValue @Id
@@ -141,11 +141,11 @@ class ExpenseReportEntity {
 
     private void addExpense(ExpenseEntity expense) {
         expense.expenseReport = this;
-        expenses.add(expense);        
+        expenses.add(expense);
     }
-    
+
     // Hibernate
-    
+
     ExpenseReportEntity() {
     }
 

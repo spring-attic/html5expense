@@ -87,31 +87,31 @@ public class Expense {
         this.id = id;
     }
 
-    private  void setDate(LocalDate date) {
+    private void setDate(LocalDate date) {
         this.date = date;
     }
 
-    private  void setMerchant(String merchant) {
+    private void setMerchant(String merchant) {
         this.merchant = merchant;
     }
 
-    private  void setCategory(String category) {
+    private void setCategory(String category) {
         this.category = category;
     }
 
-    private  void setAmount(BigDecimal amount) {
+    private void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    private  void setChargeId(Long chargeId) {
+    private void setChargeId(Long chargeId) {
         this.chargeId = chargeId;
     }
 
-    private  void setReceipt(String receipt) {
+    private void setReceipt(String receipt) {
         this.receipt = receipt;
     }
 
-    private  void setFlag(String flag) {
+    private void setFlag(String flag) {
         this.flag = flag;
     }
 

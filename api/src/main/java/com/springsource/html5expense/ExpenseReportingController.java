@@ -15,18 +15,12 @@
  */
 package com.springsource.html5expense;
 
-import java.util.Collection;
-import java.util.List;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Roy Clarkson
@@ -44,62 +38,80 @@ public class ExpenseReportingController {
 
     /**
      * Create a new {@link ExpenseReport} with an associated description for the purpose
+     *
      * @param purpose the reason for the expense report. i.e. conference, business meal, etc.
      * @return the ID of the new expense report
      */
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Long createReport(@RequestParam String purpose) {
+    public
+    @ResponseBody
+    Long createReport(@RequestParam String purpose) {
         return service.createReport(purpose);
     }
 
     /**
-     * Retrieve a list of charges that can be associated with an {@link ExpenseReport}. 
+     * Retrieve a list of charges that can be associated with an {@link ExpenseReport}.
      * These charges are not currently associated with any other expense report.
+     *
      * @return collection of {@link EligibleCharge} objects
      */
     @RequestMapping(value = "/eligible-charges", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody Collection<EligibleCharge> getEligibleCharges() {
+    public
+    @ResponseBody
+    Collection<EligibleCharge> getEligibleCharges() {
         return service.getEligibleCharges();
     }
 
     /**
      * Associate expenses with an {@link ExpenseReport}
+     *
      * @param reportId the ID of the {@link ExpenseReport}
      * @return list of {@link Expense} items associated with the expense report
      */
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public @ResponseBody Collection<Expense> createExpenses(@PathVariable Long reportId, @RequestBody EligibleChargeList charges) {
+    public
+    @ResponseBody
+    Collection<Expense> createExpenses(@PathVariable Long reportId, @RequestBody EligibleChargeList charges) {
         return service.createExpenses(reportId, charges.getChargeIds());
     }
 
     /**
-     * Associate an image of a receipt with an {@link Expense} 
-     * @param reportId the ID of the {@link ExpenseReport}
-     * @param expenseId the ID of the {@link Expense}
+     * Associate an image of a receipt with an {@link Expense}
+     *
+     * @param reportId     the ID of the {@link ExpenseReport}
+     * @param expenseId    the ID of the {@link Expense}
      * @param receiptBytes the image of the receipt
      * @return the URI of the image
      */
     @RequestMapping(value = "/{reportId}/expenses/{expenseId}/receipt", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public @ResponseBody String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestBody byte[] receiptBytes) {
+    public
+    @ResponseBody
+    String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestBody byte[] receiptBytes) {
         return service.attachReceipt(reportId, expenseId, receiptBytes);
     }
 
     /**
      * Finalizes and submits the {@link ExpenseReport} for review
+     *
      * @param reportId the ID of the {@link ExpenseReport}
      */
     @RequestMapping(value = "/{reportId}", method = RequestMethod.POST)
-    public @ResponseBody Long submitReport(@PathVariable Long reportId) {
+    public
+    @ResponseBody
+    Long submitReport(@PathVariable Long reportId) {
         service.submitReport(reportId);
         return reportId;
     }
 
     /**
      * Retrieves all of the open, or incomplete, expense reports for the user
+     *
      * @return list of {@link ExpenseReport} objects
      */
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<ExpenseReport> getOpenReports() {
+    public
+    @ResponseBody
+    List<ExpenseReport> getOpenReports() {
         return service.getOpenReports();
     }
 

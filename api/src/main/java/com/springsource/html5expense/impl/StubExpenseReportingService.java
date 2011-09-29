@@ -15,21 +15,15 @@
  */
 package com.springsource.html5expense.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.joda.time.LocalDate;
-
 import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReport;
 import com.springsource.html5expense.ExpenseReportingService;
+import org.joda.time.LocalDate;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class StubExpenseReportingService implements ExpenseReportingService {
 
