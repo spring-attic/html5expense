@@ -19,13 +19,15 @@ import java.util.List;
 
 public class ExpenseReport {
     
-    private final Long id;
+    private Long id;
     
-    private final String purpose;
+    private String purpose;
     
-    private final State state;
+    private State state;
     
-    private final List<Expense> expenses;
+    private List<Expense> expenses;
+
+    private ExpenseReport() {}
 
     public ExpenseReport(Long id, String purpose, State state, List<Expense> expenses) {
         this.id = id;
@@ -50,4 +52,29 @@ public class ExpenseReport {
         return expenses;
     }
 
+    private void setId(Long id) {
+        this.id = id;
+    }
+
+    private void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    private void setState(State state) {
+        this.state = state;
+    }
+
+    private void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
+    }
+
+    @Override
+    public String toString() {
+        return "ExpenseReport{" +
+                       "id=" + id +
+                       ", purpose='" + purpose + '\'' +
+                       ", state=" + state +
+                       ", expenses=" + expenses +
+                       '}';
+    }
 }

@@ -15,20 +15,24 @@
  */
 package com.springsource.html5expense.config;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.sql.DataSource;
 
 import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
+import org.h2.tools.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -56,16 +60,13 @@ public class ComponentConfig {
         EmbeddedDatabaseFactory factory = new EmbeddedDatabaseFactory();
         factory.setDatabaseName("html5expense");
         factory.setDatabaseType(EmbeddedDatabaseType.H2);
-        factory.setDatabasePopulator(new DatabasePopulator() {
-            @Override
-            public void populate(Connection connection) throws SQLException {
-                SingleConnectionDataSource connectionDataSource = new SingleConnectionDataSource(connection,false);
-                JdbcTemplate jdbcTemplate = new JdbcTemplate( connectionDataSource);
-                jdbcTemplate.execute("INSERT INTO ELIGIBLE_CHARGE");
-
-            }
-        })  ;
         return factory.getDatabase();
+    }
+
+    // this allows the user to connect to jdbc:h2:tcp://localhost/mem:html5expense in the H2 console and interrogate the data
+    @Bean
+    public Server server () throws Exception {
+        return Server.createTcpServer().start();
     }
 
     @Bean

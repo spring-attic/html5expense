@@ -37,7 +37,7 @@ public class EligibleCharge {
 
     private BigDecimal amount;
 
-    EligibleCharge() {
+    public EligibleCharge() {
     }
 
     public EligibleCharge(LocalDate date, String merchant, String category, BigDecimal amount) {
@@ -73,6 +73,38 @@ public class EligibleCharge {
 
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    @Override
+    public String toString() {
+        return "EligibleCharge{" +
+                       "id=" + id +
+                       ", date=" + date +
+                       ", merchant='" + merchant + '\'' +
+                       ", category='" + category + '\'' +
+                       ", amount=" + amount +
+                       '}';
+    }
+
+    // these fields are here for Jackson
+    private void setId(Long id) {
+        this.id = id;
+    }
+
+    private void setMerchant(String merchant) {
+        this.merchant = merchant;
+    }
+
+    private void setCategory(String category) {
+        this.category = category;
+    }
+
+    private void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    private void setDate(LocalDate d) {
+        this.date = (d).toDate();
     }
 
 }

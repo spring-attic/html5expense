@@ -21,21 +21,24 @@ import java.math.BigDecimal;
 
 public class Expense {
 
-    private final Integer id;
+    private Integer id;
 
-    private final LocalDate date;
+    private LocalDate date;
 
-    private final String merchant;
+    private String merchant;
 
-    private final String category;
+    private String category;
 
-    private final BigDecimal amount;
+    private BigDecimal amount;
 
-    private final Long chargeId;
+    private Long chargeId;
 
-    private final String receipt;
+    private String receipt;
 
-    private final String flag;
+    private String flag;
+
+    private Expense() {
+    }
 
     public Expense(Integer id, LocalDate date, String merchant, String category, BigDecimal amount, Long chargeId, String receipt, String flag) {
         this.id = id;
@@ -80,4 +83,49 @@ public class Expense {
         return flag;
     }
 
+    private void setId(Integer id) {
+        this.id = id;
+    }
+
+    private  void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    private  void setMerchant(String merchant) {
+        this.merchant = merchant;
+    }
+
+    private  void setCategory(String category) {
+        this.category = category;
+    }
+
+    private  void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    private  void setChargeId(Long chargeId) {
+        this.chargeId = chargeId;
+    }
+
+    private  void setReceipt(String receipt) {
+        this.receipt = receipt;
+    }
+
+    private  void setFlag(String flag) {
+        this.flag = flag;
+    }
+
+    @Override
+    public String toString() {
+        return "Expense{" +
+                       "id=" + id +
+                       ", date=" + date +
+                       ", merchant='" + merchant + '\'' +
+                       ", category='" + category + '\'' +
+                       ", amount=" + amount +
+                       ", chargeId=" + chargeId +
+                       ", receipt='" + receipt + '\'' +
+                       ", flag='" + flag + '\'' +
+                       '}';
+    }
 }
