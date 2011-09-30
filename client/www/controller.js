@@ -23,10 +23,10 @@ var destinationType;
 var imageQuality = 50;
 
 // to test on a device, you need to modify the IP for the local instance of the API service
-//var apiUrl = "http://192.168.0.8:8080/api/";
+var apiUrl = "http://192.168.0.5:8080/api/";
 
 // use this address when running on the Android emulator
- var apiUrl = "http://10.0.2.2:8080/api/";
+// var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -142,7 +142,13 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
 function onAssociateExpensesSuccess(data, textStatus, jqXHR) {
     $.mobile.hidePageLoadingMsg();
     expenseReport.expenses = data;
-    $.mobile.changePage($("#create-new-confirm"));
+
+    if (receiptsRequired(expenseReport.expenses)) {
+        $.mobile.changePage($("#create-new-add-receipt"));
+    } else {
+        // if no receipts are required, then display the confirmation page
+        $.mobile.changePage($("#create-new-confirm"));
+    }
 }
 
 function onAssociateExpensesError(jqXHR, textStatus, errorThrown) {
@@ -160,7 +166,7 @@ function onFetchEligibleExpensesSuccess(data, textStatus, jqXHR) {
         $.each(data, function(i, charge) {
             var cbId = 'checkbox-' + i;
             content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
-            content += '<label for="' + cbId + '">' + charge.date + ' - $' + $.currency(charge.amount) + ' - ' + charge.merchant + '</label>';
+            content += '<label for="' + cbId + '">' + formatDate(charge.date) + ' - $' + $.currency(charge.amount) + ' - ' + charge.merchant + '</label>';
         });
         content += '</fieldset>';
         // set the content and trigger the create event to refresh and format the list properly
@@ -174,6 +180,47 @@ function onFetchEligibleExpensesError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
     alert("Error fetching eligible expenses");
 }
+
+// ***************************************
+// Create New - Add Receipt
+// ***************************************
+
+$('#create-new-add-receipt').live('pagecreate', function(event) {
+
+    $("#create-new-add-receipt-capture-photo").click(function() {
+        navigator.camera.getPicture(onPhotoCaptureSuccess, onPhotoCaptureFail, {
+            quality : imageQuality,
+            destinationType : destinationType.FILE_URI
+        });
+        return false;
+    });
+
+    $("#create-new-expenses-next").click(function() {
+        $.mobile.changePage($("#create-new-confirm"));
+        return false;
+    });
+});
+
+function onPhotoCaptureSuccess(imageURI) {
+    var image = document.getElementById('receiptImage');
+    image.src = imageURI;
+    $.mobile.changePage($("#create-new-review-receipt"));
+}
+
+function onPhotoCaptureFail(message) {
+    alert('Failed to capture image: ' + message);
+}
+
+// ***************************************
+// Create New - Review Receipt
+// ***************************************
+
+$('#create-new-review-receipt').live('pagecreate', function(event) {
+    $("#create-new-review-receipt-next").click(function() {
+        $.mobile.changePage($("#create-new-confirm"));
+        return false;
+    });
+});
 
 // ***************************************
 // Create New - Confirm
@@ -204,7 +251,7 @@ $('#create-new-confirm').live('pageshow', function(event) {
         content += '<p class="ui-li-aside">$' + $.currency(expense.amount) + '</p>';
         content += '<h3>' + expense.merchant + '</h3>';
         content += '<p>' + expense.category + '</p>';
-        content += '<p>' + expense.date + '</p>';
+        content += '<p>' + formatDate(expense.date) + '</p>';
         content += '</li>';
     });
 
@@ -225,47 +272,6 @@ function onSubmitExpenseReportError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
     alert("Error submitted expense report");
 }
-
-// ***************************************
-// Create New - Add Receipt
-// ***************************************
-
-$('#create-new-add-receipt').live('pagecreate', function(event) {
-
-    $("#create-new-add-receipt-capture-photo").click(function() {
-        navigator.camera.getPicture(onPhotoCaptureSuccess, onPhotoCaptureFail, {
-            quality : imageQuality,
-            destinationType : destinationType.FILE_URI
-        });
-        return false;
-    });
-
-    $("#create-new-expenses-next").click(function() {
-        $.mobile.changePage($("#create-new-confirm"));
-        return false;
-    });
-});
-
-function onPhotoCaptureSuccess(imageURI) {
-    var image = document.getElementById('receiptImage');
-    image.src = imageURI;
-    $.mobile.changePage($("#create-new-review-receipt"));
-}
-
-function onPhotoCaptureFail(message) {
-    alert('Failed to capture image [' + message + ']');
-}
-
-// ***************************************
-// Create New - Review Receipt
-// ***************************************
-
-$('#create-new-review-receipt').live('pagecreate', function(event) {
-    $("#create-new-review-receipt-next").click(function() {
-        $.mobile.changePage($("#create-new-confirm"));
-        return false;
-    });
-});
 
 // ***************************************
 // Review Status
@@ -335,3 +341,23 @@ $('#review-status-details').live('pagebeforeshow', function(event, ui) {
         alert("No expense report available to display");
     }
 });
+
+// ***************************************
+// Utility Methods
+// ***************************************
+
+function formatDate(date) {
+    var dateString = JSON.stringify(date);
+    //TODO: is there a better way to do this?
+    return dateString.substring(1, dateString.length-1).replace(/,/g, "-");
+}
+
+function receiptsRequired(expenses) {
+    var result = false;
+    $.each(expenses, function(i, expense) {
+        if (expense.flag == "receiptRequired") {
+            result = true;
+        }
+    });
+    return result;
+} 
