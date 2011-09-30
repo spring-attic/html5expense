@@ -23,10 +23,10 @@ var destinationType;
 var imageQuality = 50;
 
 // to test on a device, you need to modify the IP for the local instance of the API service
-var apiUrl = "http://192.168.0.8:8080/api/";
+//var apiUrl = "http://192.168.0.8:8080/api/";
 
 // use this address when running on the Android emulator
-// var apiUrl = "http://10.0.2.2:8080/api/";
+ var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -135,6 +135,8 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
         success : onFetchEligibleExpensesSuccess,
         error : onFetchEligibleExpensesError
     });
+
+    return false;
 });
 
 function onAssociateExpensesSuccess(data, textStatus, jqXHR) {
@@ -158,7 +160,7 @@ function onFetchEligibleExpensesSuccess(data, textStatus, jqXHR) {
         $.each(data, function(i, charge) {
             var cbId = 'checkbox-' + i;
             content += '<input type="checkbox" name="' + cbId + '" id="' + cbId + '" value="' + charge.id + '" class="custom" />';
-            content += '<label for="' + cbId + '">' + charge.date + ' - ' + charge.amount + ' - ' + charge.merchant + '</label>';
+            content += '<label for="' + cbId + '">' + charge.date + ' - $' + $.currency(charge.amount) + ' - ' + charge.merchant + '</label>';
         });
         content += '</fieldset>';
         // set the content and trigger the create event to refresh and format the list properly
@@ -178,8 +180,19 @@ function onFetchEligibleExpensesError(jqXHR, textStatus, errorThrown) {
 // ***************************************
 
 $('#create-new-confirm').live('pagecreate', function(event) {
-    $("#create-new-confirm-save").click(function() {
-        $.mobile.changePage($("#home"));
+    $("#create-new-confirm-submit").click(function() {
+        $.mobile.showPageLoadingMsg();
+
+        var url = getApiUrl("reports/" + expenseReport.id);
+
+        $.ajax({
+            type : 'PUT',
+            url : url,
+            cache : false,
+            success : onSubmitExpenseReportSuccess,
+            error : onSubmitExpenseReportError
+        });
+
         return false;
     });
 });
@@ -188,16 +201,30 @@ $('#create-new-confirm').live('pageshow', function(event) {
     var content = '<li data-role="list-divider">Expenses</li>';
     $.each(expenseReport.expenses, function(i, expense) {
         content += '<li>';
-        content += '<p class="ui-li-aside">' + expense.amount + '</p>';
+        content += '<p class="ui-li-aside">$' + $.currency(expense.amount) + '</p>';
         content += '<h3>' + expense.merchant + '</h3>';
         content += '<p>' + expense.category + '</p>';
         content += '<p>' + expense.date + '</p>';
         content += '</li>';
     });
 
-    // set the content and trigger the create event to refresh and format the list properly
     $('#expenses-list').html(content).listview('refresh');
 });
+
+function onSubmitExpenseReportSuccess(data, textStatus, jqXHR) {
+    $.mobile.hidePageLoadingMsg();
+    if (data == true) {
+        alert('Expense report submitted');
+        $.mobile.changePage($("#home"));
+    } else {
+        alert('Receipts required! Expense report not submitted');
+    }
+}
+
+function onSubmitExpenseReportError(jqXHR, textStatus, errorThrown) {
+    $.mobile.hidePageLoadingMsg();
+    alert("Error submitted expense report");
+}
 
 // ***************************************
 // Create New - Add Receipt

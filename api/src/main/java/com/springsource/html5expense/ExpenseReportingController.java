@@ -88,9 +88,14 @@ public class ExpenseReportingController {
      * Finalizes and submits the {@link ExpenseReport} for review
      * @param reportId the ID of the {@link ExpenseReport}
      */
-    @RequestMapping(value = "/{reportId}", method = RequestMethod.POST)
-    public void submitReport(@PathVariable Long reportId) {
-        service.submitReport(reportId);
+    @RequestMapping(value = "/{reportId}", method = RequestMethod.PUT)
+    public @ResponseBody Boolean submitReport(@PathVariable Long reportId) {
+        try {
+            service.submitReport(reportId);
+            return true;
+        } catch(IllegalStateException e) {
+            return false;
+        }
     }
 
     /**
