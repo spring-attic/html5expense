@@ -28,7 +28,7 @@ import java.util.Date;
 class ExpenseEntity {
 
     @GeneratedValue @Id
-    private Integer id;
+    Integer id;
 
     private Date date;
 

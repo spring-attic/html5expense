@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.joda.time.LocalDate;
@@ -39,10 +40,15 @@ public class StubExpenseReportingService implements ExpenseReportingService {
 
     private final AtomicLong reportSequence = new AtomicLong();
 
+    private final AtomicInteger expenseSequence = new AtomicInteger();
+
     public StubExpenseReportingService() {
         eligibleCharges.put(1L, new EligibleCharge(1L, new LocalDate(2011, 7, 31), "Delta", "Air Travel", new BigDecimal("431.00")));
         eligibleCharges.put(2L, new EligibleCharge(2L, new LocalDate(2011, 8, 22), "Hilton", "Lodging", new BigDecimal("639.00")));
         eligibleCharges.put(3L, new EligibleCharge(3L, new LocalDate(2011, 8, 22), "Chipotle", "Meals", new BigDecimal("24.00")));
+        eligibleCharges.put(4L, new EligibleCharge(4L, new LocalDate(2011, 9, 04), "United", "Air Travel", new BigDecimal("537.00")));
+        eligibleCharges.put(5L, new EligibleCharge(5L, new LocalDate(2011, 9, 15), "Apple Store", "Computer Supplies", new BigDecimal("49.00")));
+        eligibleCharges.put(6L, new EligibleCharge(6L, new LocalDate(2011, 9, 16), "Peet's Coffee", "Meals", new BigDecimal("7.99")));
     }
 
     public Long createReport(String purpose) {
@@ -60,7 +66,9 @@ public class StubExpenseReportingService implements ExpenseReportingService {
         List<Expense> expenses = new ArrayList<Expense>();
         for (Long chargeId : chargeIds) {
             EligibleCharge charge = eligibleCharges.get(chargeId);
-            expenses.add(report.createExpense(charge).data());
+            ExpenseEntity expense = report.createExpense(charge);
+            expense.id = expenseSequence.incrementAndGet();
+            expenses.add(expense.data());
             eligibleCharges.remove(chargeId);
         }
         return expenses;
