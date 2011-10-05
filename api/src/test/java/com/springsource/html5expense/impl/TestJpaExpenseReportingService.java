@@ -19,7 +19,6 @@ import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReportingService;
 import com.springsource.html5expense.State;
-import com.springsource.html5expense.config.ComponentConfig;
 import junit.framework.Assert;
 import org.joda.time.LocalDate;
 import org.junit.Before;
