@@ -80,7 +80,7 @@ public class ExpenseReportingController {
      * @return the URI of the image
      */
     @RequestMapping(value = "/{reportId}/expenses/{expenseId}/receipt", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public @ResponseBody String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestBody byte[] receiptBytes) {
+    public @ResponseBody String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestParam byte[] receiptBytes) {
         return service.attachReceipt(reportId, expenseId, receiptBytes);
     }
 

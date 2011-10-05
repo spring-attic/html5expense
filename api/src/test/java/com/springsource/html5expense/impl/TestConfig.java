@@ -20,11 +20,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.springsource.html5expense.EligibleCharge;
-import com.springsource.html5expense.Expense;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -33,6 +29,10 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.springsource.html5expense.EligibleCharge;
+import com.springsource.html5expense.Expense;
+import com.springsource.html5expense.ExpenseReportingService;
 
 /**
  * Configuration for application @Components such as @Services, @Repositories, and @Controllers.
@@ -43,11 +43,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableTransactionManagement
-//@ComponentScan(basePackages="com.springsource.html5expense", excludeFilters={ @Filter(Configuration.class)} )
-public class ComponentConfig {
+public class TestConfig {
     
     @Bean
-    public JpaExpenseReportingService reportingService() {
+    public ExpenseReportingService reportingService() {
         return new JpaExpenseReportingService();
     }
 

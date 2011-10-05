@@ -21,13 +21,14 @@ var expenseReport;
 var pictureSource;
 var destinationType;
 var imageQuality = 50;
+var imageWidth = 300;
 
 // to test on a device, you need to modify the IP for the local instance of the API service
-//var apiUrl = "http://192.168.0.5:8080/api/";
+// var apiUrl = "http://192.168.0.5:8080/api/";
 var apiUrl = "http://html5expense.cloudfoundry.com/";
 
 // use this address when running on the Android emulator
-//var apiUrl = "http://10.0.2.2:8080/api/";
+// var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -43,6 +44,19 @@ document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
     pictureSource = navigator.camera.PictureSourceType;
     destinationType = navigator.camera.DestinationType;
+
+    var networkState = navigator.network.connection.type;
+
+    var states = {};
+    states[Connection.UNKNOWN] = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI] = 'WiFi connection';
+    states[Connection.CELL_2G] = 'Cell 2G connection';
+    states[Connection.CELL_3G] = 'Cell 3G connection';
+    states[Connection.CELL_4G] = 'Cell 4G connection';
+    states[Connection.NONE] = 'No network connection';
+
+    alert('Connection type: ' + states[networkState]);
 }
 
 // ***************************************
@@ -192,6 +206,7 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
     $("#create-new-add-receipt-capture-photo").click(function() {
         navigator.camera.getPicture(onPhotoCaptureSuccess, onPhotoCaptureFail, {
             quality : imageQuality,
+            targetWidth : imageWidth, 
             destinationType : destinationType.FILE_URI
         });
         return false;
@@ -206,28 +221,30 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
 });
 
 function onPhotoCaptureSuccess(imageURI) {
+    $.mobile.showPageLoadingMsg();
+    
     var image = document.getElementById('receiptImage');
     image.src = imageURI;
-    
-    // TODO: upload receipt
-    
-//    $.mobile.showPageLoadingMsg();
-//
-//    var url = getApiUrl("reports/" + expenseReport.id + "/expenses/" + 1 + "/receipt");
-//    var imageData;
-//
-//    $.ajax({
-//        type : 'POST',
-//        url : url,
-//        cache : false,
-//        data : imageData,
-//        contentType : 'multipart/form-data',
-//        processData: false,
-//        success : onUploadReceiptPhotoSuccess,
-//        error : onUploadReceiptPhotoError
-//    });
-    
-    
+
+    function win(r) {
+        $.mobile.hidePageLoadingMsg();
+        alert('Image uploaded successfully!')
+    }
+
+    function fail(err) {
+        $.mobile.hidePageLoadingMsg();
+        alert("Ruh roh. Image failed to upload! Errorcode: " = err.code)
+    }
+
+    var opts = new FileUploadOptions();
+    opts.fileKey = "receiptBytes";
+    opts.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+    opts.mimeType = "image/jpeg";
+    opts.params = {};
+
+    var ft = new FileTransfer();
+    ft.upload(imageURI, getApiUrl("reports/" + expenseReport.id + "/expenses/" + 1 + "/receipt"), win, fail, opts);
+
     $.mobile.changePage($("#create-new-review-receipt"));
 }
 
@@ -371,8 +388,8 @@ $('#review-status-details').live('pagebeforeshow', function(event, ui) {
 
 function formatDate(date) {
     var dateString = JSON.stringify(date);
-    //TODO: is there a better way to do this?
-    return dateString.substring(1, dateString.length-1).replace(/,/g, "-");
+    // TODO: is there a better way to do this?
+    return dateString.substring(1, dateString.length - 1).replace(/,/g, "-");
 }
 
 function receiptsRequired(expenses) {
@@ -383,4 +400,4 @@ function receiptsRequired(expenses) {
         }
     });
     return result;
-} 
+}

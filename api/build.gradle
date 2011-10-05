@@ -25,11 +25,14 @@ slf4jVersion = '1.6.2'
 h2Version = '1.2.144'
 junitVersion = '4.7'
 jacksonVersion = '1.8.5'
+commonsFileuploadVersion = '1.2.2'
+commonsIoVersion = '2.0.1'
+hibernateVersion = '3.6.5.Final'
 
 
 dependencies {
     compile "joda-time:joda-time:$jodaTimeVersion"
-    compile "org.hibernate:hibernate-entitymanager:3.6.5.Final"
+    compile "org.hibernate:hibernate-entitymanager:$hibernateVersion"
     compile "com.h2database:h2:$h2Version"
     compile "cglib:cglib-nodep:$cglibVersion"
     compile "ch.qos.logback:logback-classic:$logbackVersion"
@@ -39,6 +42,8 @@ dependencies {
     compile "org.springframework:spring-orm:$springVersion"
     compile "javax.inject:javax.inject:$javaxInjectVersion"
     compile "org.codehaus.jackson:jackson-mapper-asl:$jacksonVersion"
+    compile "commons-fileupload:commons-fileupload:$commonsFileuploadVersion"
+    compile "commons-io:commons-io:$commonsIoVersion"
     testCompile "org.springframework:spring-test:$springVersion"
     testCompile "junit:junit:$junitVersion"
     providedCompile "javax.servlet:servlet-api:$servletVersion"

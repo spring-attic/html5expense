@@ -20,8 +20,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.springsource.html5expense.EligibleCharge;
-import com.springsource.html5expense.Expense;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -34,6 +32,11 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.springsource.html5expense.EligibleCharge;
+import com.springsource.html5expense.Expense;
+import com.springsource.html5expense.ExpenseReportingService;
+import com.springsource.html5expense.impl.StubExpenseReportingService;
+
 /**
  * Configuration for application @Components such as @Services, @Repositories, and @Controllers.
  * Loads externalized property values required to configure the various application properties.
@@ -45,6 +48,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @ComponentScan(basePackages="com.springsource.html5expense", excludeFilters={ @Filter(Configuration.class)} )
 public class ComponentConfig {
+
+    @Bean
+    public ExpenseReportingService reportingService() {
+        return new StubExpenseReportingService();
+    }
 
     @Bean
     public DataSource dataSource() throws Exception {

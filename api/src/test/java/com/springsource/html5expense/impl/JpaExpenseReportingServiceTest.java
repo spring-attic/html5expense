@@ -44,8 +44,8 @@ import java.util.Collection;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = ComponentConfig.class)
-public class TestJpaExpenseReportingService {
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = TestConfig.class)
+public class JpaExpenseReportingServiceTest {
 
     private EligibleCharge expensiveCharge;
 
