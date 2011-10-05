@@ -23,12 +23,23 @@ var destinationType;
 var imageQuality = 50;
 var imageWidth = 300;
 
-// to test on a device, you need to modify the IP for the local instance of the API service
-// var apiUrl = "http://192.168.0.5:8080/api/";
+/*
+ *  Use the following URL to test against the CloudFoundry instance
+ *  of the service
+ */
 var apiUrl = "http://html5expense.cloudfoundry.com/";
 
-// use this address when running on the Android emulator
+/* 
+ * Use the following URL to test against a local instance of the service
+ * while running on the Android emulator
+ */
 // var apiUrl = "http://10.0.2.2:8080/api/";
+
+/* 
+ * Modify the following URL to test against a local instance of the service
+ * while running on an Android device. 
+ */
+// var apiUrl = "http://192.168.1.x:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -45,18 +56,18 @@ function onDeviceReady() {
     pictureSource = navigator.camera.PictureSourceType;
     destinationType = navigator.camera.DestinationType;
 
-    var networkState = navigator.network.connection.type;
-
-    var states = {};
-    states[Connection.UNKNOWN] = 'Unknown connection';
-    states[Connection.ETHERNET] = 'Ethernet connection';
-    states[Connection.WIFI] = 'WiFi connection';
-    states[Connection.CELL_2G] = 'Cell 2G connection';
-    states[Connection.CELL_3G] = 'Cell 3G connection';
-    states[Connection.CELL_4G] = 'Cell 4G connection';
-    states[Connection.NONE] = 'No network connection';
-
-    alert('Connection type: ' + states[networkState]);
+//    var networkState = navigator.network.connection.type;
+//
+//    var states = {};
+//    states[Connection.UNKNOWN] = 'Unknown connection';
+//    states[Connection.ETHERNET] = 'Ethernet connection';
+//    states[Connection.WIFI] = 'WiFi connection';
+//    states[Connection.CELL_2G] = 'Cell 2G connection';
+//    states[Connection.CELL_3G] = 'Cell 3G connection';
+//    states[Connection.CELL_4G] = 'Cell 4G connection';
+//    states[Connection.NONE] = 'No network connection';
+//
+//    alert('Connection type: ' + states[networkState]);
 }
 
 // ***************************************
@@ -206,7 +217,7 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
     $("#create-new-add-receipt-capture-photo").click(function() {
         navigator.camera.getPicture(onPhotoCaptureSuccess, onPhotoCaptureFail, {
             quality : imageQuality,
-            targetWidth : imageWidth, 
+            targetWidth : imageWidth,
             destinationType : destinationType.FILE_URI
         });
         return false;
@@ -222,7 +233,7 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
 
 function onPhotoCaptureSuccess(imageURI) {
     $.mobile.showPageLoadingMsg();
-    
+
     var image = document.getElementById('receiptImage');
     image.src = imageURI;
 
