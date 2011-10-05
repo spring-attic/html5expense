@@ -23,10 +23,10 @@ var destinationType;
 var imageQuality = 50;
 
 // to test on a device, you need to modify the IP for the local instance of the API service
-var apiUrl = "http://192.168.0.5:8080/api/";
+// var apiUrl = "http://192.168.0.5:8080/api/";
 
 // use this address when running on the Android emulator
-// var apiUrl = "http://10.0.2.2:8080/api/";
+var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
