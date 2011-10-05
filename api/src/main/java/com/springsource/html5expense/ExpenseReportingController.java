@@ -15,6 +15,7 @@
  */
 package com.springsource.html5expense;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Roy Clarkson
@@ -78,10 +80,11 @@ public class ExpenseReportingController {
      * @param expenseId the ID of the {@link Expense}
      * @param receiptBytes the image of the receipt
      * @return the URI of the image
+     * @throws IOException 
      */
     @RequestMapping(value = "/{reportId}/expenses/{expenseId}/receipt", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public @ResponseBody String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestParam byte[] receiptBytes) {
-        return service.attachReceipt(reportId, expenseId, receiptBytes);
+    public @ResponseBody String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestParam MultipartFile receiptBytes) throws IOException {
+        return service.attachReceipt(reportId, expenseId, receiptBytes.getBytes());
     }
 
     /**
