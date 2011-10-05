@@ -34,7 +34,7 @@ import com.springsource.html5expense.State;
 /**
  * @author Josh Long
  */
-@Service
+//@Service
 public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @PersistenceContext
