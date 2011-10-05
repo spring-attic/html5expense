@@ -23,10 +23,11 @@ var destinationType;
 var imageQuality = 50;
 
 // to test on a device, you need to modify the IP for the local instance of the API service
-var apiUrl = "http://192.168.0.5:8080/api/";
+//var apiUrl = "http://192.168.0.5:8080/api/";
+var apiUrl = "http://html5expense.cloudfoundry.com/";
 
 // use this address when running on the Android emulator
-// var apiUrl = "http://10.0.2.2:8080/api/";
+//var apiUrl = "http://10.0.2.2:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -60,11 +61,12 @@ $('#create-new-purpose').live('pagecreate', function(event) {
 function submitCreateNewReportForm() {
     $.mobile.showPageLoadingMsg();
 
+    var url = getApiUrl("reports");
     var formData = $("#create-new-purpose-form").serialize();
 
     $.ajax({
         type : 'POST',
-        url : getApiUrl("reports"),
+        url : url,
         cache : false,
         data : formData,
         success : onCreateReportSuccess,
@@ -83,6 +85,8 @@ function onCreateReportSuccess(data, textStatus, jqXHR) {
 
 function onCreateReportError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
+    console.log('errorThrown: ' + errorThrown);
+    console.log('textStatus: ' + textStatus);
     alert('Error creating report');
 }
 
@@ -124,14 +128,12 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl("reports/eligible-charges");
-    var data;
 
     $.ajax({
         type : 'GET',
         url : url,
         cache : false,
         dataType : 'json',
-        data : data,
         success : onFetchEligibleExpensesSuccess,
         error : onFetchEligibleExpensesError
     });
@@ -195,7 +197,9 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
         return false;
     });
 
-    $("#create-new-expenses-next").click(function() {
+    $("#create-new-add-receipt-skip").click(function() {
+        alert("Receipts are required in order to submit this expense report!");
+        // TODO: determine if another receipt is required
         $.mobile.changePage($("#create-new-confirm"));
         return false;
     });
@@ -204,6 +208,26 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
 function onPhotoCaptureSuccess(imageURI) {
     var image = document.getElementById('receiptImage');
     image.src = imageURI;
+    
+    // TODO: upload receipt
+    
+//    $.mobile.showPageLoadingMsg();
+//
+//    var url = getApiUrl("reports/" + expenseReport.id + "/expenses/" + 1 + "/receipt");
+//    var imageData;
+//
+//    $.ajax({
+//        type : 'POST',
+//        url : url,
+//        cache : false,
+//        data : imageData,
+//        contentType : 'multipart/form-data',
+//        processData: false,
+//        success : onUploadReceiptPhotoSuccess,
+//        error : onUploadReceiptPhotoError
+//    });
+    
+    
     $.mobile.changePage($("#create-new-review-receipt"));
 }
 
@@ -217,6 +241,7 @@ function onPhotoCaptureFail(message) {
 
 $('#create-new-review-receipt').live('pagecreate', function(event) {
     $("#create-new-review-receipt-next").click(function() {
+        // TODO: determine if another receipt is required
         $.mobile.changePage($("#create-new-confirm"));
         return false;
     });
@@ -281,14 +306,12 @@ $('#review-status').live('pageshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl("reports");
-    var data;
 
     $.ajax({
         type : 'GET',
         url : url,
         cache : false,
         dataType : 'json',
-        data : data,
         success : onFetchOpenExpenseReportsSuccess,
         error : onFetchOpenExpenseReportsError
     });
