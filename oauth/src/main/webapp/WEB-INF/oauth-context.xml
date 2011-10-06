@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans:beans xmlns="http://www.springframework.org/schema/security/oauth2"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<provider id="oauth2ProviderFilter" token-services-ref="tokenServices">
+		<authorization-server client-details-service-ref="clientDetails">
+			<authorization-code />
+		</authorization-server>
+	</provider>
+
+	<!-- TODO: Pull this from DB where apps are registered -->
+	<client-details-service id="clientDetails">
+		<client clientId="pg" authorizedGrantTypes="password" authorities="ROLE_CLIENT, ROLE_TRUSTED_CLIENT" scope="read,write,trust" />
+	</client-details-service>
+
+	<beans:beans profile="dev">
+		<beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.InMemoryOAuth2ProviderTokenServices">
+			<beans:property name="supportRefreshToken" value="true" />
+		</beans:bean>
+	</beans:beans>
+
+	<beans:beans profile="cloud">
+		<beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices">
+			<beans:constructor-arg ref="dataSource" />
+		</beans:bean>
+	</beans:beans>
+</beans:beans>
