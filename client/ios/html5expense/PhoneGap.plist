@@ -22,6 +22,9 @@
 	<false/>
 	<key>ExternalHosts</key>
 	<array>
+		<string>127.0.0.1</string>
+		<string>localhost</string>
+		<string>*.phonegap.com</string>
 		<string>*.cloudfoundry.com</string>
 	</array>
 	<key>Plugins</key>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phonegap>
+    <access origin="http://10.0.2.2:8080*"/>
+    <access origin="http://debug.phonegap.com*"/>
+    <access origin="http://html5expense.cloudfoundry.com*"/>
+</phonegap>
