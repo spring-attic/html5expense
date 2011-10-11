@@ -73,7 +73,7 @@ public class JpaExpenseReportingServiceTest {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                for (Class t : new Class[]{ExpenseEntity.class, ExpenseReportEntity.class, EligibleCharge.class}) {
+                for (Class<?> t : new Class[]{ExpenseEntity.class, ExpenseReportEntity.class, EligibleCharge.class}) {
                     entityManager.createQuery(String.format("DELETE FROM %s", t.getName())).executeUpdate();
                 }
             }
