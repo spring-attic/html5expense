@@ -24,6 +24,7 @@
 	<beans:beans profile="cloud">
 		<beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices">
 			<beans:constructor-arg ref="dataSource" />
+			<beans:property name="supportRefreshToken" value="true" />
 		</beans:bean>
 	</beans:beans>
 </beans:beans>

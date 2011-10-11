@@ -25,6 +25,7 @@ dependencies {
     compile "org.springframework:spring-webmvc:$springVersion"
     compile "org.springframework.security.oauth:spring-security-oauth2:$s2OAuthVersion"
     compile "org.cloudfoundry:cloudfoundry-runtime:$cloudFoundryVersion"
+    compile "com.h2database:h2:1.3.158"
 }
 
 sourceSets {

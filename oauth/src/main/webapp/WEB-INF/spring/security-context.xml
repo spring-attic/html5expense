@@ -25,13 +25,8 @@
 		<authentication-provider user-service-ref="userService" />
 	</authentication-manager>
 
-	<!-- Have to put user services in separate XML due to id attributes being xsd:ID (see SEC-1835) -->
-	<beans:beans profile="dev">
-		<beans:import resource="mem-user-service.xml" />
-	</beans:beans>
-
-	<beans:beans profile="cloud">
-		<beans:import resource="jdbc-user-service.xml" />
-	</beans:beans>
+	<user-service id="userService">
+		<user name="craig" password="password" authorities="ROLE_USER" />
+	</user-service>
 
 </beans:beans>

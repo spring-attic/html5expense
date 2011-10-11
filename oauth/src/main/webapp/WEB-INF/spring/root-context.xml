@@ -8,4 +8,5 @@
 
 	<import resource="data-context.xml" />
 
+	<bean class="org.springframework.cloud.oauth.Bootstrap" init-method="go" />
 </beans>
