@@ -14,7 +14,7 @@ configurations {
     all*.exclude group: 'commons-logging', module: 'commons-logging'
 }
 
-springVersion = '3.1.0.BUILD-SNAPSHOT'
+springVersion = '3.1.0.RC1'
 cglibVersion = '2.2'
 logbackVersion = '0.9.29'
 javaxInjectVersion = '1'
