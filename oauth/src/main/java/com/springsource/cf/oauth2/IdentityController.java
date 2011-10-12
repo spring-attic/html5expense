@@ -16,6 +16,8 @@
 package com.springsource.cf.oauth2;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +33,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class IdentityController {
 
 	@RequestMapping(value="/me", method=RequestMethod.GET)
-	public @ResponseBody String getIdentity(Principal principal) {
-		return principal.getName();
+	public @ResponseBody Map<String, String> getIdentity(Principal principal) {
+		HashMap<String, String> identityMap = new HashMap<String, String>();
+		identityMap.put("id", principal.getName());
+		return identityMap;
 	}
 	
 }
