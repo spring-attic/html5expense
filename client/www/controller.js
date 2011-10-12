@@ -18,28 +18,21 @@
 // Variables
 // ***************************************
 var expenseReport;
+
+// camera related values
 var pictureSource;
 var destinationType;
 var imageQuality = 50;
 var imageWidth = 300;
 
-/*
- *  Use the following URL to test against the CloudFoundry instance
- *  of the service
- */
-var apiUrl = "http://html5expense.cloudfoundry.com/";
+// Use the following URL to test against the CloudFoundry instance of the service
+//var apiUrl = "http://html5expense2.cloudfoundry.com/";
 
-/* 
- * Use the following URL to test against a local instance of the service
- * while running on the Android emulator
- */
-// var apiUrl = "http://10.0.2.2:8080/api/";
+// Use the following URL to test against a local instance of the service while running on the Android emulator
+//var apiUrl = "http://10.0.2.2:8080/api/";
 
-/* 
- * Modify the following URL to test against a local instance of the service
- * while running on an Android device. 
- */
-// var apiUrl = "http://192.168.1.x:8080/api/";
+// Use the following URL to test against a local instance of the service while running on the iPhone simulator
+//var apiUrl = "http://127.0.0.1:8080/api/";
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -56,18 +49,20 @@ function onDeviceReady() {
     pictureSource = navigator.camera.PictureSourceType;
     destinationType = navigator.camera.DestinationType;
 
-//    var networkState = navigator.network.connection.type;
-//
-//    var states = {};
-//    states[Connection.UNKNOWN] = 'Unknown connection';
-//    states[Connection.ETHERNET] = 'Ethernet connection';
-//    states[Connection.WIFI] = 'WiFi connection';
-//    states[Connection.CELL_2G] = 'Cell 2G connection';
-//    states[Connection.CELL_3G] = 'Cell 3G connection';
-//    states[Connection.CELL_4G] = 'Cell 4G connection';
-//    states[Connection.NONE] = 'No network connection';
-//
-//    alert('Connection type: ' + states[networkState]);
+    // TODO: also check the offline/online events for enabling
+    
+    var networkState = navigator.network.connection.type;
+    
+    var states = {};
+    states[Connection.UNKNOWN] = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI] = 'WiFi connection';
+    states[Connection.CELL_2G] = 'Cell 2G connection';
+    states[Connection.CELL_3G] = 'Cell 3G connection';
+    states[Connection.CELL_4G] = 'Cell 4G connection';
+    states[Connection.NONE] = 'No network connection';
+
+    console.log('Connection type: ' + states[networkState]);
 }
 
 // ***************************************
@@ -83,11 +78,18 @@ $('#create-new-purpose').live('pagecreate', function(event) {
     });
 });
 
+$('#create-new-purpose').live('pagebeforeshow', function(event) {
+    $('#purpose').val('');
+});
+
 function submitCreateNewReportForm() {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl("reports");
     var formData = $("#create-new-purpose-form").serialize();
+
+    console.log("URL: " + url);
+    console.log("Data: " + formData);
 
     $.ajax({
         type : 'POST',
@@ -103,6 +105,7 @@ function submitCreateNewReportForm() {
 
 function onCreateReportSuccess(data, textStatus, jqXHR) {
     $.mobile.hidePageLoadingMsg();
+    console.log("Status: " + textStatus);
     expenseReport = {};
     expenseReport.id = $.trim(data);
     $.mobile.changePage($('#create-new-expenses'));
@@ -110,8 +113,8 @@ function onCreateReportSuccess(data, textStatus, jqXHR) {
 
 function onCreateReportError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
-    console.log('errorThrown: ' + errorThrown);
-    console.log('textStatus: ' + textStatus);
+    console.log("Status: " + textStatus);
+    console.log("Error: " + errorThrown);
     alert('Error creating report');
 }
 
@@ -149,7 +152,7 @@ $('#create-new-expenses').live('pagecreate', function(event) {
     });
 });
 
-$('#create-new-expenses').live('pageshow', function(event, ui) {
+$('#create-new-expenses').live('pagebeforeshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl("reports/eligible-charges");
@@ -169,7 +172,9 @@ $('#create-new-expenses').live('pageshow', function(event, ui) {
 function onAssociateExpensesSuccess(data, textStatus, jqXHR) {
     $.mobile.hidePageLoadingMsg();
     expenseReport.expenses = data;
+    expenseReport.flaggedExpenses = getFlaggedExpenses(data);
 
+    //    if (expenseReport.flaggedExpenses && expenseReport.flaggedExpenses.length > 0) {
     if (receiptsRequired(expenseReport.expenses)) {
         $.mobile.changePage($("#create-new-add-receipt"));
     } else {
@@ -180,6 +185,8 @@ function onAssociateExpensesSuccess(data, textStatus, jqXHR) {
 
 function onAssociateExpensesError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
+    console.log("Status: " + textStatus);
+    console.log("Error: " + errorThrown);
     alert("Error associating expenses");
 }
 
@@ -205,6 +212,8 @@ function onFetchEligibleExpensesSuccess(data, textStatus, jqXHR) {
 
 function onFetchEligibleExpensesError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
+    console.log("Status: " + textStatus);
+    console.log("Error: " + errorThrown);
     alert("Error fetching eligible expenses");
 }
 
@@ -215,7 +224,7 @@ function onFetchEligibleExpensesError(jqXHR, textStatus, errorThrown) {
 $('#create-new-add-receipt').live('pagecreate', function(event) {
 
     $("#create-new-add-receipt-capture-photo").click(function() {
-        navigator.camera.getPicture(onPhotoCaptureSuccess, onPhotoCaptureFail, {
+        navigator.camera.getPicture(onPhotoCaptureSuccess, onPhotoCaptureError, {
             quality : imageQuality,
             targetWidth : imageWidth,
             destinationType : destinationType.FILE_URI
@@ -231,35 +240,74 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
     });
 });
 
+$('#create-new-add-receipt').live('pagebeforeshow', function(event) {
+    updateExpenseDetails();
+});
+
+var expense;
+function updateExpenseDetails() {
+    expense = expenseReport.flaggedExpenses.pop();
+    var content = '<h3>' + expense.merchant + '</h3>';
+    content += '<p>$' + $.currency(expense.amount) + '</p>';
+    content += '<p>' + expense.category + '</p>';
+    content += '<p>' + formatDate(expense.date) + '</p>';
+    $('#expense-details').html(content);
+}
+
 function onPhotoCaptureSuccess(imageURI) {
     $.mobile.showPageLoadingMsg();
 
     var image = document.getElementById('receiptImage');
     image.src = imageURI;
 
-    function win(r) {
+    /*
+     * the FileTransfer function returns a FileUploadResult object upon success
+     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadResult
+     */
+    function onFileTransferSuccess(result) {
         $.mobile.hidePageLoadingMsg();
-        alert('Image uploaded successfully!')
+        console.log("Bytes Sent: " + result.byteSent);
+        console.log("Response Code: " + result.responseCode);
+        console.log("Response: " + result.response);
+        alert('Image uploaded successfully!');
+
+        if (expenseReport.flaggedExpenses.length > 0) {
+            updateExpenseDetails();
+        } else {
+            $.mobile.changePage($("#create-new-confirm"));
+        }
     }
 
-    function fail(err) {
+    /*
+     * the FileTransfer function returns a FileTransferError object upon failure
+     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransferError
+     */
+    function onFileTransferError(error) {
         $.mobile.hidePageLoadingMsg();
-        alert("Ruh roh. Image failed to upload! Errorcode: " = err.code)
+        console.log("Error Code: " + error.code);
+        alert("Image failed to upload! Please try again.");
     }
 
+    /*
+     * use a FileUploadOptions object to upload the image data
+     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadOptions
+     */
     var opts = new FileUploadOptions();
     opts.fileKey = "receiptBytes";
     opts.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
     opts.mimeType = "image/jpeg";
     opts.params = {};
 
-    var ft = new FileTransfer();
-    ft.upload(imageURI, getApiUrl("reports/" + expenseReport.id + "/expenses/" + 1 + "/receipt"), win, fail, opts);
-
-    $.mobile.changePage($("#create-new-review-receipt"));
+    /*
+     * the FileTransfer function performs the AJAX request
+     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransfer
+     */
+    var url = getApiUrl("reports/" + expenseReport.id + "/expenses/" + expense.id + "/receipt");
+    var fileTransfer = new FileTransfer();
+    fileTransfer.upload(imageURI, url, onFileTransferSuccess, onFileTransferError, opts);
 }
 
-function onPhotoCaptureFail(message) {
+function onPhotoCaptureError(message) {
     alert('Failed to capture image: ' + message);
 }
 
@@ -267,13 +315,13 @@ function onPhotoCaptureFail(message) {
 // Create New - Review Receipt
 // ***************************************
 
-$('#create-new-review-receipt').live('pagecreate', function(event) {
-    $("#create-new-review-receipt-next").click(function() {
-        // TODO: determine if another receipt is required
-        $.mobile.changePage($("#create-new-confirm"));
-        return false;
-    });
-});
+//$('#create-new-review-receipt').live('pagecreate', function(event) {
+//    $("#create-new-review-receipt-use").click(function() {
+//        // TODO: determine if another receipt is required
+//        $.mobile.changePage($("#create-new-confirm"));
+//        return false;
+//    });
+//});
 
 // ***************************************
 // Create New - Confirm
@@ -285,8 +333,10 @@ $('#create-new-confirm').live('pagecreate', function(event) {
 
         var url = getApiUrl("reports/" + expenseReport.id);
 
+        console.log("URL: " + url);
+
         $.ajax({
-            type : 'PUT',
+            type : 'GET',
             url : url,
             cache : false,
             success : onSubmitExpenseReportSuccess,
@@ -313,6 +363,7 @@ $('#create-new-confirm').live('pageshow', function(event) {
 
 function onSubmitExpenseReportSuccess(data, textStatus, jqXHR) {
     $.mobile.hidePageLoadingMsg();
+    console.log('Status: ' + textStatus);
     if (data == true) {
         alert('Expense report submitted');
         $.mobile.changePage($("#home"));
@@ -323,7 +374,9 @@ function onSubmitExpenseReportSuccess(data, textStatus, jqXHR) {
 
 function onSubmitExpenseReportError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
-    alert("Error submitted expense report");
+    console.log("Status: " + textStatus);
+    console.log("Error: " + errorThrown);
+    alert("Error submitting expense report");
 }
 
 // ***************************************
@@ -377,6 +430,8 @@ function onFetchOpenExpenseReportsSuccess(data, textStatus, jqXHR) {
 
 function onFetchOpenExpenseReportsError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
+    console.log("Status: " + textStatus);
+    console.log("Error: " + errorThrown);
     alert("Error fetching open expense reports");
 }
 
@@ -411,4 +466,14 @@ function receiptsRequired(expenses) {
         }
     });
     return result;
+}
+
+function getFlaggedExpenses(expenses) {
+    var a = [];
+    $.each(expenses, function(i, expense) {
+        if (expense.flag == "receiptRequired") {
+            a.push(expense);
+        }
+    });
+    return a.reverse();
 }

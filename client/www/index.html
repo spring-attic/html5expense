@@ -154,7 +154,7 @@
     <!-- /page -->
 
     <!-- Start of Create New - Add Receipt page -->
-    <div data-role="page" id="create-new-add-receipt" data-add-back-btn="true">
+    <div data-role="page" id="create-new-add-receipt">
 
         <div data-role="header">
             <h1>Add Receipt</h1>
@@ -162,6 +162,7 @@
         <!-- /header -->
 
         <div data-role="content">
+            <div class="ui-body" id="expense-details"></div>            
             <form id="create-new-add-receipt-form">
                 <div class="ui-body">
                     <button id="create-new-add-receipt-capture-photo" type="submit">Capture Photo</button>
@@ -186,7 +187,7 @@
     <!-- /page -->
 
     <!-- Start of Create New - Review Receipt page -->
-    <div data-role="page" id="create-new-review-receipt" data-add-back-btn="true">
+    <div data-role="page" id="create-new-review-receipt">
 
         <div data-role="header">
             <h1>Add Receipt</h1>
@@ -199,10 +200,10 @@
                     <img id="receiptImage" src="" width="94%" />
                     <fieldset class="ui-grid-a">
                         <div class="ui-block-a">
-                            <a href="#home" data-role="button">Cancel</a>
+                            <button id="create-new-review-receipt-retake" type="submit">Retake</button>
                         </div>
                         <div class="ui-block-b">
-                            <button id="create-new-review-receipt-next" type="submit">Next</button>
+                            <button id="create-new-review-receipt-use" type="submit">Use</button>
                         </div>
                     </fieldset>
                 </div>
@@ -218,7 +219,7 @@
     <!-- /page -->
 
     <!-- Start of Create New - Confirm page -->
-    <div data-role="page" id="create-new-confirm" data-add-back-btn="true">
+    <div data-role="page" id="create-new-confirm">
 
         <div data-role="header">
             <h1>Confirm</h1>

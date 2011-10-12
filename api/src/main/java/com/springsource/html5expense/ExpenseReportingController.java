@@ -91,7 +91,7 @@ public class ExpenseReportingController {
      * Finalizes and submits the {@link ExpenseReport} for review
      * @param reportId the ID of the {@link ExpenseReport}
      */
-    @RequestMapping(value = "/{reportId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{reportId}", method = RequestMethod.GET)
     public @ResponseBody Boolean submitReport(@PathVariable Long reportId) {
         try {
             service.submitReport(reportId);
