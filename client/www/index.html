@@ -22,7 +22,9 @@
             <ul data-role="listview">
                 <li><a href="#create-new-purpose">Create New</a>
                 </li>
-                <li><a href="#review-status">Review Status</a>
+                <li><a href="#expense-reports-open">Open Expense Reports</a>
+                </li>
+                <li><a href="#expense-reports-submitted">Submitted Expense Reports</a>
                 </li>
                 <li><a href="#about">About</a>
                 </li>
@@ -250,16 +252,37 @@
     </div>
     <!-- /page -->
 
-    <!-- Start of Review Status page -->
-    <div data-role="page" id="review-status" data-add-back-btn="true">
+    <!-- Start of Open Expense Reports page -->
+    <div data-role="page" id="expense-reports-open" data-add-back-btn="true">
 
         <div data-role="header">
-            <h1>Review Status</h1>
+            <h1>Open</h1>
         </div>
         <!-- /header -->
 
         <div data-role="content">
-            <ul data-role="listview" id="reports-list">
+            <ul data-role="listview" id="expense-reports-open-list">
+            </ul>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>Page Footer</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+    
+    <!-- Start of Submitted Expense Reports page -->
+    <div data-role="page" id="expense-reports-submitted" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>Submitted</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <ul data-role="listview" id="expense-reports-submitted-list">
             </ul>
         </div>
         <!-- /content -->
