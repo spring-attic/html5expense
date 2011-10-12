@@ -16,16 +16,8 @@
 		<client clientId="expense" resource-ids="identityResource" authorizedGrantTypes="password,authorization_code,refresh_token" authorities="ROLE_CLIENT, ROLE_TRUSTED_CLIENT" scope="read" />
 	</client-details-service>
 
-	<beans:beans profile="dev">
-		<beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.InMemoryOAuth2ProviderTokenServices">
-			<beans:property name="supportRefreshToken" value="true" />
-		</beans:bean>
-	</beans:beans>
-
-	<beans:beans profile="cloud">
-		<beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices">
-			<beans:constructor-arg ref="dataSource" />
-			<beans:property name="supportRefreshToken" value="true" />
-		</beans:bean>
-	</beans:beans>
+	<beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices">
+		<beans:constructor-arg ref="dataSource" />
+		<beans:property name="supportRefreshToken" value="true" />
+	</beans:bean>
 </beans:beans>
