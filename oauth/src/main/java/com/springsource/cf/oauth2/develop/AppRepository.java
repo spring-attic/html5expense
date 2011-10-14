@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.springsource.cf.oauth2.config;
+package com.springsource.cf.oauth2.develop;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.Configuration;
+import java.util.List;
 
-@Configuration
-@ComponentScan(basePackages="com.springsource.cf.oauth2", excludeFilters={ @Filter(Configuration.class)} )
-public class ComponentConfig {
+public interface AppRepository {
 
+	List<AppSummary> findAppSummaries(String developerId);
+
+	App findAppBySlug(String developerId, String slug);
+	
+	String createApp(String developerId, AppForm form);
+
+	AppForm getNewAppForm();
+
+	AppForm getAppForm(String developerId, String slug);
+
+	String updateApp(String developerId, String slug, AppForm form);
+
+	void deleteApp(String developerId, String slug);
 }

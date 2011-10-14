@@ -21,34 +21,18 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.security.crypto.encrypt.Encryptors;
-import org.springframework.security.crypto.encrypt.TextEncryptor;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.JdbcClientDetailsService;
-import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
-@ImportResource({"classpath:com/springsource/cf/oauth2/config/security.xml", "classpath:com/springsource/cf/oauth2/config/oauth.xml"})
-public class SecurityConfig {
-	
+@ImportResource("classpath:com/springsource/cf/oauth2/config/data.xml")
+public class DataConfig {
+
 	@Inject
 	private DataSource dataSource;
 	
 	@Bean
-	public ClientDetailsService clientDetails() {
-		return new JdbcClientDetailsService(dataSource);
-	}
-	
-	@Bean 
-	public JdbcOAuth2ProviderTokenServices tokenServices() {
-		JdbcOAuth2ProviderTokenServices tokenServices = new JdbcOAuth2ProviderTokenServices(dataSource);
-		tokenServices.setSupportRefreshToken(true);
-		return tokenServices;
-	}
-	
-	@Bean
-	public TextEncryptor textEncryptor() {
-		return Encryptors.noOpText();
+	public JdbcTemplate jdbcTemplate() {
+		return new JdbcTemplate(dataSource);
 	}
 
 }

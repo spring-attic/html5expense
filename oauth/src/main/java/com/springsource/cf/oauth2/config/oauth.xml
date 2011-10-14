@@ -10,13 +10,5 @@
 		</authorization-server>
 		<resource-server resource-id="identityResource" />
 	</provider>
- 
-	<beans:bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
-		<beans:constructor-arg ref="dataSource" />
-	</beans:bean>
- 
-	<beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices">
-		<beans:constructor-arg ref="dataSource" />
-		<beans:property name="supportRefreshToken" value="true" />
-	</beans:bean>
+
 </beans:beans>
