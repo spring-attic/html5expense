@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.phonegap.DroidGap;
 
-public class MainActivity extends DroidGap {
+public class Html5expense extends DroidGap {
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
