@@ -87,23 +87,23 @@ public class JdbcAppRepository implements AppRepository {
 		return SlugUtils.toSlug(appName);
 	}
 
-	private static final String SELECT_APPS = "select a.name, a.slug, a.description from oauth_client_details a inner join AppDeveloper d on a.id = d.app where d.developer = ?";
+	private static final String SELECT_APPS = "select a.name, a.slug, a.description from App a inner join AppDeveloper d on a.id = d.app where d.developer = ?";
 
-	private static final String SELECT_APP_BY_SLUG = "select a.name, a.slug, a.description, a.client_id, a.client_secret, a.web_server_redirect_uri from oauth_client_details a inner join AppDeveloper d on a.id = d.app where d.developer = ? and a.slug = ?";
+	private static final String SELECT_APP_BY_SLUG = "select a.name, a.slug, a.description, a.apiKey, a.secret, a.redirectUrl from App a inner join AppDeveloper d on a.id = d.app where d.developer = ? and a.slug = ?";
 
-	private static final String SELECT_APP_FORM = "select a.name, a.description, a.organization, a.website, a.web_server_redirect_uri from oauth_client_details a inner join AppDeveloper d on a.id = d.app where d.developer = ? and a.slug = ?";
+	private static final String SELECT_APP_FORM = "select a.name, a.description, a.organization, a.website, a.redirectUrl from App a inner join AppDeveloper d on a.id = d.app where d.developer = ? and a.slug = ?";
 
-	private static final String UPDATE_APP_FORM = "update oauth_client_details set name = ?, slug = ?, description = ?, organization = ?, website = ?, web_server_redirect_uri = ? where exists(select 1 from AppDeveloper where developer = ?) and slug = ?";
+	private static final String UPDATE_APP_FORM = "update App set name = ?, slug = ?, description = ?, organization = ?, website = ?, redirectUrl = ? where exists(select 1 from AppDeveloper where developer = ?) and slug = ?";
 
-	private static final String DELETE_APP = "delete from oauth_client_details where exists(select 1 from AppDeveloper where developer = ?) and slug = ?";
+	private static final String DELETE_APP = "delete from App where exists(select 1 from AppDeveloper where developer = ?) and slug = ?";
 
-	private static final String INSERT_APP = "insert into oauth_client_details (name, slug, description, organization, website, client_id, client_secret, web_server_redirect_uri, authorized_grant_types) values (?, ?, ?, ?, ?, ?, ?, ?, 'password,authorization_code,refresh_token')";
+	private static final String INSERT_APP = "insert into App (name, slug, description, organization, website, apiKey, secret, redirectUrl, grantTypes) values (?, ?, ?, ?, ?, ?, ?, ?, 'password,authorization_code,refresh_token')";
 
 	private static final String INSERT_APP_DEVELOPER = "insert into AppDeveloper (app, developer) values (?, ?)";
 
 	private RowMapper<App> appMapper = new RowMapper<App>() {
 		public App mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return new App(appSummaryMapper.mapRow(rs, rowNum), encryptor.decrypt(rs.getString("client_id")), encryptor.decrypt(rs.getString("client_secret")), rs.getString("web_server_redirect_uri"));
+			return new App(appSummaryMapper.mapRow(rs, rowNum), encryptor.decrypt(rs.getString("apiKey")), encryptor.decrypt(rs.getString("secret")), rs.getString("redirectUrl"));
 		}
 	};
 	
@@ -122,7 +122,7 @@ public class JdbcAppRepository implements AppRepository {
 			form.setDescription(rs.getString("description"));
 			form.setOrganization(rs.getString("organization"));
 			form.setWebsite(rs.getString("website"));
-			form.setCallbackUrl(rs.getString("web_server_redirect_uri"));
+			form.setCallbackUrl(rs.getString("redirectUrl"));
 			return form;
 		}
 	};

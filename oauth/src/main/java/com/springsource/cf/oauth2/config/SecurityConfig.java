@@ -36,7 +36,10 @@ public class SecurityConfig {
 	
 	@Bean
 	public ClientDetailsService clientDetails() {
-		return new JdbcClientDetailsService(dataSource);
+		JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+		clientDetailsService.setSelectClientDetailsSql("select apiKey, resourceIds, secret, scope, "
+				+ "grantTypes, redirectUrl, authorities from App where apiKey = ?");
+		return clientDetailsService;
 	}
 	
 	@Bean 
