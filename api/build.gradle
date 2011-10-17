@@ -28,7 +28,8 @@ jacksonVersion = '1.8.5'
 commonsFileuploadVersion = '1.2.2'
 commonsIoVersion = '2.0.1'
 hibernateVersion = '3.6.5.Final'
-
+cloudFoundryVersion = '0.8.1'
+s2OAuthVersion = '1.0.0.BUILD-SNAPSHOT'
 
 dependencies {
     compile "joda-time:joda-time:$jodaTimeVersion"
@@ -44,6 +45,8 @@ dependencies {
     compile "org.codehaus.jackson:jackson-mapper-asl:$jacksonVersion"
     compile "commons-fileupload:commons-fileupload:$commonsFileuploadVersion"
     compile "commons-io:commons-io:$commonsIoVersion"
+    compile "org.cloudfoundry:cloudfoundry-runtime:$cloudFoundryVersion"
+    compile "org.springframework.security.oauth:spring-security-oauth2:$s2OAuthVersion"
     testCompile "org.springframework:spring-test:$springVersion"
     testCompile "junit:junit:$junitVersion"
     providedCompile "javax.servlet:servlet-api:$servletVersion"
