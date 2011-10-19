@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>html5expense</title>
-<link rel="stylesheet" href="jquery.mobile-1.0rc1.min.css" />
+<link rel="stylesheet" href="jquery.mobile-1.0rc2.min.css" />
 </head>
 
 <body>
@@ -27,6 +27,8 @@
                 <li><a href="#expense-reports-submitted">Submitted Expense Reports</a>
                 </li>
                 <li><a href="#about">About</a>
+                </li>
+                <li><a href="#sign-in">Sign In</a>
                 </li>
             </ul>
         </div>
@@ -50,12 +52,10 @@
             <form method="get" action="#home" data-transition="slidedown">
                 <div data-role="fieldcontain" class="ui-field-contain">
                     <label for="username">Username:</label> <input type="text" name="username" id="username" value="" />
-                </div>
-                <div data-role="fieldcontain" class="ui-field-contain">
                     <label for="password">Password:</label> <input type="password" name="password" id="password" value="" />
                 </div>
                 <div class="ui-body">
-                    <button type="submit">Sign In</button>
+                    <button id="sign-in-submit" type="submit">Sign In</button>
                 </div>
             </form>
         </div>
@@ -332,7 +332,7 @@
     <script src=jquery.validate-1.8.1.js></script>
     <script src=jquery.json-2.3.js></script>
     <script src=jquery.currency.1.0.0.min.js></script>
-    <script src=jquery.mobile-1.0rc1.js></script>
+    <script src=jquery.mobile-1.0rc2.js></script>
     <script src=controller.js></script>
     <!-- /scripts -->
 </body>
