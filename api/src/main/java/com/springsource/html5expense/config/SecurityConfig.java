@@ -22,30 +22,32 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.security.crypto.encrypt.Encryptors;
-import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
 import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
+import org.springframework.security.web.AuthenticationEntryPoint;
+
+import com.springsource.html5expense.security.Http401UnauthorizedEntryPoint;
 
 @Configuration
 @ImportResource("classpath:com/springsource/html5expense/config/security.xml")
 public class SecurityConfig {
 
+	@Bean
+	public AuthenticationEntryPoint entryPoint() {
+		return new Http401UnauthorizedEntryPoint();
+	}
+
+	// OAuth beans
 	@Inject
 	@Named("tokenDataSource")
 	private DataSource dataSource;
 	
 	@Bean
 	public OAuth2ProviderTokenServices tokenServices() {
-		// TODO: Perhaps this should be handled via the OAuth service and not via a shared DB
+		// TODO: Perhaps this should be handled via an endpoint on the OAuth service and not a shared DB
 		JdbcOAuth2ProviderTokenServices tokenServices = new JdbcOAuth2ProviderTokenServices(dataSource);
 		tokenServices.setSupportRefreshToken(true);
 		return tokenServices;
-	}
-	
-	@Bean
-	public TextEncryptor textEncryptor() {
-		return Encryptors.noOpText();
 	}
 	
 }
