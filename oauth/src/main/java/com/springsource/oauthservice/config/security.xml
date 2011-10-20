@@ -8,6 +8,7 @@
 		<intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/develop/**" access="ROLE_USER" />
 		<intercept-url pattern="/me" access="SCOPE_READ" />
+		<intercept-url pattern="/me/**" access="SCOPE_READ" />
 		<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY,DENY_OAUTH" />
 		<anonymous />
 		<custom-filter ref="oauth2ProviderFilter" after="EXCEPTION_TRANSLATION_FILTER" />

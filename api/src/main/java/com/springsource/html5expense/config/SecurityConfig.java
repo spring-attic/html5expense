@@ -25,8 +25,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
 import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
 import org.springframework.security.web.AuthenticationEntryPoint;
-
-import com.springsource.html5expense.security.Http401UnauthorizedEntryPoint;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 
 @Configuration
 @ImportResource("classpath:com/springsource/html5expense/config/security.xml")
@@ -34,7 +33,7 @@ public class SecurityConfig {
 
 	@Bean
 	public AuthenticationEntryPoint entryPoint() {
-		return new Http401UnauthorizedEntryPoint();
+		return new Http403ForbiddenEntryPoint();
 	}
 
 	// OAuth beans
