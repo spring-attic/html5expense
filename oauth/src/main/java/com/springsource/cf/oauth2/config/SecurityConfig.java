@@ -26,6 +26,7 @@ import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
+import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
 
 @Configuration
 @ImportResource("classpath:com/springsource/cf/oauth2/config/security.xml")
@@ -41,8 +42,8 @@ public class SecurityConfig {
 		return clientDetailsService;
 	}
 	
-	@Bean 
-	public JdbcOAuth2ProviderTokenServices tokenServices() {
+	@Bean
+	public OAuth2ProviderTokenServices tokenServices() {
 		JdbcOAuth2ProviderTokenServices tokenServices = new JdbcOAuth2ProviderTokenServices(dataSource);
 		tokenServices.setSupportRefreshToken(true);
 		return tokenServices;

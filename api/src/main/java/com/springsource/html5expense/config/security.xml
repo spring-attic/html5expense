@@ -5,7 +5,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
 	<http auto-config="false" access-decision-manager-ref="accessDecisionManager" >	
-		<intercept-url pattern="/reports/**" access="SCOPE_READ" />
+		<intercept-url pattern="/reports/**" access="SCOPE_READ" /> <!-- TODO: Break out into finer-grained scopes? -->
 		<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY,DENY_OAUTH" />
 		<anonymous />
 		<custom-filter ref="oauth2ProviderFilter" after="EXCEPTION_TRANSLATION_FILTER" />

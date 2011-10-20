@@ -1,8 +1,3 @@
---drop table App
---drop table AppDeveloper
---drop table oauth_access_token; 
---drop table oauth_refresh_token; 
-
 create table App (id serial,
 				name varchar not null unique, 
 				slug varchar not null unique,

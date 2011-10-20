@@ -25,6 +25,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
+import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
 
 @Configuration
 @ImportResource("classpath:com/springsource/html5expense/config/security.xml")
@@ -34,8 +35,9 @@ public class SecurityConfig {
 	@Named("tokenDataSource")
 	private DataSource dataSource;
 	
-	@Bean 
-	public JdbcOAuth2ProviderTokenServices tokenServices() {
+	@Bean
+	public OAuth2ProviderTokenServices tokenServices() {
+		// TODO: Perhaps this should be handled via the OAuth service and not via a shared DB
 		JdbcOAuth2ProviderTokenServices tokenServices = new JdbcOAuth2ProviderTokenServices(dataSource);
 		tokenServices.setSupportRefreshToken(true);
 		return tokenServices;
