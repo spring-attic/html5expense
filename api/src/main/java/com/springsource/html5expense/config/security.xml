@@ -21,14 +21,7 @@
 		</beans:property>
 	</beans:bean>
 
-	<authentication-manager alias="authenticationManager">
-		<authentication-provider user-service-ref="userService" />
-	</authentication-manager>
-
-	<!-- TODO: To be replaced with a common user service -->
-	<user-service id="userService">
-		<user name="craig" password="password" authorities="ROLE_USER" />
-	</user-service>
+	<authentication-manager alias="authenticationManager" />
 
 	<beans:import resource="oauth.xml" />
 </beans:beans>
