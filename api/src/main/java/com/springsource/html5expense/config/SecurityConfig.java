@@ -27,7 +27,7 @@ import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
 
 @Configuration
-@ImportResource({"classpath:com/springsource/html5expense/config/security.xml", "classpath:com/springsource/html5expense/config/oauth.xml"})
+@ImportResource("classpath:com/springsource/html5expense/config/security.xml")
 public class SecurityConfig {
 
 	@Inject

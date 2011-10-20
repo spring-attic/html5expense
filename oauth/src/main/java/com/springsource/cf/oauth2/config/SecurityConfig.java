@@ -28,7 +28,7 @@ import org.springframework.security.oauth2.provider.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
 
 @Configuration
-@ImportResource({"classpath:com/springsource/cf/oauth2/config/security.xml", "classpath:com/springsource/cf/oauth2/config/oauth.xml"})
+@ImportResource("classpath:com/springsource/cf/oauth2/config/security.xml")
 public class SecurityConfig {
 	
 	@Inject
@@ -37,8 +37,7 @@ public class SecurityConfig {
 	@Bean
 	public ClientDetailsService clientDetails() {
 		JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
-		clientDetailsService.setSelectClientDetailsSql("select apiKey, resourceIds, secret, scope, "
-				+ "grantTypes, redirectUrl, authorities from App where apiKey = ?");
+		clientDetailsService.setSelectClientDetailsSql(SELECT_CLIENT_DETAILS_SQL);
 		return clientDetailsService;
 	}
 	
@@ -53,5 +52,7 @@ public class SecurityConfig {
 	public TextEncryptor textEncryptor() {
 		return Encryptors.noOpText();
 	}
+
+	private static final String SELECT_CLIENT_DETAILS_SQL = "select apiKey, resourceIds, secret, scope, grantTypes, redirectUrl, authorities from App where apiKey = ?";
 
 }

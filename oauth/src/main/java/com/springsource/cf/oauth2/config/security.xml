@@ -8,6 +8,7 @@
 		<intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/develop/**" access="ROLE_USER" />
 		<intercept-url pattern="/me" access="SCOPE_READ" />
+		<intercept-url pattern="/metoo" access="SCOPE_READ" />
 		<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY,DENY_OAUTH" />
 		<anonymous />
 		<custom-filter ref="oauth2ProviderFilter" after="EXCEPTION_TRANSLATION_FILTER" />
@@ -27,9 +28,10 @@
 		<authentication-provider user-service-ref="userService" />
 	</authentication-manager>
 
-	<!-- TODO: This needs to be external, shared with the API app. -->
+	<!-- TODO: To be replaced with a common user service -->
 	<user-service id="userService">
 		<user name="craig" password="password" authorities="ROLE_USER" />
 	</user-service>
 
+	<beans:import resource="oauth.xml" />
 </beans:beans>

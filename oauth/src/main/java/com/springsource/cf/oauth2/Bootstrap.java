@@ -15,13 +15,50 @@
  */
 package com.springsource.cf.oauth2;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.cloudfoundry.org.codehaus.jackson.JsonFactory;
+import org.cloudfoundry.org.codehaus.jackson.JsonParser;
+import org.cloudfoundry.org.codehaus.jackson.map.ObjectMapper;
+
 /**
- * TEMPORARY: Bootstrap to write the value of VCAP_SERVICES so that I can create a DB URL to the bound database service.
+ * TEMPORARY: Bootstrap to log the value of VCAP_SERVICES so that I can create a DB URL to the bound database service.
+ * 
  * @author wallsc
  */
 public class Bootstrap {
-	public void go() {
+	private static final Log LOG = LogFactory.getLog(Bootstrap.class);
+
+	public void go() throws Exception {
 		String vcapServices = System.getenv("VCAP_SERVICES");
-		System.out.println("VCAP SERVICES:  " + vcapServices);		
+		LOG.debug("VCAP_SERVICES: " + vcapServices);
+		// jdbc:postgresql://172.30.48.126:5432/d6f69ba9c3c6349ac830af2973e31b779
+		
+		// pull values out and construct JDBC URL
+		Map credentials = getCredentialsMap(vcapServices);
+		String dbName = (String) credentials.get("name");
+		String host = (String) credentials.get("host");
+		Integer port = (Integer) credentials.get("port");
+		String username = (String) credentials.get("username");
+		String password = (String) credentials.get("password");
+		
+		LOG.debug("    JDBC URL:  jdbc:postgresql://" + host + ":" + port + "/" + dbName);
+		LOG.debug("    DB USERNAME: " + username);
+		LOG.debug("    DB PASSWORD: " + password);
 	}
+	
+	public Map getCredentialsMap(String vcapServices) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();		
+		JsonFactory jsonFactory = mapper.getJsonFactory();
+		JsonParser jsonParser = jsonFactory.createJsonParser(vcapServices);
+		Map map = jsonParser.readValueAs(Map.class);
+		List pgMap = (List) map.get("postgresql-9.0");
+		Map dbMap = (Map) pgMap.get(0);
+		Map credentialsMap = (Map) dbMap.get("credentials");
+		return credentialsMap;
+	}
+	
 }

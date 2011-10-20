@@ -1,5 +1,5 @@
+--drop table App
 --drop table AppDeveloper
---drop table oauth_client_details;
 --drop table oauth_access_token; 
 --drop table oauth_refresh_token; 
 
@@ -21,8 +21,10 @@ create table App (id serial,
 create table AppDeveloper (app bigint, 
 				developer varchar, 
 				primary key (app, developer),
-				foreign key (app) references oauth_client_details(id) on delete cascade);
-				
+				foreign key (app) references App(id) on delete cascade);
+			
+-- Changing the names of the oauth_access_token and oauth_refresh_token tables would involve overriding 9 different queries in JdbcOAuth2ProviderTokenServices.
+-- Will leave them as-is for now.
 create table oauth_access_token (
 				token_id VARCHAR(256),
 				token BYTEA,
