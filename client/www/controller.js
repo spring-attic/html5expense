@@ -25,19 +25,25 @@ var destinationType;
 var imageQuality = 50;
 var imageWidth = 300;
 
+// oauth
+var clientId = '09e749d8309f4044';
+var clientSecret = '189309492722aa5a';
+
+
 // Use the following URL to test against the CloudFoundry instance of the service
-//var apiUrl = 'http://html5expense2.cloudfoundry.com/';
+// var apiUrl = 'http://html5expense2.cloudfoundry.com/';
 
 // Use the following URL to test against a local instance of the service while running on the Android emulator
-//var apiUrl = 'http://10.0.2.2:8080/api/';
+// var apiUrl = 'http://10.0.2.2:8080/api/';
 
 // Use the following URL to test against a local instance of the service while running on the iPhone simulator
-//var apiUrl = 'http://127.0.0.1:8080/api/';
-var apiUrl = 'http://192.168.0.6:8080/api/';
+// var apiUrl = 'http://127.0.0.1:8080/api/';
+var apiUrl = 'http://192.168.0.8:8080/api/';
 
 function getApiUrl(path) {
     return apiUrl + path;
 }
+
 
 // ***************************************
 // Initialization
@@ -51,9 +57,9 @@ function onDeviceReady() {
     destinationType = navigator.camera.DestinationType;
 
     // TODO: also check the offline/online events for enabling
-    
+
     var networkState = navigator.network.connection.type;
-    
+
     var states = {};
     states[Connection.UNKNOWN] = 'Unknown connection';
     states[Connection.ETHERNET] = 'Ethernet connection';
@@ -65,6 +71,89 @@ function onDeviceReady() {
 
     console.log('Connection type: ' + states[networkState]);
 }
+
+
+// ***************************************
+// Home
+// ***************************************
+
+$('#home').live('pageshow', function(event) {
+    
+    var content = '';
+    if (isAuthorized()) {
+        content += '<li><a href="#create-new-purpose">Create New</a></li>';
+        content += '<li><a href="#expense-reports-open">Open Expense Reports</a></li>';
+        content += '<li><a href="#expense-reports-submitted">Submitted Expense Reports</a></li>';
+        content += '<li><a href="#sign-out">Sign Out</a></li>';
+        content += '<li><a href="#about">About</a></li>';
+    } else {
+        content += '<li><a href="#sign-in">Sign In</a></li>';
+        content += '<li><a href="#about">About</a></li>';
+    }
+    
+    $('#home-menu-items').html(content).listview('refresh');
+});
+
+
+// ***************************************
+// Create New - Sign In
+// ***************************************
+
+$('#sign-in').live('pagecreate', function(event) {
+    $("#sign-in-form").validate({
+        submitHandler : function(form) {
+            console.log('Sign In');
+            authorize();
+        }
+    });
+});
+
+function authorize() {
+    $.mobile.showPageLoadingMsg();
+
+    var url = 'http://haboauth.cloudfoundry.com/oauth/token';
+    var postData = {
+         grant_type : 'password',
+         username : $('#username').val(),
+         password : $('#password').val(),
+         client_id : clientId,
+         client_secret : clientSecret,
+         scope : 'read'
+    };
+    
+    console.log(postData);
+    
+    $.ajax({
+        type : 'POST',
+        url : url,
+        cache : false,
+        dataType : 'json',
+        data : postData,
+        success : onAuthorizeSuccess,
+        error : onAuthorizeError
+    });
+}
+
+function onAuthorizeSuccess(data, textStatus, jqXHR) {
+    $.mobile.hidePageLoadingMsg();
+    console.log('Status: ' + textStatus);
+    console.log('Data: ' + JSON.stringify(data))
+
+    if (data != null) {
+        console.log(data.access_token);
+        setAccessToken(data);
+    }
+ 
+    $.mobile.changePage('#home');
+}
+
+function onAuthorizeError(jqXHR, textStatus, errorThrown) {
+    $.mobile.hidePageLoadingMsg();
+    console.log('Status: ' + textStatus);
+    console.log('Error: ' + errorThrown);
+    alert('Error signing in');
+}
+
 
 // ***************************************
 // Create New - Purpose
@@ -100,8 +189,6 @@ function submitCreateNewReportForm() {
         success : onCreateReportSuccess,
         error : onCreateReportError
     });
-
-    return false;
 }
 
 function onCreateReportSuccess(data, textStatus, jqXHR) {
@@ -118,6 +205,7 @@ function onCreateReportError(jqXHR, textStatus, errorThrown) {
     console.log('Error: ' + errorThrown);
     alert('Error creating report');
 }
+
 
 // ***************************************
 // Create New - Expenses
@@ -175,7 +263,7 @@ function onAssociateExpensesSuccess(data, textStatus, jqXHR) {
     expenseReport.expenses = data;
     expenseReport.flaggedExpenses = getFlaggedExpenses(data);
 
-    //    if (expenseReport.flaggedExpenses && expenseReport.flaggedExpenses.length > 0) {
+    // if (expenseReport.flaggedExpenses && expenseReport.flaggedExpenses.length > 0) {
     if (receiptsRequired(expenseReport.expenses)) {
         $.mobile.changePage($('#create-new-add-receipt'));
     } else {
@@ -217,6 +305,7 @@ function onFetchEligibleExpensesError(jqXHR, textStatus, errorThrown) {
     console.log('Error: ' + errorThrown);
     alert('Error fetching eligible expenses');
 }
+
 
 // ***************************************
 // Create New - Add Receipt
@@ -312,6 +401,7 @@ function onPhotoCaptureError(message) {
     alert('Failed to capture image: ' + message);
 }
 
+
 // ***************************************
 // Create New - Confirm
 // ***************************************
@@ -368,6 +458,7 @@ function onSubmitExpenseReportError(jqXHR, textStatus, errorThrown) {
     alert('Error submitting expense report');
 }
 
+
 // ***************************************
 // Open Expense Reports
 // ***************************************
@@ -388,20 +479,32 @@ $('#expense-reports-open').live('pageshow', function(event, ui) {
 
     $('.expense-report-list-item').live('click', function() {
         var expenseReportId = $(this).jqmData('id');
-        $('#review-status-details').jqmData('expenseReportId', expenseReportId);
-        $.mobile.changePage('#review-status-details');
+        // $('#review-status-details').jqmData('expenseReportId', expenseReportId);
+        expenseReport = getOpenExpenseReport(expenseReportId);
+        $.mobile.changePage('#create-new-confirm');
     });
 });
 
+var openExpenseReports;
+function getOpenExpenseReport(id) {
+    $.each(openExpenseReports, function(i, r) {
+        if (r.id == id) {
+            return r;
+        }
+    });
+    return null;
+}
+
 function onFetchOpenExpenseReportsSuccess(data, textStatus, jqXHR) {
+    openExpenseReports = data;
     console.log('Status: ' + textStatus);
-    if (data.length == 0) {
+    if (openExpenseReports.length == 0) {
         $.mobile.hidePageLoadingMsg();
         $('#expense-reports-open-list').html('').listview('refresh');
         alert('There are no open expense reports');
     } else {
         var content = '';
-        $.each(data, function(i, expenseReport) {
+        $.each(openExpenseReports, function(i, expenseReport) {
             if (expenseReport.purpose != null) {
                 content += '<li data-id=' + expenseReport.id + ' class="expense-report-list-item"><a href="#">';
                 content += '<p class="ui-li-count">' + expenseReport.expenses.length + '</p>';
@@ -425,6 +528,7 @@ function onFetchOpenExpenseReportsError(jqXHR, textStatus, errorThrown) {
     alert('Error fetching open expense reports');
 }
 
+
 // ***************************************
 // Review Status Details
 // ***************************************
@@ -437,6 +541,7 @@ $('#review-status-details').live('pagebeforeshow', function(event, ui) {
         alert('No expense report available to display');
     }
 });
+
 
 // ***************************************
 // Utility Methods
@@ -466,4 +571,25 @@ function getFlaggedExpenses(expenses) {
         }
     });
     return a.reverse();
+}
+
+// determines if the user has a valid access token
+function isAuthorized() {
+    if (getAccessToken() != null) {
+        return true;
+    }
+    return false;
+}
+
+// saves the access token to local storage
+function setAccessToken(accessToken) {
+    if (accessToken != null) {
+        localStorage.setItem('AccessToken', JSON.stringify(accessToken));
+    }
+}
+
+// retrieves the access token from local storage
+function getAccessToken() {
+    var t = localStorage.getItem('AccessToken');
+    return t && JSON.parse(t);
 }

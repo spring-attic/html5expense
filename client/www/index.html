@@ -19,18 +19,8 @@
         <!-- /header -->
 
         <div data-role="content">
-            <ul data-role="listview">
-                <li><a href="#create-new-purpose">Create New</a>
-                </li>
-                <li><a href="#expense-reports-open">Open Expense Reports</a>
-                </li>
-                <li><a href="#expense-reports-submitted">Submitted Expense Reports</a>
-                </li>
-                <li><a href="#about">About</a>
-                </li>
-                <li><a href="#sign-in">Sign In</a>
-                </li>
-            </ul>
+            <ul id='home-menu-items' data-role="listview">
+            </ul>ul>
         </div>
         <!-- /content -->
 
@@ -49,10 +39,10 @@
         <!-- /header -->
 
         <div data-role="content">
-            <form method="get" action="#home" data-transition="slidedown">
+            <form id="sign-in-form">
                 <div data-role="fieldcontain" class="ui-field-contain">
-                    <label for="username">Username:</label> <input type="text" name="username" id="username" value="" />
-                    <label for="password">Password:</label> <input type="password" name="password" id="password" value="" />
+                    <label for="username">Username:</label> <input type="text" name="username" id="username" value="" class="required" />
+                    <label for="password">Password:</label> <input type="password" name="password" id="password" value="" class="required" />
                 </div>
                 <div class="ui-body">
                     <button id="sign-in-submit" type="submit">Sign In</button>
