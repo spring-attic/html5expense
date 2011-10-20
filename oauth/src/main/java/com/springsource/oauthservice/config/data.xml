@@ -17,7 +17,7 @@
 				<property name="ignoreFailedDrops" value="true"/>
 				<property name="scripts">
 					<value>
-						classpath:com/springsource/cf/oauth2/config/schema.sql
+						classpath:com/springsource/oauthservice/config/schema.sql
 					</value>
 				</property>
 			</bean>

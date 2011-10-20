@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.springsource.cf.oauth2.config;
+package com.springsource.oauthservice.config;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
@@ -29,7 +29,7 @@ import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderToke
 import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
 
 @Configuration
-@ImportResource("classpath:com/springsource/cf/oauth2/config/security.xml")
+@ImportResource("classpath:com/springsource/oauthservice/config/security.xml")
 public class SecurityConfig {
 	
 	@Inject

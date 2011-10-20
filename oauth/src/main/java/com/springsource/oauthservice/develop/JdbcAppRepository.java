@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.springsource.cf.oauth2.develop;
+package com.springsource.oauthservice.develop;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +29,7 @@ import org.springframework.security.crypto.keygen.StringKeyGenerator;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.springsource.cf.oauth2.utils.SlugUtils;
+import com.springsource.oauthservice.utils.SlugUtils;
 
 @Repository
 public class JdbcAppRepository implements AppRepository {

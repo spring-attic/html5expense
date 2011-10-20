@@ -12,7 +12,7 @@
     <!-- Location of Java @Configuration classes that configure the components that makeup this application -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.springsource.cf.oauth2.config</param-value>
+        <param-value>com.springsource.oauthservice.config</param-value>
     </context-param>
 
     <!-- Creates the Spring Container shared by all Servlets and Filters -->

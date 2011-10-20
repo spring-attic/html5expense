@@ -13,14 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.springsource.cf.oauth2.config;
+package com.springsource.oauthservice.config;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
+import javax.inject.Inject;
+import javax.sql.DataSource;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
-@ComponentScan(basePackages="com.springsource.cf.oauth2", excludeFilters={ @Filter(Configuration.class)} )
-public class ComponentConfig {
+@ImportResource("classpath:com/springsource/oauthservice/config/data.xml")
+public class DataConfig {
+
+	@Inject
+	private DataSource dataSource;
+	
+	@Bean
+	public JdbcTemplate jdbcTemplate() {
+		return new JdbcTemplate(dataSource);
+	}
 
 }

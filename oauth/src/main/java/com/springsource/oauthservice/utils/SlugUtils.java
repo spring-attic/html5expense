@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.springsource.cf.oauth2.utils;
+package com.springsource.oauthservice.utils;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
