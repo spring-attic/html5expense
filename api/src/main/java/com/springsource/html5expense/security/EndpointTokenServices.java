@@ -15,10 +15,15 @@
  */
 package com.springsource.html5expense.security;
 
+import java.util.List;
+
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -28,21 +33,36 @@ import org.springframework.web.client.RestTemplate;
 
 public class EndpointTokenServices implements OAuth2ProviderTokenServices {
 
-	private static final String DEFAULT_AUTHORIZATION_ENDPOINT = "https://haboauth.cloudfoundry.com/me/authorization"; 
+	private static final String DEFAULT_AUTHORIZATION_ENDPOINT = "http://oauth.habuma.cloudfoundry.me/me/authentication"; 
 	
 	private String authorizationEndpoint = DEFAULT_AUTHORIZATION_ENDPOINT;
 	
-	private RestTemplate restTemplate = new RestTemplate();
+	private RestTemplate restTemplate;
+	
+	public EndpointTokenServices() {
+		this.restTemplate = new RestTemplate();
+		// TODO: Get Jackson msg converter and add a mixin for OAuth2Authentication
+		List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();
+		for (HttpMessageConverter<?> httpMessageConverter : messageConverters) {
+			if (httpMessageConverter.getClass().equals(MappingJacksonHttpMessageConverter.class)) {
+				MappingJacksonHttpMessageConverter jsonConverter = (MappingJacksonHttpMessageConverter) httpMessageConverter;
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.registerModule(new EndpointTokenModule());
+				jsonConverter.setObjectMapper(mapper);
+			}
+		}
+	}
+	
 
 	public OAuth2Authentication loadAuthentication(String accessToken) throws AuthenticationException {
-		// Fetch an authentication from the OAuth server using the access token
-		
+		// TODO: Probably should catch REST client exceptions and rethrow as AuthenticationException
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer "+ accessToken);
 		HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
-		ResponseEntity<String> response = restTemplate.exchange(authorizationEndpoint, HttpMethod.GET, requestEntity, String.class);
+		ResponseEntity<OAuth2Authentication> response = restTemplate.exchange(authorizationEndpoint, HttpMethod.GET, requestEntity, OAuth2Authentication.class);
 		
-		return null;
+		OAuth2Authentication oauth2Authentication = response.getBody();
+		return oauth2Authentication;
 	}
 
 	public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {

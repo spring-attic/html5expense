@@ -15,17 +15,14 @@
  */
 package com.springsource.html5expense.config;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.sql.DataSource;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
 import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+
+import com.springsource.html5expense.security.EndpointTokenServices;
 
 @Configuration
 @ImportResource("classpath:com/springsource/html5expense/config/security.xml")
@@ -37,16 +34,9 @@ public class SecurityConfig {
 	}
 
 	// OAuth beans
-	@Inject
-	@Named("tokenDataSource")
-	private DataSource dataSource;
-	
 	@Bean
 	public OAuth2ProviderTokenServices tokenServices() {
-		// TODO: Perhaps this should be handled via an endpoint on the OAuth service and not a shared DB
-		JdbcOAuth2ProviderTokenServices tokenServices = new JdbcOAuth2ProviderTokenServices(dataSource);
-		tokenServices.setSupportRefreshToken(true);
-		return tokenServices;
+		return new EndpointTokenServices();
 	}
 	
 }
