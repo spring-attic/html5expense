@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
+    <script type="text/javascript" src="phonegap-android-1.0.0.js"></script>
+    <script type="text/javascript" src="js/pretty.js"></script>
+    <script type="text/javascript" src="js/hydration.js"></script>
+    <script type="text/javascript" src="js/hydra.js"></script>
+    <link rel="stylesheet" href="master.css" type="text/css" media="screen" />
+  </head>
+  <body>
+    <h1>Hydra</h1>
+    <div style="text-align:center;">
+        <img style="max-width:100%;" src="img/hydra.png" />
+    </div>
+    <div id="existing" style="display:block;" class="actions">
+      <h2>Existing Apps</h2>
+      <ul id="app_list">
+      </ul>
+    </div>
+    <p>
+      Enter a build.phonegap.com application ID along with your credentials, 
+      and this application will grab your latest application assets and load
+      them into this PhoneGap shell.
+    </p>
+    <form>
+      <div>
+        <label for="app_id">Application ID</label>
+        <input id="app_id" type="number" value="" />
+        <label for="username">E-mail</label>
+        <input id="username" type="email" autocapitalize="off" autocorrect="off" value="" />
+        <label for="password">Password</label>
+        <input id="password" type="password" value=""/>
+        <span><input id="rememberme" type="checkbox"/><label for="rememberme"> remember me</label></span>
+      </div>
+    </form>
+    <div id="action" style="display:none;" class="actions">
+      <button onclick="hydra();">Hydrate</button>
+    </div>
+    <div id="modal" style="display:none;"></div>
+    <div id="backdrop" style="display:none;">
+
+    </div>
+  </body>
+</html>

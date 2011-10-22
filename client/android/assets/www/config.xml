@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns	= "http://www.w3.org/ns/widgets"
+    xmlns:gap	= "http://phonegap.com/ns/1.0"
+    id		    = "com.nitobi.hydra"
+    version 	= "0.2.8">
+  <name>Hydra</name>
+  <description>
+    Hydrate your PhoneGap app with assets from the cloud.
+  </description>
+  <author href="http://www.nitobi.com" email="support@nitobi.com">
+    Fil Maj, Joe Bowser, Brett Rudd
+  </author>
+  <icon src="img/icon128.png" width="128" height="128" />
+  <gap:splash src="img/hydra.png" width="450" height="350" />
+</widget>
