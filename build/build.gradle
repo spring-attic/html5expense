@@ -15,7 +15,7 @@ dependencies {
     providedCompile "javax.servlet.jsp:jsp-api:$jspVersion"
 }
 
-jettyRun.contextPath = '/html5expense-client'
+jettyRun.contextPath = '/html5expense-build'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.0-milestone-3'
@@ -23,13 +23,13 @@ task wrapper(type: Wrapper) {
 
 clientAppDir = new File('src/main/webapp/client')
 
-task zipAppHtml(type: Zip) {
+task zipApp(type: Zip) {
     from 'src/main/client-html'
     archiveName = 'app.zip'
     destinationDir = clientAppDir
 }
 
-war.dependsOn('zipAppHtml')
+war.dependsOn('zipApp')
 
 clean.doFirst {
     delete files(clientAppDir)
