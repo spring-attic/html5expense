@@ -15,7 +15,7 @@ dependencies {
     providedCompile "javax.servlet.jsp:jsp-api:$jspVersion"
 }
 
-jettyRun.contextPath = '/html5expense-build'
+jettyRun.contextPath = '/html5expense-assets'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.0-milestone-3'
@@ -23,14 +23,25 @@ task wrapper(type: Wrapper) {
 
 clientAppDir = new File('src/main/webapp/client')
 
+clean.doFirst {
+    delete files(clientAppDir)
+}
+
 task zipApp(type: Zip) {
     from 'app'
     archiveName = 'app.zip'
     destinationDir = clientAppDir
 }
 
-war.dependsOn('zipApp')
-
-clean.doFirst {
-    delete files(clientAppDir)
+task updateVersion << {
+    versionJson = new File('src/main/webapp/version.json')
+    versionNumber = 0
+    if (hasProperty('buildnumber')) {
+        versionNumber = buildnumber
+    }
+    versionJson.write('{"version":' + versionNumber  + '}')
 }
+
+war.dependsOn('zipApp')
+war.dependsOn('updateVersion')
+
