@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome</title>
+    <title>html5expense-api</title>
 </head>
 <body>
-<h1>Hello world!</h1>
+<h1>html5expense-api</h1>
 </body>
 </html>

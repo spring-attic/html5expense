@@ -61,17 +61,3 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.0-milestone-3'
 }
 
-clientAssetsDir = new File('src/main/webapp/resources/client')
-
-task zipClientAssets(type: Zip) {
-    from 'client-assets'
-    archiveName = 'assets.zip'
-    destinationDir = clientAssetsDir
-}
-
-war.dependsOn('zipClientAssets')
-
-clean.doFirst {
-    delete files(clientAssetsDir)
-}
-

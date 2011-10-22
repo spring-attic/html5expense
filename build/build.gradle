@@ -1,0 +1,36 @@
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply plugin: 'idea'
+apply plugin: 'eclipse' 
+
+repositories {
+    mavenCentral()
+}
+
+jspVersion = '2.1'
+servletVersion = '2.5'
+
+dependencies {
+    providedCompile "javax.servlet:servlet-api:$servletVersion"
+    providedCompile "javax.servlet.jsp:jsp-api:$jspVersion"
+}
+
+jettyRun.contextPath = '/html5expense-client'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.0-milestone-3'
+}
+
+clientAppDir = new File('src/main/webapp/client')
+
+task zipAppHtml(type: Zip) {
+    from 'html'
+    archiveName = 'app.zip'
+    destinationDir = clientAppDir
+}
+
+war.dependsOn('zipAppHtml')
+
+clean.doFirst {
+    delete files(clientAppDir)
+}
