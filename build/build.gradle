@@ -24,7 +24,7 @@ task wrapper(type: Wrapper) {
 clientAppDir = new File('src/main/webapp/client')
 
 task zipAppHtml(type: Zip) {
-    from 'html'
+    from 'src/main/client-html'
     archiveName = 'app.zip'
     destinationDir = clientAppDir
 }
