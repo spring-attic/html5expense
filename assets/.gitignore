@@ -10,4 +10,5 @@ Thumbs.db
 *.iws
 *.ipr
 target
-app.zip
+src/main/webapp/client/app.zip
+src/main/webapp/version.json
