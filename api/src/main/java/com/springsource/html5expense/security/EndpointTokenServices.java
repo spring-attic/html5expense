@@ -31,23 +31,26 @@ import org.springframework.security.oauth2.provider.refresh.RefreshTokenDetails;
 import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Implementation of OAuth2ProviderTokenServices that loads authentication via the OAuth service's authentication endpoint.
+ * @author wallsc
+ */
 public class EndpointTokenServices implements OAuth2ProviderTokenServices {
 
-	private static final String DEFAULT_AUTHORIZATION_ENDPOINT = "http://oauth.habuma.cloudfoundry.me/me/authentication"; 
+	private final String oauthAuthenticationUrl;
 	
-	private String authorizationEndpoint = DEFAULT_AUTHORIZATION_ENDPOINT;
+	private final RestTemplate restTemplate;
 	
-	private RestTemplate restTemplate;
-	
-	public EndpointTokenServices() {
+	public EndpointTokenServices(String oauthAuthenticationUrl) {
+		this.oauthAuthenticationUrl = oauthAuthenticationUrl;
+		
 		this.restTemplate = new RestTemplate();
-		// TODO: Get Jackson msg converter and add a mixin for OAuth2Authentication
 		List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();
 		for (HttpMessageConverter<?> httpMessageConverter : messageConverters) {
 			if (httpMessageConverter.getClass().equals(MappingJacksonHttpMessageConverter.class)) {
 				MappingJacksonHttpMessageConverter jsonConverter = (MappingJacksonHttpMessageConverter) httpMessageConverter;
 				ObjectMapper mapper = new ObjectMapper();
-				mapper.registerModule(new EndpointTokenModule());
+				mapper.getDeserializationConfig().addMixInAnnotations(OAuth2Authentication.class, OAuth2AuthenticationMixin.class);
 				jsonConverter.setObjectMapper(mapper);
 			}
 		}
@@ -59,7 +62,7 @@ public class EndpointTokenServices implements OAuth2ProviderTokenServices {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer "+ accessToken);
 		HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
-		ResponseEntity<OAuth2Authentication> response = restTemplate.exchange(authorizationEndpoint, HttpMethod.GET, requestEntity, OAuth2Authentication.class);
+		ResponseEntity<OAuth2Authentication> response = restTemplate.exchange(oauthAuthenticationUrl, HttpMethod.GET, requestEntity, OAuth2Authentication.class);
 		
 		OAuth2Authentication oauth2Authentication = response.getBody();
 		return oauth2Authentication;
