@@ -35,8 +35,15 @@ task zipApp(type: Zip) {
 
 task updateVersion << {
     versionJson = new File('src/main/webapp/version.json')
-    versionJson.write('{"version":' + buildnumber  + '}')
+    versionNumber = -1
+    try {
+        versionNumber = buildnumber;
+    } catch(Exception e) {
+        // fall through
+    }
+    versionJson.write('{"version":' + versionNumber  + '}')
 }
 
 war.dependsOn('zipApp')
+war.dependsOn('updateVersion')
 
