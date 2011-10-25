@@ -1,7 +1,7 @@
 (function() {
     if (!('localStorage' in window && window['localStorage'] !== null))
         alert("No support for localStorage.");
-
+  
     // Dom helpers
     $ = function(s) {
         return document.getElementById(s);
@@ -85,7 +85,9 @@
                 console.log('xhr callback');
                 console.log(this);
                 console.log(this.responseText);
-                eval('var version = ' + this.responseText + ';');
+                eval('var response = ' + this.responseText + ';');
+                console.log("remote version: " + response.version);
+                var version = response.version;
                 
                 if (version.error) {
                     alert("html5expense-assets.cloudfoundry.com error: " + version.error);
@@ -102,6 +104,7 @@
                             showModal('Downloading application update...');
                             window.plugins.remoteApp.fetch(function(loc) {
                                 console.log('new version app fetch plugin success!');
+                                window.localStorage.setItem('version', version);
                                 window.plugins.remoteApp.load(function(loc) {
                                     console.log('app load plugin success!');
                                     window.location = loc;
@@ -121,6 +124,7 @@
                         console.log('fetching app for first time');
                         window.plugins.remoteApp.fetch(function(loc) {
                             console.log('app fetch plugin success!');
+                            window.localStorage.setItem('installed', true);
                             window.plugins.remoteApp.load(function(loc) {
                                 console.log('app load plugin success!');
                                 window.location = loc;
@@ -134,7 +138,7 @@
     }
 
     hydra = function() {
-        showModal('Talking to html5expense-assets.vcap.me...');
+        showModal('Talking to html5expense-assets.cloudfoundry.com...');
         loadApp();
     }
 
@@ -150,3 +154,22 @@
     }, false);
 
 })();
+
+
+// ***************************************
+// Home
+// ***************************************
+
+$('#hydra-home').live('pageshow', function(event) {
+
+    var content = '';
+    if (window.localStorage && window.localStorage.getItem('installed')) {
+        content += '<li><a href="#create-new-purpose">Run App</a></li>';
+    } else {
+        content += '<li><a href="#sign-in">Install</a></li>';
+    }
+
+    $('#hydra-home-menu-items').html(content).listview('refresh');
+});
+
+
