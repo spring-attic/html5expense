@@ -7,6 +7,7 @@
 	<provider id="oauth2ProviderFilter" token-services-ref="tokenServices">
 		<authorization-server client-details-service-ref="clientDetails">
 			<authorization-code />
+			<password />
 		</authorization-server>
 		<resource-server resource-id="identityResource" />
 	</provider>
