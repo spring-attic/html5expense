@@ -144,15 +144,29 @@
     }
 
     document.addEventListener('deviceready', function() {
-
         console.log('deviceready');
-        document.getElementById('action').style.display = 'block';
+        detectNetwork();
         
+        document.getElementById('action').style.display = 'block';
         if (window.localStorage && window.localStorage.getItem('installed')) {
             $('app_list').innerHTML = '<li><a href="#" onclick="loadApp();">Load App</a></li>';
             list.style.display = '';
         }
     }, false);
+    
+    function detectNetwork() {
+        // TODO: also check the offline/online events for enabling
+        var networkState = navigator.network.connection.type;
+        var states = {};
+        states[Connection.UNKNOWN] = 'Unknown connection';
+        states[Connection.ETHERNET] = 'Ethernet connection';
+        states[Connection.WIFI] = 'WiFi connection';
+        states[Connection.CELL_2G] = 'Cell 2G connection';
+        states[Connection.CELL_3G] = 'Cell 3G connection';
+        states[Connection.CELL_4G] = 'Cell 4G connection';
+        states[Connection.NONE] = 'No network connection';
+        console.log('Connection type: ' + states[networkState]);
+    }
 
 })();
 

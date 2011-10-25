@@ -20,8 +20,6 @@
 var expenseReport;
 
 // camera related values
-var pictureSource;
-var destinationType;
 var imageQuality = 50;
 var imageWidth = 300;
 
@@ -41,34 +39,6 @@ var apiUrl = 'http://html5expense-api.cloudfoundry.com/';
 
 function getApiUrl(path) {
     return apiUrl + path;
-}
-
-
-// ***************************************
-// Initialization
-// ***************************************
-
-// In order to use the camera hardware, we need to hook into the device
-document.addEventListener('deviceready', onDeviceReady, false);
-
-function onDeviceReady() {
-    pictureSource = navigator.camera.PictureSourceType;
-    destinationType = navigator.camera.DestinationType;
-
-    // TODO: also check the offline/online events for enabling
-
-    var networkState = navigator.network.connection.type;
-
-    var states = {};
-    states[Connection.UNKNOWN] = 'Unknown connection';
-    states[Connection.ETHERNET] = 'Ethernet connection';
-    states[Connection.WIFI] = 'WiFi connection';
-    states[Connection.CELL_2G] = 'Cell 2G connection';
-    states[Connection.CELL_3G] = 'Cell 3G connection';
-    states[Connection.CELL_4G] = 'Cell 4G connection';
-    states[Connection.NONE] = 'No network connection';
-
-    console.log('Connection type: ' + states[networkState]);
 }
 
 
@@ -315,7 +285,7 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
         navigator.camera.getPicture(onPhotoCaptureSuccess, onPhotoCaptureError, {
             quality : imageQuality,
             targetWidth : imageWidth,
-            destinationType : destinationType.FILE_URI
+            destinationType : navigator.camera.DestinationType.FILE_URI
         });
         return false;
     });
