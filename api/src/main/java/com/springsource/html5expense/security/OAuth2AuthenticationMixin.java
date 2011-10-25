@@ -30,8 +30,7 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.provider.AuthorizedClientAuthenticationToken;
-import org.springframework.security.oauth2.provider.ClientAuthenticationToken;
+import org.springframework.security.oauth2.provider.ClientToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 import com.springsource.html5expense.security.OAuth2AuthenticationMixin.OAuth2AuthenticationDeserializer;
@@ -44,14 +43,14 @@ public class OAuth2AuthenticationMixin {
 		@Override
 		public OAuth2Authentication deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			JsonNode tree = jp.readValueAsTree();
-			ClientAuthenticationToken clientAuthentication = deserializeClientAuthentication(tree);
+			ClientToken clientAuthentication = deserializeClientAuthentication(tree);
 			UsernamePasswordAuthenticationToken userAuthentication = deserializeUserAuthentication(tree);
 			OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(clientAuthentication, userAuthentication);
 			oAuth2Authentication.setAuthenticated(true);
 			return oAuth2Authentication;
 		}
 
-		private ClientAuthenticationToken deserializeClientAuthentication(JsonNode treeNode) {
+		private ClientToken deserializeClientAuthentication(JsonNode treeNode) {
 			JsonNode clientAuthenticationNode = treeNode.get("clientAuthentication");
 			String clientId = clientAuthenticationNode.get("clientId").getValueAsText();
 			JsonNode resourceIdsNode = clientAuthenticationNode.get("resourceIds");
@@ -67,7 +66,7 @@ public class OAuth2AuthenticationMixin {
 				scope.add(scopeIt.next().getValueAsText());
 			}
 			Set<GrantedAuthority> authorities = getAuthorities(clientAuthenticationNode);
-			return new AuthorizedClientAuthenticationToken(clientId, resourceIds, clientSecret, scope, authorities);
+			return new ClientToken(clientId, resourceIds, clientSecret, scope, authorities);
 
 		}
 

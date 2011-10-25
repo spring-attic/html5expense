@@ -16,6 +16,7 @@
 package com.springsource.html5expense.security;
 
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.http.HttpEntity;
@@ -27,7 +28,6 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.refresh.RefreshTokenDetails;
 import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
 import org.springframework.web.client.RestTemplate;
 
@@ -72,7 +72,7 @@ public class EndpointTokenServices implements OAuth2ProviderTokenServices {
 		throw new UnsupportedOperationException("Can't create an access token through this implementation.");
 	}
 
-	public OAuth2AccessToken refreshAccessToken(RefreshTokenDetails refreshToken) throws AuthenticationException {
+	public OAuth2AccessToken refreshAccessToken(String refreshToken, Set<String> scope) throws AuthenticationException {
 		throw new UnsupportedOperationException("Can't refresh an access token through this implementation.");
 	}
 
