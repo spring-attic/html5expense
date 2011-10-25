@@ -86,6 +86,7 @@
                 console.log(this);
                 console.log(this.responseText);
                 eval('var response = ' + this.responseText + ';');
+                console.log("local version: " + localVersion);
                 console.log("remote version: " + response.version);
                 var version = response.version;
                 

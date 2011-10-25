@@ -1,25 +1,23 @@
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
-    <script type="text/javascript" src="phonegap-android-1.1.0.js"></script>
-    <script type="text/javascript" src="pretty.js"></script>
-    <script type="text/javascript" src="hydration.js"></script>
-    <script type="text/javascript" src="hydra.js"></script>
-    <link rel="stylesheet" href="master.css" type="text/css" media="screen" />
-  </head>
-  <body>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<script type="text/javascript" src="device-detection.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<script type="text/javascript" src="hydration.js"></script>
+<script type="text/javascript" src="hydra.js"></script>
+<link rel="stylesheet" href="master.css" type="text/css" media="screen" />
+</head>
+<body>
     <h1>HTML5 Expense</h1>
-    <div id="existing" style="display:block;" class="actions">
-      <h2>Existing Apps</h2>
-      <ul id="app_list">
-      </ul>
+    <div id="existing" style="display: block;" class="actions">
+        <h2>Existing Apps</h2>
+        <ul id="app_list">
+        </ul>
     </div>
-    <div id="action" style="display:none;" class="actions">
-      <button onclick="hydra();">Hydrate</button>
+    <div id="action" style="display: none;" class="actions">
+        <button onclick="hydra();">Hydrate</button>
     </div>
-    <div id="modal" style="display:none;"></div>
-    <div id="backdrop" style="display:none;">
-
-    </div>
-  </body>
+    <div id="modal" style="display: none;"></div>
+    <div id="backdrop" style="display: none;"></div>
+</body>
 </html>
