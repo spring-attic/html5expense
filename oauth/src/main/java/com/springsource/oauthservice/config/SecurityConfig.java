@@ -25,8 +25,10 @@ import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.JdbcClientDetailsService;
-import org.springframework.security.oauth2.provider.token.JdbcOAuth2ProviderTokenServices;
+import org.springframework.security.oauth2.provider.token.JdbcTokenStore;
 import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
+import org.springframework.security.oauth2.provider.token.RandomValueOAuth2ProviderTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
 @ImportResource("classpath:com/springsource/oauthservice/config/security.xml")
@@ -44,7 +46,9 @@ public class SecurityConfig {
 	
 	@Bean
 	public OAuth2ProviderTokenServices tokenServices() {
-		JdbcOAuth2ProviderTokenServices tokenServices = new JdbcOAuth2ProviderTokenServices(dataSource);
+		RandomValueOAuth2ProviderTokenServices tokenServices = new RandomValueOAuth2ProviderTokenServices();
+		TokenStore tokenStore = new JdbcTokenStore(dataSource);
+		tokenServices.setTokenStore(tokenStore);
 		tokenServices.setSupportRefreshToken(true);
 		return tokenServices;
 	}
