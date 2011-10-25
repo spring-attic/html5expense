@@ -31,14 +31,13 @@ var clientSecret = '189309492722aa5a';
 
 
 // Use the following URL to test against the CloudFoundry instance of the service
-// var apiUrl = 'http://html5expense2.cloudfoundry.com/';
+var apiUrl = 'http://html5expense-api.cloudfoundry.com/';
 
 // Use the following URL to test against a local instance of the service while running on the Android emulator
 // var apiUrl = 'http://10.0.2.2:8080/api/';
 
 // Use the following URL to test against a local instance of the service while running on the iPhone simulator
 // var apiUrl = 'http://127.0.0.1:8080/api/';
-var apiUrl = 'http://192.168.0.8:8080/api/';
 
 function getApiUrl(path) {
     return apiUrl + path;
