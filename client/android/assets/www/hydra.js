@@ -143,9 +143,9 @@
         loadApp();
     }
 
-    document.addEventListener('load', function() {
+    document.addEventListener('deviceready', function() {
 
-        console.log('load');
+        console.log('deviceready');
         document.getElementById('action').style.display = 'block';
         
         if (window.localStorage && window.localStorage.getItem('installed')) {
