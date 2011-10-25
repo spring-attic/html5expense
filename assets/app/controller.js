@@ -82,7 +82,6 @@ $('#home').live('pageshow', function(event) {
     if (isAuthorized()) {
         content += '<li><a href="#create-new-purpose">Create New</a></li>';
         content += '<li><a href="#expense-reports-open">Open Expense Reports</a></li>';
-        content += '<li><a href="#expense-reports-submitted">Submitted Expense Reports</a></li>';
         content += '<li><a href="#sign-out">Sign Out</a></li>';
         content += '<li><a href="#about">About</a></li>';
     } else {
