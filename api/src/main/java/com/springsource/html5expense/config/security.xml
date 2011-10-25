@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<http auto-config="false" access-decision-manager-ref="accessDecisionManager" entry-point-ref="entryPoint">	
+		<intercept-url pattern="/reports/**" access="SCOPE_READ" /> <!-- TODO: Break out into finer-grained scopes? -->
+		<custom-filter ref="oauth2ProviderFilter" after="EXCEPTION_TRANSLATION_FILTER" />
+	</http>
+
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+		<beans:property name="decisionVoters">
+			<beans:list>
+				<beans:bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter" />
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<authentication-manager alias="authenticationManager" />
+
+	<beans:import resource="oauth.xml" />
+</beans:beans>
