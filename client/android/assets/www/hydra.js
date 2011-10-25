@@ -143,9 +143,9 @@
         loadApp();
     }
 
-    document.addEventListener('deviceready', function() {
+    document.addEventListener('load', function() {
 
-        console.log('deviceready');
+        console.log('load');
         document.getElementById('action').style.display = 'block';
         
         if (window.localStorage && window.localStorage.getItem('installed')) {
@@ -155,22 +155,5 @@
     }, false);
 
 })();
-
-
-// ***************************************
-// Home
-// ***************************************
-
-$('#hydra-home').live('pageshow', function(event) {
-
-    var content = '';
-    if (window.localStorage && window.localStorage.getItem('installed')) {
-        content += '<li><a href="#create-new-purpose">Run App</a></li>';
-    } else {
-        content += '<li><a href="#sign-in">Install</a></li>';
-    }
-
-    $('#hydra-home-menu-items').html(content).listview('refresh');
-});
 
 
