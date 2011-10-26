@@ -138,7 +138,7 @@ $('#sign-out').live('pagecreate', function(event) {
         $.mobile.showPageLoadingMsg();
         removeAccessToken();
         $.mobile.hidePageLoadingMsg();
-        $.mobile.changePage('#re-sign-in');
+        $.mobile.changePage('#sign-in-again');
     });
 });
 
