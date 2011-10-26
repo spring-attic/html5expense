@@ -102,7 +102,7 @@
                 var remoteVersion = response.version;
                 
                 if (remoteVersion.error) {
-                    alert("html5expense-assets.cloudfoundry.com error: " + remoteVersion.error);
+                    alert("Error determining remote version: " + remoteVersion.error);
                     hideModal();
                 } else {
                     
@@ -152,30 +152,46 @@
     }
 
     hydra = function() {
-        showModal('Talking to html5expense-assets.cloudfoundry.com...');
-        loadApp();
+        var networkState = detectNetwork();
+        if (networkState == Connection.UNKNOWN || networkState == Connection.NONE) {
+            alert('No network detected!');
+        } else {
+            loadApp();
+        }
     }
-
-    document.addEventListener('deviceready', function() {
+    
+    document.addEventListener("deviceready", onDeviceReady, false);
+    
+    function onDeviceReady() {
         console.log('deviceready');
-
+        
+        initializeAppInfo();
+        
+        document.addEventListener("pause", onPause, false);
+        document.addEventListener("resume", onResume, false);
+    }
+    
+    function onPause() {
+//        alert('pausing...');
+    }
+    
+    function onResume() {
+//        alert('resuming...');
+//        window.location = 'index.html';
+        hydra();
+    }
+    
+    function initializeAppInfo() {
         var appInfo = getAppInfo();
         if (appInfo == null) {
-            alert("app info null");
+            console.log("initializing app info");
             appInfo = {
                 installed : false,
                 version : 0
             };
             setAppInfo(appInfo);
         }
-        
-        var networkState = detectNetwork();
-        if (networkState == Connection.UNKNOWN || networkState == Connection.NONE) {
-            alert('No network detected!');
-        } else {
-            hydra();
-        }
-    }, false);
+    }
     
     function detectNetwork() {
         // TODO: also check the offline/online events for enabling

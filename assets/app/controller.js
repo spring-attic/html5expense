@@ -46,6 +46,12 @@ function getApiUrl(path) {
 // Home
 // ***************************************
 
+$('#home').live('pageinit', function(event) {
+    if (typeof hydra == 'hydra') {
+        hydra();
+    }
+});
+
 $('#home').live('pageshow', function(event) {
     
     var content = '';
