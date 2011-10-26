@@ -569,7 +569,7 @@ function isAuthorized() {
     return false;
 }
 
-var ACCESS_TOKEN = 'AccessToken'
+var ACCESS_TOKEN = 'AccessToken';
 
 // saves the access token to local storage
 function setAccessToken(accessToken) {
