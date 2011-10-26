@@ -1,12 +1,12 @@
-/*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  *
+ * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+if (typeof PhoneGap === "undefined") {
+
  * Copyright (c) 2005-2010, Nitobi Software Inc.
+ /*
  * Copyright (c) 2010-2011, IBM Corporation
  */
-
-if (typeof PhoneGap === "undefined") {
 
 /**
  * The order of events during page load and PhoneGap startup is as follows:
@@ -1276,8 +1276,6 @@ App.prototype.addWhiteListEntry = function(origin, subdomains) {
 
 PhoneGap.addConstructor(function() {
     navigator.app = new App();
-    navigator.app.origHistoryBack = window.history.back;
-    window.history.back = navigator.app.backHistory;
 });
 }());
 }
