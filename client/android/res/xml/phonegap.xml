@@ -2,5 +2,6 @@
 <phonegap>
     <access origin="http://10.0.2.2:8080*"/>
     <access origin="http://debug.phonegap.com*"/>
-    <access origin="http://html5expense.cloudfoundry.com*"/>
+    <access origin="http://html5expense-api.cloudfoundry.com*"/>
+    <access origin="http://haboauth.cloudfoundry.com*"/>
 </phonegap>

@@ -48,7 +48,7 @@ function getApiUrl(path) {
 
 $('#home').live('pageinit', function(event) {
     if (typeof hydra == 'hydra') {
-        hydra();
+//        hydra();
     }
 });
 
@@ -70,7 +70,7 @@ $('#home').live('pageshow', function(event) {
 
 
 // ***************************************
-// Create New - Sign In
+// Sign In
 // ***************************************
 
 $('#sign-in').live('pagecreate', function(event) {
@@ -127,6 +127,20 @@ function onAuthorizeError(jqXHR, textStatus, errorThrown) {
     console.log('Error: ' + errorThrown);
     alert('Error signing in');
 }
+
+
+// ***************************************
+// Sign Out
+// ***************************************
+
+$('#sign-out').live('pagecreate', function(event) {
+    $('#sign-out-confirm').click(function() {
+        $.mobile.showPageLoadingMsg();
+        removeAccessToken();
+        $.mobile.hidePageLoadingMsg();
+        $.mobile.changePage('#re-sign-in');
+    });
+});
 
 
 // ***************************************
@@ -452,10 +466,10 @@ $('#expense-reports-open').live('pageshow', function(event, ui) {
     });
 
     $('.expense-report-list-item').live('click', function() {
-        var expenseReportId = $(this).jqmData('id');
+        // var expenseReportId = $(this).jqmData('id');
         // $('#review-status-details').jqmData('expenseReportId', expenseReportId);
-        expenseReport = getOpenExpenseReport(expenseReportId);
-        $.mobile.changePage('#create-new-confirm');
+        // expenseReport = getOpenExpenseReport(expenseReportId);
+        // $.mobile.changePage('#create-new-confirm');
     });
 });
 
@@ -555,15 +569,22 @@ function isAuthorized() {
     return false;
 }
 
+var ACCESS_TOKEN = 'AccessToken'
+
 // saves the access token to local storage
 function setAccessToken(accessToken) {
     if (accessToken != null) {
-        localStorage.setItem('AccessToken', JSON.stringify(accessToken));
+        localStorage.setItem(ACCESS_TOKEN, JSON.stringify(accessToken));
     }
 }
 
 // retrieves the access token from local storage
 function getAccessToken() {
-    var t = localStorage.getItem('AccessToken');
+    var t = localStorage.getItem(ACCESS_TOKEN);
     return t && JSON.parse(t);
+}
+
+//remove the access token from local storage
+function removeAccessToken() {
+    localStorage.removeItem(ACCESS_TOKEN);
 }
