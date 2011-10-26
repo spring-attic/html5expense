@@ -169,6 +169,8 @@
         
         document.addEventListener("pause", onPause, false);
         document.addEventListener("resume", onResume, false);
+        
+        hydra();
     }
     
     function onPause() {
@@ -178,7 +180,7 @@
     function onResume() {
 //        alert('resuming...');
 //        window.location = 'index.html';
-        hydra();
+//        hydra();
     }
     
     function initializeAppInfo() {
