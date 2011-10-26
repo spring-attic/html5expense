@@ -20,12 +20,12 @@
 
         <div data-role="content">
             <ul id='home-menu-items' data-role="listview">
-            </ul>ul>
+            </ul>
         </div>
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -52,7 +52,38 @@
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+    
+    <!-- Start of Sign Out page -->
+    <div data-role="page" id="sign-out">
+        <div data-role="header">
+            <h1>Sign Out</h1>
+        </div>
+        <!-- /header -->
+        
+        <div data-role="content">
+            <p>Are you sure you want to sign out?</p>
+            <form id="sign-out-form">
+                <div class="ui-body">
+                    <fieldset class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a data-role="button" data-rel="back">Cancel</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <button id="sign-out-confirm" type="submit">Confirm</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+        <!-- /content -->
+        
+        <div data-role="footer">
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -68,12 +99,11 @@
 
         <div data-role="content">
             <p>Copyright 2011 SpringSource</p>
-            <p>TODO: Add about info</p>
         </div>
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -107,7 +137,7 @@
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -139,7 +169,7 @@
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -172,7 +202,7 @@
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -204,7 +234,7 @@
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -236,7 +266,7 @@
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -257,33 +287,12 @@
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
     <!-- /page -->
     
-    <!-- Start of Submitted Expense Reports page -->
-    <div data-role="page" id="expense-reports-submitted" data-add-back-btn="true">
-
-        <div data-role="header">
-            <h1>Submitted</h1>
-        </div>
-        <!-- /header -->
-
-        <div data-role="content">
-            <ul data-role="listview" id="expense-reports-submitted-list">
-            </ul>
-        </div>
-        <!-- /content -->
-
-        <div data-role="footer">
-            <h4>Page Footer</h4>
-        </div>
-        <!-- /footer -->
-    </div>
-    <!-- /page -->
-
     <!-- Start of Review Status - Detail -->
     <div data-role="page" id="review-status-details" data-add-back-btn="true">
 
@@ -310,7 +319,7 @@
         <!-- /content -->
 
         <div data-role="footer">
-            <h4>Page Footer</h4>
+            <h4>HTML5 Expense</h4>
         </div>
         <!-- /footer -->
     </div>
@@ -319,10 +328,10 @@
     <!-- scripts -->
     <script src=device-detection.js></script>
     <script src=jquery-1.6.4.js></script>
+    <script src=jquery.mobile-1.0rc2.js></script>
     <script src=jquery.validate-1.8.1.js></script>
     <script src=jquery.json-2.3.js></script>
     <script src=jquery.currency.1.0.0.min.js></script>
-    <script src=jquery.mobile-1.0rc2.js></script>
     <script src=controller.js></script>
     <!-- /scripts -->
 </body>

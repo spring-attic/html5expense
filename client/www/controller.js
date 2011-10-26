@@ -31,14 +31,13 @@ var clientSecret = '189309492722aa5a';
 
 
 // Use the following URL to test against the CloudFoundry instance of the service
-// var apiUrl = 'http://html5expense2.cloudfoundry.com/';
+var apiUrl = 'http://html5expense-api.cloudfoundry.com/';
 
 // Use the following URL to test against a local instance of the service while running on the Android emulator
 // var apiUrl = 'http://10.0.2.2:8080/api/';
 
 // Use the following URL to test against a local instance of the service while running on the iPhone simulator
 // var apiUrl = 'http://127.0.0.1:8080/api/';
-var apiUrl = 'http://192.168.0.8:8080/api/';
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -78,25 +77,22 @@ function onDeviceReady() {
 // ***************************************
 
 $('#home').live('pageshow', function(event) {
-    
     var content = '';
     if (isAuthorized()) {
         content += '<li><a href="#create-new-purpose">Create New</a></li>';
         content += '<li><a href="#expense-reports-open">Open Expense Reports</a></li>';
-        content += '<li><a href="#expense-reports-submitted">Submitted Expense Reports</a></li>';
         content += '<li><a href="#sign-out">Sign Out</a></li>';
         content += '<li><a href="#about">About</a></li>';
     } else {
         content += '<li><a href="#sign-in">Sign In</a></li>';
         content += '<li><a href="#about">About</a></li>';
     }
-    
     $('#home-menu-items').html(content).listview('refresh');
 });
 
 
 // ***************************************
-// Create New - Sign In
+// Sign In
 // ***************************************
 
 $('#sign-in').live('pagecreate', function(event) {
@@ -111,6 +107,7 @@ $('#sign-in').live('pagecreate', function(event) {
 function authorize() {
     $.mobile.showPageLoadingMsg();
 
+//    var url = getApiUrl('oauth/token');
     var url = 'http://haboauth.cloudfoundry.com/oauth/token';
     var postData = {
          grant_type : 'password',
@@ -153,6 +150,18 @@ function onAuthorizeError(jqXHR, textStatus, errorThrown) {
     console.log('Error: ' + errorThrown);
     alert('Error signing in');
 }
+
+
+// ***************************************
+// Sign Out
+// ***************************************
+
+$('#sign-out').live('pagecreate', function(event) {
+    $('#sign-out-confirm').click(function() {
+        removeAccessToken();
+        $.mobile.changePage('#home');
+    });
+});
 
 
 // ***************************************
@@ -478,10 +487,10 @@ $('#expense-reports-open').live('pageshow', function(event, ui) {
     });
 
     $('.expense-report-list-item').live('click', function() {
-        var expenseReportId = $(this).jqmData('id');
+        // var expenseReportId = $(this).jqmData('id');
         // $('#review-status-details').jqmData('expenseReportId', expenseReportId);
-        expenseReport = getOpenExpenseReport(expenseReportId);
-        $.mobile.changePage('#create-new-confirm');
+        // expenseReport = getOpenExpenseReport(expenseReportId);
+        // $.mobile.changePage('#create-new-confirm');
     });
 });
 
@@ -581,15 +590,22 @@ function isAuthorized() {
     return false;
 }
 
+var ACCESS_TOKEN = 'AccessToken';
+
 // saves the access token to local storage
 function setAccessToken(accessToken) {
     if (accessToken != null) {
-        localStorage.setItem('AccessToken', JSON.stringify(accessToken));
+        localStorage.setItem(ACCESS_TOKEN, JSON.stringify(accessToken));
     }
 }
 
 // retrieves the access token from local storage
 function getAccessToken() {
-    var t = localStorage.getItem('AccessToken');
+    var t = localStorage.getItem(ACCESS_TOKEN);
     return t && JSON.parse(t);
+}
+
+// remove the access token (deauthorize)
+function removeAccessToken() {
+    localStorage.removeItem(ACCESS_TOKEN);
 }
