@@ -73,12 +73,23 @@
         alert('Hydration plugin error!' + msg);
         hideModal();
     }
+    
+    function setAppInfo(appInfo) {
+        if (appInfo != null) {
+            localStorage.setItem('AppInfo', JSON.stringify(appInfo));
+        }
+    }
+
+    function getAppInfo() {
+        var t = localStorage.getItem('AppInfo');
+        return t && JSON.parse(t);
+    }
 
     // loads an app
     loadApp = function() {
         var url = 'http://html5expense-assets.cloudfoundry.com/version.json';
-        var installed = window.localStorage.getItem('installed');
-        var localVersion = window.localStorage.getItem('version');
+        
+        var appInfo = getAppInfo();
 
         xhr(url, {
             callback : function() {
@@ -86,26 +97,27 @@
                 console.log(this);
                 console.log(this.responseText);
                 eval('var response = ' + this.responseText + ';');
-                console.log("local version: " + localVersion);
+                console.log("local version: " + appInfo.version);
                 console.log("remote version: " + response.version);
-                var version = response.version;
+                var remoteVersion = response.version;
                 
-                if (version.error) {
-                    alert("html5expense-assets.cloudfoundry.com error: " + version.error);
+                if (remoteVersion.error) {
+                    alert("html5expense-assets.cloudfoundry.com error: " + remoteVersion.error);
                     hideModal();
                 } else {
                     
                     // Check if the app is installed
-                    if (installed == true) {
+                    if (appInfo.installed == true) {
 
                         // Check if there is a newer version of the app
-                        if (localVersion < version) {
+                        if (appInfo.version < remoteVersion) {
                             
                             console.log('found new version of app, update it');
                             showModal('Downloading application update...');
                             window.plugins.remoteApp.fetch(function(loc) {
                                 console.log('new version app fetch plugin success!');
-                                window.localStorage.setItem('version', version);
+                                appInfo.version = remoteVersion;
+                                setAppInfo(appInfo);
                                 window.plugins.remoteApp.load(function(loc) {
                                     console.log('app load plugin success!');
                                     window.location = loc;
@@ -125,7 +137,8 @@
                         console.log('fetching app for first time');
                         window.plugins.remoteApp.fetch(function(loc) {
                             console.log('app fetch plugin success!');
-                            window.localStorage.setItem('installed', true);
+                            appInfo.installed = true;
+                            setAppInfo(appInfo);
                             window.plugins.remoteApp.load(function(loc) {
                                 console.log('app load plugin success!');
                                 window.location = loc;
@@ -143,11 +156,20 @@
         loadApp();
     }
 
-    var networkState;
     document.addEventListener('deviceready', function() {
         console.log('deviceready');
-        var networkState = detectNetwork();
+
+        var appInfo = getAppInfo();
+        if (appInfo == null) {
+            alert("app info null");
+            appInfo = {
+                installed : false,
+                version : 0
+            };
+            setAppInfo(appInfo);
+        }
         
+        var networkState = detectNetwork();
         if (networkState == Connection.UNKNOWN || networkState == Connection.NONE) {
             alert('No network detected!');
         } else {
