@@ -143,14 +143,15 @@
         loadApp();
     }
 
+    var networkState;
     document.addEventListener('deviceready', function() {
         console.log('deviceready');
-        detectNetwork();
+        var networkState = detectNetwork();
         
-        document.getElementById('action').style.display = 'block';
-        if (window.localStorage && window.localStorage.getItem('installed')) {
-            $('app_list').innerHTML = '<li><a href="#" onclick="loadApp();">Load App</a></li>';
-            list.style.display = '';
+        if (networkState == Connection.UNKNOWN || networkState == Connection.NONE) {
+            alert('No network detected!');
+        } else {
+            hydra();
         }
     }, false);
     
@@ -166,6 +167,7 @@
         states[Connection.CELL_4G] = 'Cell 4G connection';
         states[Connection.NONE] = 'No network connection';
         console.log('Connection type: ' + states[networkState]);
+        return networkState;
     }
 
 })();
