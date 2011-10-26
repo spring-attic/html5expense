@@ -1276,8 +1276,6 @@ App.prototype.addWhiteListEntry = function(origin, subdomains) {
 
 PhoneGap.addConstructor(function() {
     navigator.app = new App();
-    navigator.app.origHistoryBack = window.history.back;
-    window.history.back = navigator.app.backHistory;
 });
 }());
 }
