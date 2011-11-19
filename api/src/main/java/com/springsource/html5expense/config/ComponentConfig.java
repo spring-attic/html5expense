@@ -15,51 +15,44 @@
  */
 package com.springsource.html5expense.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
+import com.springsource.html5expense.Expense;
+import com.springsource.html5expense.impl.JpaExpenseReportingService;
+import org.h2.Driver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.springsource.html5expense.EligibleCharge;
-import com.springsource.html5expense.Expense;
-import com.springsource.html5expense.ExpenseReportingService;
-import com.springsource.html5expense.impl.StubExpenseReportingService;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration for application @Components such as @Services, @Repositories, and @Controllers.
  * Loads externalized property values required to configure the various application properties.
  * Not much else here, as we rely on @Component scanning in conjunction with @Inject by-type autowiring.
+ *
  * @author Keith Donald
  * @author Josh Long
  */
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages="com.springsource.html5expense", excludeFilters={ @Filter(Configuration.class)} )
+@ComponentScan(basePackageClasses = JpaExpenseReportingService.class)
 public class ComponentConfig {
 
     @Bean
-    public ExpenseReportingService reportingService() {
-        return new StubExpenseReportingService();
-    }
-
-    @Bean
     public DataSource dataSource() throws Exception {
-        EmbeddedDatabaseFactory factory = new EmbeddedDatabaseFactory();
-        factory.setDatabaseName("html5expense");
-        factory.setDatabaseType(EmbeddedDatabaseType.H2);
-        return factory.getDatabase();
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+        dataSource.setUrl("jdbc:h2:tcp://localhost/~/expenses");
+        dataSource.setDriverClass(Driver.class);
+        dataSource.setUsername("sa");
+        dataSource.setPassword("");
+        return dataSource;
     }
 
     @Bean
@@ -69,7 +62,6 @@ public class ComponentConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
-        // TODO clean this up with the new Spring 3.1 support for configuring JPA/Hibernate
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         jpaVendorAdapter.setGenerateDdl(true);
         jpaVendorAdapter.setShowSql(true);
@@ -82,8 +74,7 @@ public class ComponentConfig {
         factory.setJpaVendorAdapter(jpaVendorAdapter);
         factory.setJpaPropertyMap(properties);
         factory.setDataSource(dataSource());
-        factory.setPackagesToScan( Expense.class.getPackage().getName(), EligibleCharge.class.getPackage().getName());
-
+        factory.setPackagesToScan(new String[]{Expense.class.getPackage().getName()});
         return factory;
     }
 

@@ -15,69 +15,99 @@
  */
 package com.springsource.html5expense;
 
-import org.joda.time.LocalDate;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
+@Entity
+@Table(name = "EXPENSE")
 public class Expense {
 
-    private final Integer id;
+    @GeneratedValue
+    @Id
+    private Integer id;
 
-    private final LocalDate date;
+    @ManyToOne
+    private ExpenseReport expenseReport;
 
-    private final String merchant;
+    private Date date;
 
-    private final String category;
+    private String merchant;
 
-    private final BigDecimal amount;
+    private String category;
 
-    private final Long chargeId;
+    private BigDecimal amount;
 
-    private final String receipt;
+    private Long chargeId;
 
-    private final String flag;
+    private String receipt;
 
-    public Expense(Integer id, LocalDate date, String merchant, String category, BigDecimal amount, Long chargeId, String receipt, String flag) {
-        this.id = id;
+    private String flag;
+
+
+    Expense(ExpenseReport er, Date date, String merchant, String category, BigDecimal amount, Long chargeId) {
         this.date = date;
+        this.expenseReport = er;
         this.merchant = merchant;
         this.category = category;
         this.amount = amount;
         this.chargeId = chargeId;
-        this.receipt = receipt;
-        this.flag = flag;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public boolean isFlagged() {
+        return flag != null;
     }
 
-    public String getMerchant() {
-        return merchant;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public Long getChargeId() {
-        return chargeId;
+    public void flag(String flag) {
+        this.flag = flag;
     }
 
     public String getReceipt() {
         return receipt;
     }
 
+    public void attachReceipt(String receipt) {
+        this.receipt = receipt;
+        if (isFlagged() && this.flag.equals("receiptRequired")) {
+            this.flag = null;
+        }
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public Long getChargeId() {
+        return chargeId;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public ExpenseReport getExpenseReport() {
+        return expenseReport;
+    }
+
     public String getFlag() {
         return flag;
+    }
+
+    public String getMerchant() {
+        return merchant;
+    }
+    // hibernate
+
+    Expense() {
     }
 
 }
