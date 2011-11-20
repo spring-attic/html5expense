@@ -16,11 +16,18 @@
 package com.springsource.html5expense.config;
 
 import com.springsource.html5expense.Expense;
-import com.springsource.html5expense.impl.JpaExpenseReportingService;
+import com.springsource.html5expense.services.JpaExpenseReportingService;
 import org.h2.Driver;
+import org.hibernate.dialect.H2Dialect;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -67,14 +74,15 @@ public class ComponentConfig {
         jpaVendorAdapter.setShowSql(true);
 
         Map<String, String> properties = new HashMap<String, String>();
-        properties.put("hibernate.hbm2ddl.auto", "create");
-        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+//        properties.put("hibernate.hbm2ddl.auto", "create");
+        properties.put("hibernate.dialect", H2Dialect.class.getName());
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(jpaVendorAdapter);
         factory.setJpaPropertyMap(properties);
         factory.setDataSource(dataSource());
         factory.setPackagesToScan(new String[]{Expense.class.getPackage().getName()});
+
         return factory;
     }
 

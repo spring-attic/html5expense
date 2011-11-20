@@ -9,6 +9,7 @@
     <version>1.0.0</version>
 
     <properties>
+        <spring.batch.version>2.1.6.RELEASE</spring.batch.version>
         <java-version>1.6</java-version>
         <org.springframework-version>3.1.0.M2</org.springframework-version>
     </properties>
@@ -18,6 +19,9 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.6.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId><artifactId>commons-lang</artifactId><version>2.5</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -53,6 +57,17 @@
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.8.5</version>
+        </dependency>
+        <dependency>
+                  <groupId>org.springframework.batch</groupId>
+                  <artifactId>spring-batch-core</artifactId>
+                  <version>${spring.batch.version}</version>
+              </dependency>
+
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-jms</artifactId>
+            <version>2.1.0.BUILD-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

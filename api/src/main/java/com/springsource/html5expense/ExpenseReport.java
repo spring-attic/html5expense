@@ -15,7 +15,7 @@
  */
 package com.springsource.html5expense;
 
-import com.springsource.html5expense.impl.Flag;
+import com.springsource.html5expense.services.Flag;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

@@ -15,7 +15,9 @@
  */
 package com.springsource.html5expense;
 
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +27,11 @@ import java.util.List;
  * @author Josh Long
  */
 public interface ExpenseReportingService {
+
+    /**
+     * Responsible for installing new {@link EligibleCharge}s into the database
+     */
+    EligibleCharge createEligibleCharge(Date date, String merchant, String category, BigDecimal amt) ;
 
     /**
      * Creates a new expense report.
