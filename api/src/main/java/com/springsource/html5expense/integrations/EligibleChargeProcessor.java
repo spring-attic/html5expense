@@ -28,8 +28,6 @@ public class EligibleChargeProcessor {
                                           @Header(EligibleChargeProcessorHeaders.EC_MERCHANT) String merchant,
                                           @Header(EligibleChargeProcessorHeaders.EC_CATEGORY) String category,
                                           @Header(EligibleChargeProcessorHeaders.EC_AMOUNT) BigDecimal amount ) throws Exception {
-
         this.expenseReportingService.createEligibleCharge( date,  merchant, category, amount) ;
-
     }
 }

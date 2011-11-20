@@ -36,7 +36,8 @@ import java.util.List;
 @Service
 public class JpaExpenseReportingService implements ExpenseReportingService {
 
-    @PersistenceContext private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional(readOnly = true)
     public Collection<EligibleCharge> getEligibleCharges() {
@@ -46,7 +47,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @Override
     @Transactional
     public EligibleCharge createEligibleCharge(Date date, String merchant, String category, BigDecimal amt) {
-     EligibleCharge charge = new EligibleCharge( date, merchant, category, amt);
+        EligibleCharge charge = new EligibleCharge(date, merchant, category, amt);
         entityManager.persist(charge);
         return charge;
     }

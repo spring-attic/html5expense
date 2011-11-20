@@ -69,7 +69,6 @@ public class ExpenseReportingController {
      * @return
      */
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
-
     @ResponseBody
     public Collection<Expense> createExpenses(
             @PathVariable Long reportId,
