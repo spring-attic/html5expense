@@ -1,6 +1,7 @@
 package com.springsource.html5expense.config;
 
 import com.springsource.html5expense.integrations.EligibleChargeProcessor;
+import com.springsource.html5expense.integrations.EligibleChargeProcessorHeaders;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -21,10 +22,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
+import org.springframework.integration.support.MessageBuilder;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -96,7 +101,7 @@ public class BatchConfig {
     @Qualifier("newEligibleCharges")
     private MessageChannel channel;
 
-    public static class MessageSendingItemWriter implements ItemWriter<Object> {
+    public static class MessageSendingItemWriter implements ItemWriter<DefaultFieldSet > {
 
         private MessageChannel channel;
 
@@ -105,9 +110,23 @@ public class BatchConfig {
         }
 
         @Override
-        public void write(List<? extends Object> objects) throws Exception {
-            for (Object o : objects)
-                System.out.println(ToStringBuilder.reflectionToString(o));
+        public void write(List<? extends DefaultFieldSet> defaultFieldSets) throws Exception {
+          for(DefaultFieldSet defaultFieldSet : defaultFieldSets)
+          {
+              Date date  = defaultFieldSet.readDate(0) ;
+              String merchant = defaultFieldSet.readString(1);
+              String category = defaultFieldSet.readString(2);
+              BigDecimal bigDecimal = defaultFieldSet.readBigDecimal(3);
+
+              Message msg = MessageBuilder.withPayload( category)
+                      .setHeader(EligibleChargeProcessorHeaders.EC_AMOUNT, bigDecimal)
+                      .setHeader(EligibleChargeProcessorHeaders.EC_CATEGORY, category)
+                      .setHeader(EligibleChargeProcessorHeaders.EC_MERCHANT, merchant)
+                      .setHeader(EligibleChargeProcessorHeaders.EC_DATE, date)
+                      .build();
+              this.channel.send(msg);
+
+          }
         }
     }
 
@@ -120,6 +139,7 @@ public class BatchConfig {
 
         JobParametersBuilder builder = new JobParametersBuilder();
         builder.addString("file", "foo");
+        builder.addLong("uid", System.currentTimeMillis());
         JobParameters jobParameters = builder.toJobParameters();
 
         JobLauncher jobLauncher = annotationConfigApplicationContext.getBean(JobLauncher.class);
