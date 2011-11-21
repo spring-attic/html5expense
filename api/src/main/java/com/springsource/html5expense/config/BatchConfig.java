@@ -48,7 +48,10 @@ public class BatchConfig {
 
     @Autowired
     public void setBatchFileDirectory( @Value("#{ systemProperties['user.home'] }")  String userHome) throws Exception {
-        this.batchFileDirectory = new File(userHome , "in");
+        batchFileDirectory = new File(userHome , "in");
+        if(!batchFileDirectory.exists())
+            batchFileDirectory.mkdirs() ;
+
     }
 
     @Bean
@@ -114,9 +117,9 @@ public class BatchConfig {
           for(DefaultFieldSet defaultFieldSet : defaultFieldSets)
           {
               Date date  = defaultFieldSet.readDate(0) ;
-              String merchant = defaultFieldSet.readString(1);
-              String category = defaultFieldSet.readString(2);
-              BigDecimal bigDecimal = defaultFieldSet.readBigDecimal(3);
+              String merchant = defaultFieldSet.readString(2);
+              String category = defaultFieldSet.readString(1);
+              BigDecimal bigDecimal = defaultFieldSet.readBigDecimal(1);
 
               Message msg = MessageBuilder.withPayload( category)
                       .setHeader(EligibleChargeProcessorHeaders.EC_AMOUNT, bigDecimal)
