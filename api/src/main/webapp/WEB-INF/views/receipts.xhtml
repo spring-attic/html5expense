@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title th:text="#{application.title}">the title of the application</title>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" th:src="@{/assets/js/jquery-1.6.3.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery.filedrop.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/upload.js}"></script>
+
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css"/>
+
+    <style type="text/css">
+        .hideme {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="dropbox">
+    <span class="message">
+
+
+    </span>
+</div>
+
+<span id="ecUrl" class="hideme" th:text="@{/reports/eligible-charges/}"/>
+
+<script lang="javascript" type="text/javascript">
+
+    // some global urls
+    var eligibleChargesUrl = $('#ecUrl').html();
+
+    function loadEligibleCharges(callback) {
+        var eligibleCharges = [];
+        $.ajax({
+            url:   eligibleChargesUrl,
+            success: function(data) {
+                callback(eligibleCharges);
+              //   $(this).addClass("done");
+            }
+        });
+
+    }
+
+    //
+    // this page has several chores:
+    // 1) display the expenses that are as yet unreconciled
+    // 2) allow people to move expenses to an active expense report and d+d receipts onto it on the fly
+    //
+
+
+    $(function() {
+
+            loadEligibleCharges(function(data){
+                alert( data+"");
+            })
+
+    });
+</script>
+</body>
+</html>

@@ -32,7 +32,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/reports")
-public class ExpenseReportingController {
+public class ExpenseReportingApiController {
 
     @Inject
     private ExpenseReportingService service;
