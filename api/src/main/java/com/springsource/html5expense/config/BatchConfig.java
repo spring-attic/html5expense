@@ -117,9 +117,9 @@ public class BatchConfig {
           for(DefaultFieldSet defaultFieldSet : defaultFieldSets)
           {
               Date date  = defaultFieldSet.readDate(0) ;
-              String merchant = defaultFieldSet.readString(2);
-              String category = defaultFieldSet.readString(1);
               BigDecimal bigDecimal = defaultFieldSet.readBigDecimal(1);
+              String category = defaultFieldSet.readString(2);
+              String merchant = defaultFieldSet.readString(3);
 
               Message msg = MessageBuilder.withPayload( category)
                       .setHeader(EligibleChargeProcessorHeaders.EC_AMOUNT, bigDecimal)

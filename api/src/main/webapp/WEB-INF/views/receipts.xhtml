@@ -22,6 +22,11 @@
 </head>
 <body>
 
+
+<div id="ecs">
+
+</div>
+
 <div id="dropbox">
     <span class="message">
 
@@ -32,22 +37,34 @@
 <span id="ecUrl" class="hideme" th:text="@{/reports/eligible-charges/}"/>
 
 <script lang="javascript" type="text/javascript">
+    <!--
 
     // some global urls
     var eligibleChargesUrl = $('#ecUrl').html();
 
+    /**
+     *  the results have data that looks like this:
+     *   [ .., .., {"id":4,"date":1287730800000,"amount":22.40,"category":"food","merchant":"Denny's","i":4}, ... ]
+     * @param callback
+     */
     function loadEligibleCharges(callback) {
         var eligibleCharges = [];
         $.ajax({
             url:   eligibleChargesUrl,
             success: function(data) {
-                callback(eligibleCharges);
-              //   $(this).addClass("done");
+                callback(data);
             }
         });
-
     }
 
+
+    function drawEligibleCharge(ecsNode, ec){
+        $(ecsNode).append("<div id='"+ec.id +"' class = 'ec' > <span class ='merchant'> "  +
+                ec.merchant +"</span> <span class='category'>"  +
+                ec.category+"</span> <span class ='amount'>"  +
+                ec.amount +"</span> </div>"   );
+
+    }
     //
     // this page has several chores:
     // 1) display the expenses that are as yet unreconciled
@@ -57,11 +74,16 @@
 
     $(function() {
 
-            loadEligibleCharges(function(data){
-                alert( data+"");
-            })
+        loadEligibleCharges(function(data) {
+            var ecs = $('#ecs');
+            for( var i = 0; i < data.length ;i++ ){
+                drawEligibleCharge(ecs, data[i] );
+            }
+        });
 
     });
+
+    //-->
 </script>
 </body>
 </html>
