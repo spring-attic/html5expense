@@ -7,7 +7,8 @@
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <script type="text/javascript" th:src="@{/assets/js/jquery-1.6.3.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery-1.6.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.16.custom.min.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/jquery.filedrop.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/upload.js}"></script>
 
@@ -17,30 +18,116 @@
         .hideme {
             display: none;
         }
+
+        body {
+            font-family: sans-serif;
+            font-size: smaller;
+        }
+
+        #ecs {
+            border: 1px solid gray;
+            border-top: 0 solid gray;
+            background-color: #d3d3d3;
+        }
+
+        #expenseReport {
+            border: 1px solid #90ee90;
+            background-color: #f5fffa;
+            min-width: 400px;
+            float: left;
+            height: 400px;
+            margin-left: 10px;
+            float: left;
+        }
+
+        .ec {
+            padding: 5px;
+        }
+
+        #ecsBalance {
+
+            padding: 5px;
+            padding-left: 155px;
+            width: 60px;
+            display: inline-block;
+        }
+
+        .ec {
+            cursor: move;
+            border-top: 1px solid gray;
+            background-color: #d3d3d3;
+        }
+
+        .ui-draggable-dragging {
+            border: 1px solid gray;
+        }
+
+        .ec .merchant {
+            display: inline-block;
+            width: 150px;
+            font-size: inherit;
+        }
+
+        .ec .category {
+            font-size: smaller;
+            text-transform: uppercase;
+            color: gray;
+            letter-spacing: 1px;
+        }
+
+        .ec .amount {
+            display: inline-block;
+            width: 60px;
+        }
+
+        .dollar {
+            color: gray
+        }
+
+        #ecsPanel {
+            float: left;
+
+            display: inline-block;
+            width: 350px;
+        }
     </style>
 
 </head>
 <body>
 
-
-<div id="ecs">
-
+<div id="ecsPanel">
+    <div id="ecs"></div>
+    <div id="ecsBalance"></div>
 </div>
 
 <div id="dropbox">
     <span class="message">
-
-
     </span>
 </div>
 
+<div id="expenseReport">
+
+
+</div>
+
+<!-- configuration information -->
 <span id="ecUrl" class="hideme" th:text="@{/reports/eligible-charges/}"/>
+<span id="createErUrl" class="hideme" th:text="@{/reports}"/>
 
 <script lang="javascript" type="text/javascript">
     <!--
 
     // some global urls
     var eligibleChargesUrl = $('#ecUrl').html();
+    var createErUrl = $('#createErUrl').html();
+
+    var currentEligibleCharge = null; // global variable to hold the current EC
+    var expenseReport = null;
+    var currentExpenseReport = null;
+
+    function renderPrice(p) {
+        return '<span class = "dollar">$</span> ' + p;
+    }
 
     /**
      *  the results have data that looks like this:
@@ -50,21 +137,50 @@
     function loadEligibleCharges(callback) {
         var eligibleCharges = [];
         $.ajax({
-            url:   eligibleChargesUrl,
+            url: eligibleChargesUrl,
             success: function(data) {
                 callback(data);
             }
         });
     }
 
+    function drawEligibleCharge(ecsNode, ec) {
+        var ecId = 'ec' + ec.id;
+        $(ecsNode).append("<div id='" + ecId + "' class = 'ec'> <span class ='merchant'> " +
+                ec.merchant + "</span>" + "<span class ='amount'>" +
+                renderPrice(ec.amount) + "</span>" +
+                " <span class='category'>" + ec.category + "</span> " +
+                "</div>");
 
-    function drawEligibleCharge(ecsNode, ec){
-        $(ecsNode).append("<div id='"+ec.id +"' class = 'ec' > <span class ='merchant'> "  +
-                ec.merchant +"</span> <span class='category'>"  +
-                ec.category+"</span> <span class ='amount'>"  +
-                ec.amount +"</span> </div>"   );
-
+        $('#' + ecId).draggable({
+            revert : 'invalid', // ie, itll revert if its not dropped
+            start : function () {
+                currentEligibleCharge = ec;
+            },
+            stop : function () {
+            },
+            drag : function () {
+            }
+        });
     }
+
+    function createExpenseReportIfRequired( purpose, cb) {
+
+        if (currentExpenseReport == null) {
+            $.post(createErUrl, { purpose :  purpose }, function( result ) {
+                var resultingId = parseInt( result);
+                currentExpenseReport= resultingId;
+                cb(currentExpenseReport);
+            });
+        } else {
+            cb(currentExpenseReport);
+        }
+    }
+
+    function addEligibleChargeToReport(ec, cb) {
+        createExpenseReportIfRequired( 'New Report ', cb);
+    }
+
     //
     // this page has several chores:
     // 1) display the expenses that are as yet unreconciled
@@ -74,11 +190,31 @@
 
     $(function() {
 
+        expenseReport = $('#expenseReport');
+
+        // setup the drop zone
+        expenseReport.droppable({
+            drop: function(event, ui) {
+                var draggable = ui.draggable;
+                var ec = currentEligibleCharge;
+                addEligibleChargeToReport(ec, function(currentExpenseReportId ) {
+                    alert( 'going to add an expense item to report '+  currentExpenseReportId);
+
+
+
+                });
+            }
+        });
+
         loadEligibleCharges(function(data) {
             var ecs = $('#ecs');
-            for( var i = 0; i < data.length ;i++ ){
-                drawEligibleCharge(ecs, data[i] );
+            var total = 0.0;
+            for (var i = 0; i < data.length; i++) {
+                drawEligibleCharge(ecs, data[i]);
+                total += data[i].amount;
             }
+            $("#ecsBalance").html(renderPrice(total));
+
         });
 
     });
