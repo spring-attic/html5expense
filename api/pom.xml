@@ -21,7 +21,9 @@
             <version>3.6.5.Final</version>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId><artifactId>commons-lang</artifactId><version>2.5</version>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -58,11 +60,12 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.8.5</version>
         </dependency>
+
         <dependency>
-                  <groupId>org.springframework.batch</groupId>
-                  <artifactId>spring-batch-core</artifactId>
-                  <version>${spring.batch.version}</version>
-              </dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-core</artifactId>
+            <version>${spring.batch.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
@@ -83,11 +86,13 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
             <version>2.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
@@ -103,4 +108,18 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>milestone</id>
+            <url>http://maven.springframework.org/milestone</url>
+        </repository>
+        <repository>
+            <id>release</id>
+            <url>http://maven.springframework.org/release</url>
+        </repository>
+        <repository>
+            <id>snapshot</id>
+            <url>http://maven.springframework.org/snapshot</url>
+        </repository>
+    </repositories>
 </project>

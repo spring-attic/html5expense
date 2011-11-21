@@ -15,8 +15,11 @@
  */
 package com.springsource.html5expense.config;
 
+import com.springsource.html5expense.controllers.ExpenseReportingController;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerConfigurer;
@@ -25,6 +28,8 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 
 @Configuration
+@ComponentScan(basePackageClasses = ExpenseReportingController.class)
+@Import (ComponentConfig.class)
 @EnableWebMvc
 public class WebConfig extends WebMvcConfigurerAdapter {
     @Override

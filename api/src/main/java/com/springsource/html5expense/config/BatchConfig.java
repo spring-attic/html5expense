@@ -16,6 +16,7 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper;
 import org.springframework.batch.item.file.transform.DefaultFieldSet;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,7 +63,6 @@ public class BatchConfig {
         return new EligibleChargeProcessor();
     }
 
-
     @Bean
     @Scope("step")
     public FlatFileItemReader reader( @Value("#{jobParameters[file]}") String  resource) {
@@ -73,12 +73,12 @@ public class BatchConfig {
         del.setNames("date,amount,category,merchant".split(","));
         del.setDelimiter(DelimitedLineTokenizer.DELIMITER_COMMA);
 
-        DefaultLineMapper defaultLineMapper = new DefaultLineMapper();
+        DefaultLineMapper <FieldSet> defaultLineMapper = new DefaultLineMapper<FieldSet>();
         defaultLineMapper.setLineTokenizer(del);
         defaultLineMapper.setFieldSetMapper(new PassThroughFieldSetMapper());
         defaultLineMapper.afterPropertiesSet();
 
-        FlatFileItemReader fileItemReader = new FlatFileItemReader();
+        FlatFileItemReader <FieldSet> fileItemReader = new FlatFileItemReader<FieldSet>();
         fileItemReader.setLineMapper(defaultLineMapper);
         fileItemReader.setResource( new FileSystemResource( f) );
 
