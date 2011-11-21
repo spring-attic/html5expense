@@ -23,6 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -60,21 +62,19 @@ public class ExpenseReportingApiController {
     public Collection<EligibleCharge> getEligibleCharges() {
         return service.getEligibleCharges();
     }
+//
+//    @RequestMapping (value= "/ids", method = RequestMethod.GET, produces = "application/json")
+//    @ResponseBody public List <Long> ids(){
+//    return   Arrays. <Long>asList(2L, 4L, 45L, 53432L);
+//    }
 
-    /**
-     * Associate expenses with an {@link com.springsource.html5expense.ExpenseReport}
-     *
-     * @param reportId  the ID of the {@link com.springsource.html5expense.ExpenseReport}
-     * @param chargeIds the IDs of the {@link EligibleCharge} objects to associate with the expense report
-     * @return
-     */
+
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
-    @ResponseBody
-    public Collection<Expense> createExpenses(
-            @PathVariable Long reportId,
-            @RequestParam(required = true) List<Long> chargeIds) {
-        return service.createExpenses(reportId, chargeIds);
-    }
+      @ResponseBody
+      public Collection<Expense> createExpenses(
+              @PathVariable Long reportId, @RequestParam(required = true, value = "chargeId")   Long  chargeId) {
+          return service.createExpenses(reportId, Arrays.asList(chargeId ));
+      }
 
     /**
      * Associate an image of a receipt with an {@link Expense}

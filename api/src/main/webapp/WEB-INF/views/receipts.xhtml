@@ -7,6 +7,7 @@
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <script type="text/javascript" th:src="@{/assets/js/json2.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/jquery-1.6.2.min.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.16.custom.min.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/jquery.filedrop.js}"></script>
@@ -113,11 +114,15 @@
 <!-- configuration information -->
 <span id="ecUrl" class="hideme" th:text="@{/reports/eligible-charges/}"/>
 <span id="createErUrl" class="hideme" th:text="@{/reports}"/>
+<span id="newReportString" class="hideme" th:text="#{label.createNewReport}"/>
+<span id="createExpenseReportExpenseUrl" class="hideme" th:text="@{/reports/reportId/expenses}"/>
 
 <script lang="javascript" type="text/javascript">
     <!--
 
     // some global urls
+    var createExpenseReportExpenseUrl = $('#createExpenseReportExpenseUrl').html();
+    var newReportString = $('#newReportString').html();
     var eligibleChargesUrl = $('#ecUrl').html();
     var createErUrl = $('#createErUrl').html();
 
@@ -164,29 +169,30 @@
         });
     }
 
-    function createExpenseReportIfRequired( purpose, cb) {
+    function createExpenseReportIfRequired(purpose, cb) {
 
         if (currentExpenseReport == null) {
-            $.post(createErUrl, { purpose :  purpose }, function( result ) {
-                var resultingId = parseInt( result);
-                currentExpenseReport= resultingId;
-                cb(currentExpenseReport);
+            $.post(createErUrl, { purpose :  purpose }, function(result) {
+                var resultingId = parseInt(result);
+                currentExpenseReport = resultingId;
+                cb(purpose, currentExpenseReport);
             });
         } else {
-            cb(currentExpenseReport);
+            cb(purpose, currentExpenseReport);
         }
     }
 
     function addEligibleChargeToReport(ec, cb) {
-        createExpenseReportIfRequired( 'New Report ', cb);
+        createExpenseReportIfRequired(newReportString, function(purpose, reportId) {
+            var url = createExpenseReportExpenseUrl.replace('reportId', reportId);
+            var obj = { chargeId : ec.id   };
+            $.post(url, {  chargeId  :  ec.id }, function(result) {
+                var expense = result [0];
+
+            });
+
+        });
     }
-
-    //
-    // this page has several chores:
-    // 1) display the expenses that are as yet unreconciled
-    // 2) allow people to move expenses to an active expense report and d+d receipts onto it on the fly
-    //
-
 
     $(function() {
 
@@ -197,10 +203,8 @@
             drop: function(event, ui) {
                 var draggable = ui.draggable;
                 var ec = currentEligibleCharge;
-                addEligibleChargeToReport(ec, function(currentExpenseReportId ) {
-                    alert( 'going to add an expense item to report '+  currentExpenseReportId);
-
-
+                addEligibleChargeToReport(ec, function(purpose, currentExpenseReportId) {
+                    alert('going to add an expense ' + ec.id + ' item to report ' + currentExpenseReportId);
 
                 });
             }
