@@ -45,7 +45,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
         //ExpenseReport expenseReport = this.entityManager.find(ExpenseReport.class, reportId);
 
-        Collection<Expense> expenseCollection = this.entityManager.createQuery( "from Expense e WHERE e.expenseReport.id  = :id")
+        Collection<Expense> expenseCollection = this.entityManager.createQuery( "from Expense e WHERE e.expenseReport.id  = :id" , Expense.class)
                 .setParameter( "id", reportId)
                 .getResultList();
 
