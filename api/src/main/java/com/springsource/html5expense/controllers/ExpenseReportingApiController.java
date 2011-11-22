@@ -39,6 +39,12 @@ public class ExpenseReportingApiController {
     @Inject
     private ExpenseReportingService service;
 
+    @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses",  produces = "application/json")
+    @ResponseBody
+    public Collection<Expense> expenseForExpenseReport(@PathVariable(value = "reportId") Long reportId) {
+        return this.service.getExpensesForExpenseReport(reportId);
+    }
+
     /**
      * Create a new {@link com.springsource.html5expense.ExpenseReport} with an associated description for the purpose
      *
@@ -70,11 +76,14 @@ public class ExpenseReportingApiController {
 
 
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
-      @ResponseBody
-      public Collection<Expense> createExpenses(
-              @PathVariable Long reportId, @RequestParam(required = true, value = "chargeId")   Long  chargeId) {
-          return service.createExpenses(reportId, Arrays.asList(chargeId ));
-      }
+    @ResponseBody
+    public Collection<Expense> createExpenses(
+            @PathVariable Long reportId, @RequestParam(required = true, value = "chargeId") Long chargeId) {
+
+        Collection<Expense> expenseCollection =   service.createExpenses(reportId, Arrays.asList(chargeId));
+
+        return expenseCollection;
+    }
 
     /**
      * Associate an image of a receipt with an {@link Expense}

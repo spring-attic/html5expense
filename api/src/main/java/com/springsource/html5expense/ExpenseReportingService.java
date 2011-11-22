@@ -28,6 +28,8 @@ import java.util.List;
  */
 public interface ExpenseReportingService {
 
+    Collection<Expense> getExpensesForExpenseReport (  Long reportId ) ;
+
     /**
      * Responsible for installing new {@link EligibleCharge}s into the database
      */

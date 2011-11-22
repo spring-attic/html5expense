@@ -31,7 +31,7 @@
             background-color: #d3d3d3;
         }
 
-        #expenseReport {
+        #expenseReportPanel {
             border: 1px solid #90ee90;
             background-color: #f5fffa;
             min-width: 400px;
@@ -106,8 +106,10 @@
     </span>
 </div>
 
-<div id="expenseReport">
-
+<div id="expenseReportPanel">
+    <div id="expenses">
+    </div>
+    <div id="expensesBalance"></div>
 
 </div>
 
@@ -126,27 +128,24 @@
     var eligibleChargesUrl = $('#ecUrl').html();
     var createErUrl = $('#createErUrl').html();
 
+    var expenseReportExpensesUrl = '/reports/reportId/expenses';
     var currentEligibleCharge = null; // global variable to hold the current EC
     var expenseReport = null;
     var currentExpenseReport = null;
 
-    function renderPrice(p) {
-        return '<span class = "dollar">$</span> ' + p;
-    }
-
     /**
-     *  the results have data that looks like this:
-     *   [ .., .., {"id":4,"date":1287730800000,"amount":22.40,"category":"food","merchant":"Denny's","i":4}, ... ]
-     * @param callback
+     * load the expense report's expenses
      */
-    function loadEligibleCharges(callback) {
-        var eligibleCharges = [];
-        $.ajax({
-            url: eligibleChargesUrl,
-            success: function(data) {
-                callback(data);
+    function loadExpenseReportExpenses(expenseReportId) {
+        var expensesNode = $('#expenses');
+        var url = expenseReportExpensesUrl.replace('reportId', expenseReportId);
+
+        $.get(url, function(results) {
+            for (var i = 0; i < results.length; i++) {
+                var expense = results[i];
+                 drawExpense(expensesNode, expense);
             }
-        });
+        }, 'json');
     }
 
     function drawEligibleCharge(ecsNode, ec) {
@@ -169,6 +168,29 @@
         });
     }
 
+    function drawExpense(expensesNode, expense) {
+
+    }
+
+    function renderPrice(p) {
+        return '<span class = "dollar">$</span> ' + p;
+    }
+    /**
+     *  the results have data that looks like this:
+     *   [ .., .., {"id":4,"date":1287730800000,"amount":22.40,"category":"food","merchant":"Denny's","i":4}, ... ]
+     * @param callback
+     */
+    function loadEligibleCharges(callback) {
+        var eligibleCharges = [];
+        $.ajax({
+            url: eligibleChargesUrl,
+            success: function(data) {
+                callback(data);
+            }
+        });
+    }
+
+
     function createExpenseReportIfRequired(purpose, cb) {
 
         if (currentExpenseReport == null) {
@@ -180,23 +202,42 @@
         } else {
             cb(purpose, currentExpenseReport);
         }
+        //loadExpenseReportExpenses(currentExpenseReport);
     }
 
     function addEligibleChargeToReport(ec, cb) {
         createExpenseReportIfRequired(newReportString, function(purpose, reportId) {
             var url = createExpenseReportExpenseUrl.replace('reportId', reportId);
             var obj = { chargeId : ec.id   };
-            $.post(url, {  chargeId  :  ec.id }, function(result) {
-                var expense = result [0];
+            alert( 'movement'+ url +":"+ec.id );
 
+//            loadExpenseReportExpenses( reportId);
+
+              $.ajax({
+                type : 'POST',
+                url : url,
+                cache : false,
+                dataType : 'json',
+                data : {  chargeId  :  ec.id },
+                success : function(result) {
+                    alert( "we've added "+ ec.id +  " to report " + reportId  );
+                },
+                error : function(e)  {
+                    alert ('error ' + JSON.stringify( e))
+                }
             });
+
+//            $.post(url, {  chargeId  :  ec.id }, function(result) {
+//                alert( "we've added "+ ec.id +  " to report " + reportId  );
+//                //cb(  purpose,  result )
+//            });
 
         });
     }
 
     $(function() {
 
-        expenseReport = $('#expenseReport');
+        expenseReport = $('#expenseReportPanel');
 
         // setup the drop zone
         expenseReport.droppable({

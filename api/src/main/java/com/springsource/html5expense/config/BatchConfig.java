@@ -47,10 +47,10 @@ public class BatchConfig {
     private File batchFileDirectory;
 
     @Autowired
-    public void setBatchFileDirectory( @Value("#{ systemProperties['user.home'] }")  String userHome) throws Exception {
-        batchFileDirectory = new File(userHome , "in");
-        if(!batchFileDirectory.exists())
-            batchFileDirectory.mkdirs() ;
+    public void setBatchFileDirectory(@Value("#{ systemProperties['user.home'] }") String userHome) throws Exception {
+        batchFileDirectory = new File(userHome, "in");
+        if (!batchFileDirectory.exists())
+            batchFileDirectory.mkdirs();
 
     }
 
@@ -68,22 +68,22 @@ public class BatchConfig {
 
     @Bean
     @Scope("step")
-    public FlatFileItemReader reader( @Value("#{jobParameters[file]}") String  resource) {
+    public FlatFileItemReader reader(@Value("#{jobParameters[file]}") String resource) {
 
-        File f = new File( this.batchFileDirectory, resource  + ".csv");
+        File f = new File(this.batchFileDirectory, resource + ".csv");
 
         DelimitedLineTokenizer del = new DelimitedLineTokenizer();
         del.setNames("date,amount,category,merchant".split(","));
         del.setDelimiter(DelimitedLineTokenizer.DELIMITER_COMMA);
 
-        DefaultLineMapper <FieldSet> defaultLineMapper = new DefaultLineMapper<FieldSet>();
+        DefaultLineMapper<FieldSet> defaultLineMapper = new DefaultLineMapper<FieldSet>();
         defaultLineMapper.setLineTokenizer(del);
         defaultLineMapper.setFieldSetMapper(new PassThroughFieldSetMapper());
         defaultLineMapper.afterPropertiesSet();
 
-        FlatFileItemReader <FieldSet> fileItemReader = new FlatFileItemReader<FieldSet>();
+        FlatFileItemReader<FieldSet> fileItemReader = new FlatFileItemReader<FieldSet>();
         fileItemReader.setLineMapper(defaultLineMapper);
-        fileItemReader.setResource( new FileSystemResource( f) );
+        fileItemReader.setResource(new FileSystemResource(f));
 
         return fileItemReader;
     }
@@ -92,6 +92,7 @@ public class BatchConfig {
     public ItemWriter writer() {
         return new MessageSendingItemWriter(this.channel);
     }
+
     @Bean
     public JobRepositoryFactoryBean jobRepository() throws Exception {
         JobRepositoryFactoryBean bean = new JobRepositoryFactoryBean();
@@ -104,7 +105,7 @@ public class BatchConfig {
     @Qualifier("newEligibleCharges")
     private MessageChannel channel;
 
-    public static class MessageSendingItemWriter implements ItemWriter<DefaultFieldSet > {
+    public static class MessageSendingItemWriter implements ItemWriter<DefaultFieldSet> {
 
         private MessageChannel channel;
 
@@ -114,22 +115,21 @@ public class BatchConfig {
 
         @Override
         public void write(List<? extends DefaultFieldSet> defaultFieldSets) throws Exception {
-          for(DefaultFieldSet defaultFieldSet : defaultFieldSets)
-          {
-              Date date  = defaultFieldSet.readDate(0) ;
-              BigDecimal bigDecimal = defaultFieldSet.readBigDecimal(1);
-              String category = defaultFieldSet.readString(2);
-              String merchant = defaultFieldSet.readString(3);
+            for (DefaultFieldSet defaultFieldSet : defaultFieldSets) {
+                Date date = defaultFieldSet.readDate(0);
+                BigDecimal bigDecimal = defaultFieldSet.readBigDecimal(1);
+                String category = defaultFieldSet.readString(2);
+                String merchant = defaultFieldSet.readString(3);
 
-              Message msg = MessageBuilder.withPayload( category)
-                      .setHeader(EligibleChargeProcessorHeaders.EC_AMOUNT, bigDecimal)
-                      .setHeader(EligibleChargeProcessorHeaders.EC_CATEGORY, category)
-                      .setHeader(EligibleChargeProcessorHeaders.EC_MERCHANT, merchant)
-                      .setHeader(EligibleChargeProcessorHeaders.EC_DATE, date)
-                      .build();
-              this.channel.send(msg);
+                Message msg = MessageBuilder.withPayload(category)
+                        .setHeader(EligibleChargeProcessorHeaders.EC_AMOUNT, bigDecimal)
+                        .setHeader(EligibleChargeProcessorHeaders.EC_CATEGORY, category)
+                        .setHeader(EligibleChargeProcessorHeaders.EC_MERCHANT, merchant)
+                        .setHeader(EligibleChargeProcessorHeaders.EC_DATE, date)
+                        .build();
+                this.channel.send(msg);
 
-          }
+            }
         }
     }
 

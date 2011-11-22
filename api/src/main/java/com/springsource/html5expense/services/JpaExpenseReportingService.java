@@ -39,6 +39,19 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Override
+    @Transactional(readOnly = true)
+    public Collection<Expense> getExpensesForExpenseReport(Long reportId) {
+
+        //ExpenseReport expenseReport = this.entityManager.find(ExpenseReport.class, reportId);
+
+        Collection<Expense> expenseCollection = this.entityManager.createQuery( "from Expense e WHERE e.expenseReport.id  = :id")
+                .setParameter( "id", reportId)
+                .getResultList();
+
+        return expenseCollection ;
+    }
+
     @Transactional(readOnly = true)
     public Collection<EligibleCharge> getEligibleCharges() {
         return entityManager.createQuery("from EligibleCharge", EligibleCharge.class).getResultList();

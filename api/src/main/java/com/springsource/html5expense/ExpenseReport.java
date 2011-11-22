@@ -16,12 +16,11 @@
 package com.springsource.html5expense;
 
 import com.springsource.html5expense.services.Flag;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "EXPENSE_REPORT")
@@ -36,6 +35,8 @@ public class ExpenseReport {
     @OneToMany(mappedBy = "expenseReport")
     private List<Expense> expenses = new ArrayList<Expense>();
 
+    private BigDecimal receiptRequiredAmount = new BigDecimal("25.00");
+
     @Enumerated(EnumType.STRING)
     private State state = State.NEW;
 
@@ -43,7 +44,10 @@ public class ExpenseReport {
         return this.state;
     }
 
-    private BigDecimal receiptRequiredAmount = new BigDecimal("25.00");
+//
+//    public Collection<Expense> getExpenses() {
+//        return new ArrayList<Expense>(this.expenses);
+//    }
 
     public ExpenseReport(String purpose) {
         this.purpose = purpose;

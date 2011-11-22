@@ -16,11 +16,17 @@
 package com.springsource.html5expense.config;
 
 import com.springsource.html5expense.controllers.ExpenseReportingApiController;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerConfigurer;
@@ -29,6 +35,9 @@ import org.thymeleaf.TemplateMode;
 import org.thymeleaf.spring3.SpringTemplateEngine;
 import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 
 @Configuration
@@ -64,13 +73,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
         resourceBundleMessageSource.setBasenames(baseNames);
         return resourceBundleMessageSource;
-     }
+    }
 
     @Bean
     public ServletContextTemplateResolver servletContextTemplateResolver() {
         ServletContextTemplateResolver servletContextTemplateResolver = new ServletContextTemplateResolver();
         servletContextTemplateResolver.setPrefix("/WEB-INF/views/");
-        servletContextTemplateResolver.setCacheable(!debug );
+        servletContextTemplateResolver.setCacheable(!debug);
         servletContextTemplateResolver.setSuffix(".xhtml");
         servletContextTemplateResolver.setTemplateMode(TemplateMode.HTML5);
         return servletContextTemplateResolver;
@@ -80,6 +89,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine springTemplateEngine = new SpringTemplateEngine();
         springTemplateEngine.setTemplateResolver(this.servletContextTemplateResolver());
+
         return springTemplateEngine;
     }
 
