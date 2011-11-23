@@ -19,6 +19,9 @@ import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReport;
 import com.springsource.html5expense.ExpenseReportingService;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -30,7 +33,9 @@ import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequ
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -42,6 +47,12 @@ import java.util.List;
 @Controller
 @RequestMapping("/reports")
 public class ExpenseReportingApiController {
+
+    //
+//    @RequestMapping (value= "/ids", method = RequestMethod.GET, produces = "application/json")
+//    @ResponseBody public List <Long> ids(){
+//    return   Arrays. <Long>asList(2L, 4L, 45L, 53432L);
+    private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
 
     @Inject
     private ExpenseReportingService service;
@@ -75,12 +86,9 @@ public class ExpenseReportingApiController {
     public Collection<EligibleCharge> getEligibleCharges() {
         return service.getEligibleCharges();
     }
-//
-//    @RequestMapping (value= "/ids", method = RequestMethod.GET, produces = "application/json")
-//    @ResponseBody public List <Long> ids(){
-//    return   Arrays. <Long>asList(2L, 4L, 45L, 53432L);
-//    }
 
+
+//    }
 
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
@@ -94,9 +102,19 @@ public class ExpenseReportingApiController {
 
 
     @RequestMapping(value = "/receipts", method = RequestMethod.POST)
-    public String attachReceipt( @RequestParam("file") MultipartFile file ) {
-        System.out.println("Received an upload with file " +  file.getName() );
-        return "receipts";
+    @ResponseStatus(HttpStatus.OK)
+    public void attachReceipt(@RequestParam("file") MultipartFile file) {
+        System.out.println("Received an upload with file " + file.getName());
+        try {
+            File outputFile = new File(this.tmpDir, System.currentTimeMillis() + ".jpg");
+            InputStream in = file.getInputStream();
+            OutputStream out = new FileOutputStream(outputFile);
+            IOUtils.copy(in, out);
+            System.out.println("wrote " + file.getName() + " to " + outputFile.getAbsolutePath());
+            //return "receipts";
+        } catch (Throwable th) {
+            System.out.println(ExceptionUtils.getFullStackTrace(th));
+        }
     }
 
     @RequestMapping(value = "/{reportId}/expenses/{expenseId}/receipt",

@@ -162,7 +162,7 @@
         .createNewReportLabel {
             display: inline;
             float: left;
-            padding-top: .3EM;
+            padding-top: .3 EM;
             margin-right: 5px;
 
         }
@@ -292,7 +292,7 @@ function drawExpense(expensesNode, ec) {
             " <span class='category'>" + ec.category + "</span> " +
             "</div>");
 
-    $('#'+ecId).bind('mouseover', createExpenseDropzoneCallback( currentExpenseReport, ec.id ))
+    $('#' + ecId).bind('mouseover', createExpenseDropzoneCallback(currentExpenseReport, ec.id))
 
 }
 
@@ -314,7 +314,6 @@ function loadEligibleCharges(callback) {
         }
     });
 }
-
 
 function createExpenseReportIfRequired(purpose, cb) {
 
@@ -366,7 +365,6 @@ function refreshMenus(erIdToSelect) {
         dataType : "json",
         success : function(result) {
 
-
             var menu = expenseReportMenu;
             var menuOptions = menu.options;
 
@@ -395,10 +393,10 @@ function refreshMenus(erIdToSelect) {
 
 }
 
-function createExpenseDropzoneCallback ( reportId, expenseId){
-    var callback =function(){
-        alert( 'the report id ' + reportId + ':'+ expenseId);
-    }     ;
+function createExpenseDropzoneCallback(reportId, expenseId) {
+    var callback = function() {
+        console.log('the report id ' + reportId + ':' + expenseId);
+    };
     return callback;
 }
 
@@ -408,7 +406,7 @@ function createExpenseDropzoneCallback ( reportId, expenseId){
  * when a drop enters a node, its report + expense ids are cached (lets get that working, first)
  *
  */
-function setupDropzone () {
+function setupDropzone() {
 
     // todo we need to make sure that when a drag enters a single expense, that the dropzone sits on top of it and provides some visual cues
 
@@ -417,7 +415,7 @@ function setupDropzone () {
         url: '/reports/receipts',              // upload handler, handles each file separately
         paramname: 'file',          // POST parameter name used on serverside to reference file
         data: {
-            reportId : function(){
+            reportId : function() {
                 return 205;
             },
             expenseId:  178,
