@@ -280,6 +280,12 @@ function drawExpense(expensesNode, ec) {
 }
 
 function renderPrice(p) {
+    p = p + '';
+    if(p.indexOf(".")!=-1 ){
+        var np1 = p.split(".")[0]
+        var np2 = p.split(".")[1].substring(0,2);
+        p = np1 +"."+np2;
+    }
     return '<span class = "dollar">$</span> ' + p;
 }
 
