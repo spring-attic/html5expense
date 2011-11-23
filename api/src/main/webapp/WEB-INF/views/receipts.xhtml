@@ -37,14 +37,19 @@
         body {
             font-family: sans-serif;
             font-size: smaller;
+            padding: 0;
+            margin: 0;
+            margin: 0;
+            border: 0;
         }
 
         #dropzone {
-            height: 500px;
-            width: 500px;
-            background-color: #dcdcdc;
             position: absolute;
-            top: 400px
+            background-color: #dcdcdc;
+            height: 10px;
+            width: 10px;
+            top: 200px;
+            left: 10px;
         }
 
         #ecs {
@@ -159,10 +164,14 @@
             display: inline;
         }
 
+        #ws {
+            padding: 10px;
+        }
+
         .createNewReportLabel {
             display: inline;
             float: left;
-            padding-top: .3 EM;
+            padding-top: .3em;
             margin-right: 5px;
 
         }
@@ -170,17 +179,17 @@
 
 </head>
 <body>
+<div id="ws">
+    <div id="ecsPanel">
+        <div id="ecs"></div>
+        <div id="ecsBalance"></div>
+    </div>
 
-<div id="ecsPanel">
-    <div id="ecs"></div>
-    <div id="ecsBalance"></div>
-</div>
-
-<div id="expenseReportPanel">
+    <div id="expenseReportPanel">
 
 
-    <div id="expensesMenu">
-        <form class="openExpensesForm">
+        <div id="expensesMenu">
+            <form class="openExpensesForm">
 
             <span class="createNewReportLabel">
                 <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
@@ -191,26 +200,27 @@
                  <span th:text="#{label.selectExistingReport}"/>
             </span>
 
-            <select id="openExpenses"/>
-        </form>
+                <select id="openExpenses"/>
+            </form>
+        </div>
+
+        <div id="reportPurpose"></div>
+        <div id="expenses"></div>
+        <div id="expensesBalance"></div>
+
     </div>
 
-    <div id="reportPurpose"></div>
-    <div id="expenses"></div>
-    <div id="expensesBalance"></div>
+    <div id="dropzone">
 
-</div>
+        <!--
+        <form method="POST" action="/reports/receipts" enctype="multipart/form-data">
+            <input type="name" id ="name"/>
+            <input type="file" name="file" id = "file"/>
+            <input type="submit"/>
+        </form>
+        -->
 
-<div id="dropzone">
-
-    <!--
-    <form method="POST" action="/reports/receipts" enctype="multipart/form-data">
-        <input type="name" id ="name"/>
-        <input type="file" name="file" id = "file"/>
-        <input type="submit"/>
-    </form>
-    -->
-
+    </div>
 </div>
 
 <!-- configuration information -->
@@ -232,6 +242,10 @@ var reportPurposeUrl = '/reports/reportId/purpose';
 var openReportsUrl = "/reports/open-reports";
 var newReportLabel = 'A New Report (click to edit)';
 
+var dropzoneNode = null;
+var currentFocusedExpenseElement = null;
+var isDragging = false;
+var currentExpense = null;
 var purposeReport = null;
 var expenseReportMenu = null;
 var ecsNode = null;
@@ -276,12 +290,39 @@ function drawEligibleCharge(ecsNode, ec) {
         stop : function () {
         },
         drag : function () {
-
-            console.log("drag")
         }
     });
 }
 
+function fileDragging(isIt) {
+
+    isDragging = isIt;
+
+    if (!isIt) {
+        console.log("dragging is false");
+        dropzoneNode.hide();
+    }
+    if (isIt) {
+
+        // redraw the box
+        var cfe = $(currentFocusedExpenseElement);
+        var h = cfe.outerHeight();
+        var w = cfe.outerWidth();
+        var x = cfe.position().left;
+        var y = cfe.position().top;
+
+        console.log('x=' + x + ',  w=' + w + ', h=' + h + ',y=' + y)
+
+        //dropzoneNode.position({ left : x, top : y});
+        //dropzoneNode.height(h)
+        //dropzoneNode.width(w);
+
+        dropzoneNode.css({ left :x, top :y, width:w, height:h });
+        dropzoneNode.show()
+    }
+    //$(dropzoneNode).position( p.left, p.top );
+
+}
 
 function drawExpense(expensesNode, ec) {
 
@@ -292,7 +333,9 @@ function drawExpense(expensesNode, ec) {
             " <span class='category'>" + ec.category + "</span> " +
             "</div>");
 
-    $('#' + ecId).bind('mouseover', createExpenseDropzoneCallback(currentExpenseReport, ec.id))
+    var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
+    $('#' + ecId).bind('mouseover', cb);
+    $('#' + ecId).bind('dragenter', cb);
 
 }
 
@@ -316,11 +359,9 @@ function loadEligibleCharges(callback) {
 }
 
 function createExpenseReportIfRequired(purpose, cb) {
-
     var wrappedCallback = function() {
         cb(purpose, currentExpenseReport);
     };
-
     if (currentExpenseReport == null) {
         $.post(createErUrl, { purpose :  purpose }, function(result) {
             currentExpenseReport = parseInt(result);
@@ -348,7 +389,7 @@ function addEligibleChargeToReport(ec, cb) {
                 cb(purpose, reportId);
             },
             error : function(e) {
-                alert('error addEligibleChargeToReport ' + JSON.stringify(e))
+                console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
             }
         });
 
@@ -386,19 +427,26 @@ function refreshMenus(erIdToSelect) {
 
         },
         error : function(e) {
-            alert('error addEligibleChargeToReport ' + JSON.stringify(e))
+            console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
         }
     });
 
 
 }
 
+
 function createExpenseDropzoneCallback(reportId, expenseId) {
+
     var callback = function() {
-        console.log('the report id ' + reportId + ':' + expenseId);
+        currentFocusedExpenseElement = this;
+        currentExpense = expenseId;
+        if (isDragging) {
+            console.log("dragging onto expense ID #" + expenseId);
+        }
     };
     return callback;
 }
+
 
 /**
  * the behavior is this:
@@ -408,12 +456,13 @@ function createExpenseDropzoneCallback(reportId, expenseId) {
  */
 function setupDropzone() {
 
-    // todo we need to make sure that when a drag enters a single expense, that the dropzone sits on top of it and provides some visual cues
+    // todo we need to make sure that when a drag enters a single expense,
+    // that the dropzone sits on top of it and provides some visual cues
 
-    $('#dropzone').filedrop({
+    dropzoneNode.filedrop({
         fallback_id: 'upload_button'  ,  // an identifier of a standard file input element
-        url: '/reports/receipts',              // upload handler, handles each file separately
-        paramname: 'file',          // POST parameter name used on serverside to reference file
+        url: '/reports/receipts',        // upload handler, handles each file separately
+        paramname: 'file',               // POST parameter name used on serverside to reference file
         data: {
             reportId : function() {
                 return 205;
@@ -440,18 +489,22 @@ function setupDropzone() {
             }
         },
         dragOver: function() {
+
             // user dragging files over #dropzone
         },
         dragLeave: function() {
+
             // user dragging files out of #dropzone
         },
         docOver: function() {
-            // user dragging files anywhere inside the browser document window
+            fileDragging(true);
         },
         docLeave: function() {
             // user dragging files out of the browser document window
         },
         drop: function() {
+            fileDragging(false);
+            console.log("drop is finished");
             // user drops file
         },
         uploadStarted: function(i, file, len) {
@@ -480,7 +533,7 @@ function setupDropzone() {
             // return false to cancel upload
         },
         afterAll: function() {
-            alert('finished!');// runs after all files have been uploaded or otherwise dealt with
+            console.log('finished uploading (afterAll())');// runs after all files have been uploaded or otherwise dealt with
         }
     });
 
@@ -489,7 +542,7 @@ function setupDropzone() {
 
 $(function() {
 
-
+    dropzoneNode = $('#dropzone');
     ecsBalance = $('#ecsBalance');
     expensesNode = $('#expenses');
     ecsNode = $('#ecs');
@@ -529,6 +582,9 @@ $(function() {
     // setup the drop zone
     expenseReport.droppable({
         drop: function(event, ui) {
+
+            fileDragging(false);
+
             var draggable = ui.draggable;
             var ec = currentEligibleCharge;
             addEligibleChargeToReport(ec, function(purpose, currentExpenseReportId) {

@@ -22,14 +22,12 @@ import com.springsource.html5expense.ExpenseReportingService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -49,15 +47,17 @@ import java.util.List;
 @RequestMapping("/reports")
 public class ExpenseReportingApiController {
 
+    private Log log = LogFactory.getLog(getClass());
+
     private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
+
+    @Inject
+    private ExpenseReportingService service;
 
     @PostConstruct
     public void begin() {
         if (!tmpDir.exists()) tmpDir.mkdirs();
     }
-
-    @Inject
-    private ExpenseReportingService service;
 
     @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses", produces = "application/json")
     @ResponseBody
@@ -103,16 +103,24 @@ public class ExpenseReportingApiController {
     @RequestMapping(value = "/receipts", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void attachReceipt(@RequestParam("file") MultipartFile file) {
-        System.out.println("Received an upload with file " + file.getName());
+        if (log.isDebugEnabled()) {
+            log.debug("Received an upload with file " + file.getName());
+        }
+
         try {
             File outputFile = new File(this.tmpDir, System.currentTimeMillis() + ".jpg");
             InputStream in = file.getInputStream();
             OutputStream out = new FileOutputStream(outputFile);
             IOUtils.copy(in, out);
-            System.out.println("wrote " + file.getName() + " to " + outputFile.getAbsolutePath());
-            //return "receipts";
+
+            if (log.isDebugEnabled()) {
+                log.debug("wrote " + file.getName() + " to " + outputFile.getAbsolutePath());
+            }
+
         } catch (Throwable th) {
-            System.out.println(ExceptionUtils.getFullStackTrace(th));
+            if (log.isErrorEnabled()) {
+                log.error("Something went wrong trying to write the file out.", th);
+            }
         }
     }
 
