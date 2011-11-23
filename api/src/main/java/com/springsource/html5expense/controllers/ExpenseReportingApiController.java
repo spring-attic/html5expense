@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,11 +49,12 @@ import java.util.List;
 @RequestMapping("/reports")
 public class ExpenseReportingApiController {
 
-    //
-//    @RequestMapping (value= "/ids", method = RequestMethod.GET, produces = "application/json")
-//    @ResponseBody public List <Long> ids(){
-//    return   Arrays. <Long>asList(2L, 4L, 45L, 53432L);
     private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
+
+    @PostConstruct
+    public void begin() {
+        if (!tmpDir.exists()) tmpDir.mkdirs();
+    }
 
     @Inject
     private ExpenseReportingService service;
@@ -86,9 +88,6 @@ public class ExpenseReportingApiController {
     public Collection<EligibleCharge> getEligibleCharges() {
         return service.getEligibleCharges();
     }
-
-
-//    }
 
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
