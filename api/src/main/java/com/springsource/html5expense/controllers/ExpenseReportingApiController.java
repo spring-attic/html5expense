@@ -19,11 +19,18 @@ import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReport;
 import com.springsource.html5expense.ExpenseReportingService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -85,19 +92,20 @@ public class ExpenseReportingApiController {
         return expenseCollection;
     }
 
-    /**
-     * Associate an image of a receipt with an {@link Expense}
-     *
-     * @param reportId     the ID of the {@link com.springsource.html5expense.ExpenseReport}
-     * @param expenseId    the ID of the {@link Expense}
-     * @param receiptBytes the image of the receipt
-     * @return the URI of the image
-     */
+
+    @RequestMapping(value = "/receipts", method = RequestMethod.POST)
+    public String attachReceipt( @RequestParam("file") MultipartFile file ) {
+        System.out.println("Received an upload with file " +  file.getName() );
+        return "receipts";
+    }
+
     @RequestMapping(value = "/{reportId}/expenses/{expenseId}/receipt",
             method = RequestMethod.POST,
             consumes = "multipart/form-data")
     @ResponseBody
-    public String attachReceipt(@PathVariable Long reportId, @PathVariable Integer expenseId, @RequestParam(required = true) byte[] receiptBytes) {
+    public String attachReceipt(@PathVariable Long reportId,
+                                @PathVariable Integer expenseId,
+                                @RequestParam(required = true) byte[] receiptBytes) {
         return service.attachReceipt(reportId, expenseId, receiptBytes);
     }
 

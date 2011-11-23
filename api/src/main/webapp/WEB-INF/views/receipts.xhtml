@@ -39,6 +39,14 @@
             font-size: smaller;
         }
 
+        #dropzone {
+            height: 500px;
+            width: 500px;
+            background-color: #dcdcdc;
+            position: absolute;
+            top: 400px
+        }
+
         #ecs {
             border: 1px solid gray;
             border-top: 0 solid gray;
@@ -154,7 +162,7 @@
         .createNewReportLabel {
             display: inline;
             float: left;
-            padding-top: .3 EM;
+            padding-top: .3EM;
             margin-right: 5px;
 
         }
@@ -166,11 +174,6 @@
 <div id="ecsPanel">
     <div id="ecs"></div>
     <div id="ecsBalance"></div>
-</div>
-
-<div id="dropbox">
-    <span class="message">
-    </span>
 </div>
 
 <div id="expenseReportPanel">
@@ -195,6 +198,18 @@
     <div id="reportPurpose"></div>
     <div id="expenses"></div>
     <div id="expensesBalance"></div>
+
+</div>
+
+<div id="dropzone">
+
+    <!--
+    <form method="POST" action="/reports/receipts" enctype="multipart/form-data">
+        <input type="name" id ="name"/>
+        <input type="file" name="file" id = "file"/>
+        <input type="submit"/>
+    </form>
+    -->
 
 </div>
 
@@ -277,14 +292,16 @@ function drawExpense(expensesNode, ec) {
             " <span class='category'>" + ec.category + "</span> " +
             "</div>");
 
+    $('#'+ecId).bind('mouseover', createExpenseDropzoneCallback( currentExpenseReport, ec.id ))
+
 }
 
 function renderPrice(p) {
-    p = p + '';
-    if(p.indexOf(".")!=-1 ){
-        var np1 = p.split(".")[0]
-        var np2 = p.split(".")[1].substring(0,2);
-        p = np1 +"."+np2;
+    p = p + ''; //make a string
+    if (p.indexOf(".") != -1) {
+        var np1 = p.split(".")[0];
+        var np2 = p.split(".")[1].substring(0, 2);
+        p = np1 + "." + np2;
     }
     return '<span class = "dollar">$</span> ' + p;
 }
@@ -316,7 +333,7 @@ function createExpenseReportIfRequired(purpose, cb) {
 }
 
 function addEligibleChargeToReport(ec, cb) {
-    createExpenseReportIfRequired( newReportLabel, function(purpose, reportId) {
+    createExpenseReportIfRequired(newReportLabel, function(purpose, reportId) {
 
         var url = createExpenseReportExpenseUrl.replace('reportId', reportId);
 
@@ -378,6 +395,99 @@ function refreshMenus(erIdToSelect) {
 
 }
 
+function createExpenseDropzoneCallback ( reportId, expenseId){
+    var callback =function(){
+        alert( 'the report id ' + reportId + ':'+ expenseId);
+    }     ;
+    return callback;
+}
+
+/**
+ * the behavior is this:
+ *
+ * when a drop enters a node, its report + expense ids are cached (lets get that working, first)
+ *
+ */
+function setupDropzone () {
+
+    // todo we need to make sure that when a drag enters a single expense, that the dropzone sits on top of it and provides some visual cues
+
+    $('#dropzone').filedrop({
+        fallback_id: 'upload_button'  ,  // an identifier of a standard file input element
+        url: '/reports/receipts',              // upload handler, handles each file separately
+        paramname: 'file',          // POST parameter name used on serverside to reference file
+        data: {
+            reportId : function(){
+                return 205;
+            },
+            expenseId:  178,
+            name : 'file'
+        },
+        error: function(err, file) {
+            alert(JSON.springify(err));
+            switch (err) {
+                case 'BrowserNotSupported':
+                    alert('browser does not support html5 drag and drop')
+                    break;
+                case 'TooManyFiles':
+                    // user uploaded more than 'maxfiles'
+                    break;
+                case 'FileTooLarge':
+                    // program encountered a file whose size is greater than 'maxfilesize'
+                    // FileTooLarge also has access to the file which was too large
+                    // use file.name to reference the filename of the culprit file
+                    break;
+                default:
+                    break;
+            }
+        },
+        dragOver: function() {
+            // user dragging files over #dropzone
+        },
+        dragLeave: function() {
+            // user dragging files out of #dropzone
+        },
+        docOver: function() {
+            // user dragging files anywhere inside the browser document window
+        },
+        docLeave: function() {
+            // user dragging files out of the browser document window
+        },
+        drop: function() {
+            // user drops file
+        },
+        uploadStarted: function(i, file, len) {
+            console.log('uploading file ' + i + ' of ' + len + ' ' + file)
+            // a file began uploading
+            // i = index => 0, 1, 2, 3, 4 etc
+            // file is the actual file of the index
+            // len = total files user dropped
+        },
+        uploadFinished: function(i, file, response, time) {
+            // response is the data you got back from server in JSON format.
+        },
+        progressUpdated: function(i, file, progress) {
+            // this function is used for large files and updates intermittently
+            // progress is the integer value of file being uploaded percentage to completion
+        },
+        speedUpdated: function(i, file, speed) {
+            // speed in kb/s
+        },
+        rename: function(name) {
+            // name in string format
+            // must return alternate name as string
+        },
+        beforeEach: function(file) {
+            // file is a file object
+            // return false to cancel upload
+        },
+        afterAll: function() {
+            alert('finished!');// runs after all files have been uploaded or otherwise dealt with
+        }
+    });
+
+}
+
 
 $(function() {
 
@@ -389,6 +499,8 @@ $(function() {
     purposeReport = $("#reportPurpose");
     purposeReport.html(newReportLabel);
 
+
+    setupDropzone();
 
     purposeReport.editInPlace({
         callback: function(originalElement, html, original) {
@@ -428,7 +540,7 @@ $(function() {
         }
     });
 
-    expenseReportMenu = document.getElementById("openExpenses");
+    expenseReportMenu = document.getElementById("openExpenses");// cant use jquery
     $(expenseReportMenu).bind('change', function() {
         if (this.value != '') {
             var eri = parseInt(this.value);
