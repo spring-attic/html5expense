@@ -384,21 +384,24 @@ $(function() {
 
     purposeReport.editInPlace({
         callback: function(originalElement, html, original) {
+            createExpenseReportIfRequired(html, function(p, cid) {
 
-            var newUrl = reportPurposeUrl.replace('reportId', currentExpenseReport);
+                var newUrl = reportPurposeUrl.replace('reportId', currentExpenseReport);
 
-            $.ajax({
-                type : 'POST',
-                url : newUrl,
-                cache : false,
-                dataType : 'json',
-                data : {  title  :  html },
-                success : function(result) {
-                    refreshMenus(currentExpenseReport);
-                },
-                error : function(e) {
-                    alert('error addEligibleChargeToReport ' + JSON.stringify(e))
-                }
+                $.ajax({
+                    type : 'POST',
+                    url : newUrl,
+                    cache : false,
+                    dataType : 'json',
+                    data : {  title  :  html },
+                    success : function(result) {
+                        refreshMenus(currentExpenseReport);
+                    },
+                    error : function(e) {
+                        alert('error addEligibleChargeToReport ' + JSON.stringify(e))
+                    }
+                });
+
             });
 
             return(html);
@@ -426,7 +429,6 @@ $(function() {
     });
 
 
-
     refreshMenus();
     renderEligibleCharges();
 
@@ -448,9 +450,9 @@ function renderEligibleCharges(cb) {
 
     });
 
-    $('#createNewReportButton').bind('click',function(e){
+    $('#createNewReportButton').bind('click', function(e) {
         currentExpenseReport = null;
-        createExpenseReportIfRequired(newReportLabel , function(p,erId){
+        createExpenseReportIfRequired(newReportLabel, function(p, erId) {
             refreshMenus();
             loadExpenseReportExpenses(erId);
         });
