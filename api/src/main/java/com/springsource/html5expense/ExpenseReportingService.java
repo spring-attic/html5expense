@@ -28,6 +28,8 @@ import java.util.List;
  */
 public interface ExpenseReportingService {
 
+    void updateExpenseReportPurpose(Long reportId, String title);
+
     Collection<Expense> getExpensesForExpenseReport (  Long reportId ) ;
 
     /**
@@ -86,4 +88,5 @@ public interface ExpenseReportingService {
      */
     List<ExpenseReport> getOpenReports();
 
+    ExpenseReport getExpenseReport(Long reportId);
 }

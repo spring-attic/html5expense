@@ -16,7 +16,6 @@
 package com.springsource.html5expense;
 
 import com.springsource.html5expense.services.Flag;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -40,14 +39,13 @@ public class ExpenseReport {
     @Enumerated(EnumType.STRING)
     private State state = State.NEW;
 
+    public void setPurpose(String purpose){
+        this.purpose = purpose;
+    }
+
     public State getState() {
         return this.state;
     }
-
-//
-//    public Collection<Expense> getExpenses() {
-//        return new ArrayList<Expense>(this.expenses);
-//    }
 
     public ExpenseReport(String purpose) {
         this.purpose = purpose;
@@ -77,28 +75,12 @@ public class ExpenseReport {
 
     private Expense createExpense(Date date, String merchant, String category, BigDecimal amount, Long chargeId) {
         assertOpen();
-        Expense e = new Expense(this, date, merchant, category, amount, chargeId);
-        if (e.getAmount().compareTo(receiptRequiredAmount) == 1)
-            e.flag("receiptRequired");
-        this.expenses.add(e);
-        return e;
-
+        Expense expense = new Expense(this, date, merchant, category, amount, chargeId);
+        if (expense.getAmount().compareTo(receiptRequiredAmount) == 1)
+            expense.flag("receiptRequired");
+        this.expenses.add(expense);
+        return expense;
     }
-
-    /**
-     * public Expense createExpense(EligibleCharge charge) {
-     * assertOpen();
-     * Expense expense = new Expense(charge);
-     * if (charge.getAmount().compareTo(receiptRequiredAmount) == 1) {
-     * expense.flag("receiptRequired");
-     * }
-     * addExpense(expense);
-     * return expense;
-     * }
-     *
-     * @param expenseId
-     * @param receipt
-     */
 
     public void attachReceipt(Integer expenseId, String receipt) {
         assertOpen();

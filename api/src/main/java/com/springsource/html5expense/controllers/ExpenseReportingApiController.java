@@ -19,11 +19,11 @@ import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReport;
 import com.springsource.html5expense.ExpenseReportingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +39,7 @@ public class ExpenseReportingApiController {
     @Inject
     private ExpenseReportingService service;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses",  produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses", produces = "application/json")
     @ResponseBody
     public Collection<Expense> expenseForExpenseReport(@PathVariable(value = "reportId") Long reportId) {
         return this.service.getExpensesForExpenseReport(reportId);
@@ -80,7 +80,7 @@ public class ExpenseReportingApiController {
     public Collection<Expense> createExpenses(
             @PathVariable Long reportId, @RequestParam(required = true, value = "chargeId") Long chargeId) {
 
-        Collection<Expense> expenseCollection =   service.createExpenses(reportId, Arrays.asList(chargeId));
+        Collection<Expense> expenseCollection = service.createExpenses(reportId, Arrays.asList(chargeId));
 
         return expenseCollection;
     }
@@ -111,6 +111,12 @@ public class ExpenseReportingApiController {
         service.submitReport(reportId);
     }
 
+    @RequestMapping(value = "/{reportId}", method = RequestMethod.GET)
+    @ResponseBody
+    public ExpenseReport getReport(@PathVariable Long reportId) {
+        return service.getExpenseReport(reportId);
+    }
+
     /**
      * Retrieves all of the open, or incomplete, expense reports for the user
      *
@@ -119,6 +125,18 @@ public class ExpenseReportingApiController {
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<ExpenseReport> getOpenReports() {
+        return service.getOpenReports();
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{reportId}/purpose")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void updateReportPurpose(@PathVariable("reportId") Long reportId, String title) {
+        service.updateExpenseReportPurpose(reportId, title);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/open-reports")
+    @ResponseBody
+    public Collection<ExpenseReport> openReports() {
         return service.getOpenReports();
     }
 

@@ -40,6 +40,14 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     private EntityManager entityManager;
 
     @Override
+    @Transactional
+    public void updateExpenseReportPurpose(Long reportId, String purpose) {
+        ExpenseReport expenseReport = getReport(reportId);
+        expenseReport.setPurpose(purpose);
+        entityManager.merge(expenseReport);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Collection<Expense> getExpensesForExpenseReport(Long reportId) {
 
@@ -98,6 +106,12 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         ExpenseReport entity = getReport(reportId);
         entity.markInReview();
         entityManager.merge(entity);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ExpenseReport getExpenseReport(Long reportId) {
+     return entityManager.find(ExpenseReport.class, reportId);
     }
 
     @Transactional(readOnly = true)

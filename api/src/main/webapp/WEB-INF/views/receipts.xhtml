@@ -11,6 +11,7 @@
     <script type="text/javascript" th:src="@{/assets/js/jquery-1.6.2.min.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.16.custom.min.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/jquery.filedrop.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery.editinplace.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/upload.js}"></script>
 
     <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css"/>
@@ -18,6 +19,19 @@
     <style type="text/css">
         .hideme {
             display: none;
+        }
+
+        #expensesMenu {
+            padding: 5px;
+            margin-bottom: 5px;
+            vertical-align: baseline;
+        }
+
+        #expensesMenu form {
+            display: inline;
+            margin: 0;
+            padding: 0;
+            vertical-align: baseline;
         }
 
         body {
@@ -34,7 +48,7 @@
         #expenseReportPanel {
             border: 1px solid #90ee90;
             background-color: #f5fffa;
-            min-width: 400px;
+            min-width: 500px;
             float: left;
             height: 400px;
             margin-left: 10px;
@@ -81,6 +95,32 @@
             width: 60px;
         }
 
+            /** Expense report row */
+
+        .expense {
+            padding: 5px;
+            border-top: 1px solid #f5fffa;
+            background-color: #90ee90;
+        }
+
+        .expense .merchant {
+            display: inline-block;
+            width: 150px;
+            font-size: inherit;
+        }
+
+        .expense .category {
+            font-size: smaller;
+            text-transform: uppercase;
+            color: gray;
+            letter-spacing: 1px;
+        }
+
+        .expense .amount {
+            display: inline-block;
+            width: 60px;
+        }
+
         .dollar {
             color: gray
         }
@@ -90,6 +130,33 @@
 
             display: inline-block;
             width: 350px;
+        }
+
+        #reportPurpose {
+            height: 1em;
+            padding: 5px;
+            font-size: larger;
+            color: green;
+        }
+
+        a:link {
+            color: green;
+        }
+
+        #createNewReportButton {
+        }
+
+        #openExpensesForm {
+            float: left;
+            display: inline;
+        }
+
+        .createNewReportLabel {
+            display: inline;
+            float: left;
+            padding-top: .3EM;
+            margin-right: 5px;
+
         }
     </style>
 
@@ -107,8 +174,26 @@
 </div>
 
 <div id="expenseReportPanel">
-    <div id="expenses">
+
+
+    <div id="expensesMenu">
+        <form class="openExpensesForm">
+
+            <span class="createNewReportLabel">
+                <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
+                                                                              th:text="#{label.createNewReport}"/></a>
+
+                <span th:text="#{label.or}"/>
+
+                 <span th:text="#{label.selectExistingReport}"/>
+            </span>
+
+            <select id="openExpenses"/>
+        </form>
     </div>
+
+    <div id="reportPurpose"></div>
+    <div id="expenses"></div>
     <div id="expensesBalance"></div>
 
 </div>
@@ -120,166 +205,250 @@
 <span id="createExpenseReportExpenseUrl" class="hideme" th:text="@{/reports/reportId/expenses}"/>
 
 <script lang="javascript" type="text/javascript">
-    <!--
+<!--
 
-    // some global urls
-    var createExpenseReportExpenseUrl = $('#createExpenseReportExpenseUrl').html();
-    var newReportString = $('#newReportString').html();
-    var eligibleChargesUrl = $('#ecUrl').html();
-    var createErUrl = $('#createErUrl').html();
+// some global urls
+var createExpenseReportExpenseUrl = $('#createExpenseReportExpenseUrl').html();
+var newReportString = $('#newReportString').html();
+var eligibleChargesUrl = $('#ecUrl').html();
+var createErUrl = $('#createErUrl').html();
+var expenseReportExpensesUrl = '/reports/reportId/expenses';
+var reportPurposeUrl = '/reports/reportId/purpose';
+var openReportsUrl = "/reports/open-reports";
 
-    var ecsNode = null;
-    var expenseReportExpensesUrl = '/reports/reportId/expenses';
-    var currentEligibleCharge = null; // global variable to hold the current EC
-    var expenseReport = null;
-    var expensesPanel = null;
-    var expensesNode = null;
-    var currentExpenseReport = null;
-
-    /**
-     * load the expense report's expenses
-     */
-    function loadExpenseReportExpenses(expenseReportId) {
-
-        var url = expenseReportExpensesUrl.replace('reportId', expenseReportId);
-
-        $.get(url, function(results) {
-            for (var i = 0; i < results.length; i++) {
-                var expense = results[i];
-                drawExpense(expensesNode, expense);
-            }
-        }, 'json');
-    }
-
-    function drawEligibleCharge(ecsNode, ec) {
-        var ecId = 'ec' + ec.id;
-        $(ecsNode).append("<div id='" + ecId + "' class = 'ec'> <span class ='merchant'> " +
-                ec.merchant + "</span>" + "<span class ='amount'>" +
-                renderPrice(ec.amount) + "</span>" +
-                " <span class='category'>" + ec.category + "</span> " +
-                "</div>");
-
-        $('#' + ecId).draggable({
-            revert : 'invalid', // ie, itll revert if its not dropped
-            start : function () {
-                currentEligibleCharge = ec;
-            },
-            stop : function () {
-            },
-            drag : function () {
-            }
-        });
-    }
-
-    function drawExpense(expensesNode, expense) {
-
-    }
-
-    function renderPrice(p) {
-        return '<span class = "dollar">$</span> ' + p;
-    }
-    /**
-     *  the results have data that looks like this:
-     *   [ .., .., {"id":4,"date":1287730800000,"amount":22.40,"category":"food","merchant":"Denny's","i":4}, ... ]
-     * @param callback
-     */
-    function loadEligibleCharges(callback) {
-        $.ajax({
-            url: eligibleChargesUrl,
-            success: function(data) {
-                callback(data);
-            }
-        });
-    }
+var purposeReport;
+var expenseReportMenu = null;
+var ecsNode = null;
+var currentEligibleCharge = null; // global variable to hold the current EC
+var expenseReport = null;
+var expensesPanel = null;
+var expensesNode = null;
+var currentExpenseReport = null;
 
 
-    function createExpenseReportIfRequired(purpose, cb) {
+function loadExpenseReportExpenses(expenseReportId) {
+    currentExpenseReport = expenseReportId;
+    var urlForReport = '/reports/' + expenseReportId;
+    var urlForExpenses = expenseReportExpensesUrl.replace('reportId', '' + expenseReportId);
+    expensesNode.html("");
 
-        var wrappedCallback = function() {
-            cb(purpose, currentExpenseReport);
-        };
+    $.get(urlForReport, function(result) {
+        purposeReport.html(result.purpose);
+    });
 
-        if (currentExpenseReport == null) {
-            $.post(createErUrl, { purpose :  purpose }, function(result) {
-                currentExpenseReport = parseInt(result);
-                wrappedCallback();
-            });
-        } else {
-            wrappedCallback();
+    $.get(urlForExpenses, function(results) {
+        for (var i = 0; i < results.length; i++) {
+            var expense = results[i];
+            drawExpense(expensesNode, expense);
         }
-        //loadExpenseReportExpenses(currentExpenseReport);
+    }, 'json');
+}
+
+function drawEligibleCharge(ecsNode, ec) {
+    var ecId = 'ec' + ec.id;
+    $(ecsNode).append("<div id='" + ecId + "' class = 'ec'> <span class ='merchant'> " +
+            ec.merchant + "</span>" + "<span class ='amount'>" +
+            renderPrice(ec.amount) + "</span>" +
+            " <span class='category'>" + ec.category + "</span> " +
+            "</div>");
+
+    $('#' + ecId).draggable({
+        revert : 'invalid', // ie, itll revert if its not dropped
+        start : function () {
+            currentEligibleCharge = ec;
+        },
+        stop : function () {
+        },
+        drag : function () {
+
+            console.log("drag")
+        }
+    });
+}
+
+
+function drawExpense(expensesNode, ec) {
+
+    var ecId = 'expense' + ec.id;
+    $(expensesNode).append("<div id='" + ecId + "' class = 'expense'> <span class ='merchant'> " +
+            ec.merchant + "</span>" + "<span class ='amount'>" +
+            renderPrice(ec.amount) + "</span>" +
+            " <span class='category'>" + ec.category + "</span> " +
+            "</div>");
+
+}
+
+function renderPrice(p) {
+    return '<span class = "dollar">$</span> ' + p;
+}
+
+function loadEligibleCharges(callback) {
+    $.ajax({
+        url: eligibleChargesUrl,
+        success: function(data) {
+            callback(data);
+        }
+    });
+}
+
+
+function createExpenseReportIfRequired(purpose, cb) {
+
+    var wrappedCallback = function() {
+        cb(purpose, currentExpenseReport);
+    };
+
+    if (currentExpenseReport == null) {
+        $.post(createErUrl, { purpose :  purpose }, function(result) {
+            currentExpenseReport = parseInt(result);
+            wrappedCallback();
+        });
+    } else {
+        wrappedCallback();
     }
+}
 
-    function addEligibleChargeToReport(ec, cb) {
-        createExpenseReportIfRequired(newReportString, function(purpose, reportId) {
+function addEligibleChargeToReport(ec, cb) {
+    createExpenseReportIfRequired(newReportString, function(purpose, reportId) {
 
-            var url = createExpenseReportExpenseUrl.replace('reportId', reportId);
+        var url = createExpenseReportExpenseUrl.replace('reportId', reportId);
 
-            var obj = { chargeId : ec.id   };
+        var obj = { chargeId : ec.id   };
+
+        $.ajax({
+            type : 'POST',
+            url : url,
+            cache : false,
+            dataType : 'json',
+            data : {  chargeId  :  ec.id },
+            success : function(result) {
+                cb(purpose, reportId);
+            },
+            error : function(e) {
+                alert('error addEligibleChargeToReport ' + JSON.stringify(e))
+            }
+        });
+
+    });
+}
+
+
+function refreshMenus(erIdToSelect) {
+
+    $.ajax({
+        type : 'GET',
+        url : openReportsUrl ,
+        cache : false,
+        dataType : "json",
+        success : function(result) {
+
+
+            var menu = expenseReportMenu;
+            var menuOptions = menu.options;
+
+            menu.options.length = 0;
+
+            menuOptions[0] = new Option("", "", true, false);
+
+            $(result).each(function(e) {
+                var expense = result[e];
+                var selectMenuId = expense.id;
+                var mIndex = menuOptions.length;
+                menuOptions[menuOptions.length] = new Option(expense.purpose, "" + selectMenuId, true, false);
+                if (erIdToSelect != null) {
+                    if (erIdToSelect == selectMenuId)
+                        menu.selectedIndex = mIndex;
+                }
+            });
+
+
+        },
+        error : function(e) {
+            alert('error addEligibleChargeToReport ' + JSON.stringify(e))
+        }
+    });
+
+
+}
+
+
+$(function() {
+
+
+    ecsBalance = $('#ecsBalance');
+    expensesNode = $('#expenses');
+    ecsNode = $('#ecs');
+    expenseReport = $('#expenseReportPanel');
+    purposeReport = $("#reportPurpose");
+
+    purposeReport.editInPlace({
+        callback: function(originalElement, html, original) {
+
+            var newUrl = reportPurposeUrl.replace('reportId', currentExpenseReport);
 
             $.ajax({
                 type : 'POST',
-                url : url,
+                url : newUrl,
                 cache : false,
                 dataType : 'json',
-                data : {  chargeId  :  ec.id },
+                data : {  title  :  html },
                 success : function(result) {
-
-                    cb(purpose, reportId);
+                    refreshMenus(currentExpenseReport);
                 },
                 error : function(e) {
                     alert('error addEligibleChargeToReport ' + JSON.stringify(e))
                 }
             });
 
-        });
-    }
+            return(html);
+        }
+    });
 
-    $(function() {
-        ecsBalance = $('#ecsBalance');
-        expensesNode = $('#expenses');
-        ecsNode = $('#ecs');
-        expenseReport = $('#expenseReportPanel');
+    // setup the drop zone
+    expenseReport.droppable({
+        drop: function(event, ui) {
+            var draggable = ui.draggable;
+            var ec = currentEligibleCharge;
+            addEligibleChargeToReport(ec, function(purpose, currentExpenseReportId) {
+                loadExpenseReportExpenses(currentExpenseReportId);
+                renderEligibleCharges();
+            });
+        }
+    });
 
-        // setup the drop zone
-        expenseReport.droppable({
-            drop: function(event, ui) {
-                var draggable = ui.draggable;
-                var ec = currentEligibleCharge;
-                addEligibleChargeToReport(ec, function(purpose, currentExpenseReportId) {
-                    alert('going to add an expense ' + ec.id + ' item to report ' + currentExpenseReportId);
+    refreshMenus();
 
+    expenseReportMenu = document.getElementById("openExpenses");
+    $(expenseReportMenu).bind('change', function() {
+        if (this.value != '') {
+            var eri = parseInt(this.value);
+            loadExpenseReportExpenses(eri);
+        }
+    });
 
-                    // add the node to the report and *then* re-render the eligible charges because the node will dissappear
+    renderEligibleCharges();
 
-                    renderEligibleCharges();
-                });
-            }
-        });
+});
 
-        renderEligibleCharges();
+function renderEligibleCharges(cb) {
+    loadEligibleCharges(function(data) {
+        ecsNode.html("")
+        var total = 0.0;
+        for (var i = 0; i < data.length; i++) {
+            drawEligibleCharge(ecsNode, data[i]);
+            total += data[i].amount;
+        }
+
+        ecsBalance.html(renderPrice(total));
+        if (cb != null) {
+            cb();
+        }
 
     });
 
-    function renderEligibleCharges (cb){
-        loadEligibleCharges(function(data) {
-            ecsNode.html("")
-            var total = 0.0;
-            for (var i = 0; i < data.length; i++) {
-                drawEligibleCharge(ecs, data[i]);
-                total += data[i].amount;
-            }
+}
 
-            ecsBalance.html(renderPrice(total));
-            if(cb != null) {
-                cb();
-            }
-
-        });
-
-    }
-
-    //-->
+//-->
 </script>
 </body>
 </html>
