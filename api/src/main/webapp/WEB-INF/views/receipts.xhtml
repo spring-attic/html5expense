@@ -310,7 +310,7 @@ function createExpenseReportIfRequired(purpose, cb) {
 }
 
 function addEligibleChargeToReport(ec, cb) {
-    createExpenseReportIfRequired(newReportString, function(purpose, reportId) {
+    createExpenseReportIfRequired( newReportLabel, function(purpose, reportId) {
 
         var url = createExpenseReportExpenseUrl.replace('reportId', reportId);
 
@@ -381,6 +381,8 @@ $(function() {
     ecsNode = $('#ecs');
     expenseReport = $('#expenseReportPanel');
     purposeReport = $("#reportPurpose");
+    purposeReport.html(newReportLabel);
+
 
     purposeReport.editInPlace({
         callback: function(originalElement, html, original) {
