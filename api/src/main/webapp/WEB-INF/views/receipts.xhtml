@@ -45,11 +45,24 @@
 
         #dropzone {
             position: absolute;
-            background-color: #dcdcdc;
-            height: 10px;
+            height: 5px;
             width: 10px;
             top: 200px;
             left: 10px;
+            display: none;
+            border-top: 1px solid #f5fffa;
+            background-color: green;
+            text-align: center;
+            font-weight: bold;
+            font-family: Arial bold, arial, sans-serif;
+            color: #90ee90;
+            text-transform: uppercase;
+            font-size: smaller;
+
+            vertical-align: bottom;
+            letter-spacing: .2em;
+
+            border-bottom: 1px solid #f5fffa;
         }
 
         #ecs {
@@ -107,8 +120,6 @@
             display: inline-block;
             width: 60px;
         }
-
-            /** Expense report row */
 
         .expense {
             padding: 5px;
@@ -240,6 +251,7 @@ var createErUrl = $('#createErUrl').html();
 var expenseReportExpensesUrl = '/reports/reportId/expenses';
 var reportPurposeUrl = '/reports/reportId/purpose';
 var openReportsUrl = "/reports/open-reports";
+var attachReceiptLabel = 'Attach receipt';
 var newReportLabel = 'A New Report (click to edit)';
 
 var dropzoneNode = null;
@@ -311,16 +323,13 @@ function fileDragging(isIt) {
         var x = cfe.position().left;
         var y = cfe.position().top;
 
-        console.log('x=' + x + ',  w=' + w + ', h=' + h + ',y=' + y)
+        console.log('x=' + x + ',  w=' + w + ', h=' + h + ',y=' + y);
 
-        //dropzoneNode.position({ left : x, top : y});
-        //dropzoneNode.height(h)
-        //dropzoneNode.width(w);
-
-        dropzoneNode.css({ left :x, top :y, width:w, height:h });
+        dropzoneNode.html( attachReceiptLabel );
+        dropzoneNode.css({ left :x, top :y, width:w, height:h , opacity :.6});
         dropzoneNode.show()
+
     }
-    //$(dropzoneNode).position( p.left, p.top );
 
 }
 
@@ -433,7 +442,6 @@ function refreshMenus(erIdToSelect) {
 
 
 }
-
 
 function createExpenseDropzoneCallback(reportId, expenseId) {
 
