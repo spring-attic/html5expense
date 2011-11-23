@@ -154,7 +154,7 @@
         .createNewReportLabel {
             display: inline;
             float: left;
-            padding-top: .3EM;
+            padding-top: .3 EM;
             margin-right: 5px;
 
         }
@@ -215,11 +215,12 @@ var createErUrl = $('#createErUrl').html();
 var expenseReportExpensesUrl = '/reports/reportId/expenses';
 var reportPurposeUrl = '/reports/reportId/purpose';
 var openReportsUrl = "/reports/open-reports";
+var newReportLabel = 'A New Report (click to edit)';
 
-var purposeReport;
+var purposeReport = null;
 var expenseReportMenu = null;
 var ecsNode = null;
-var currentEligibleCharge = null; // global variable to hold the current EC
+var currentEligibleCharge = null;
 var expenseReport = null;
 var expensesPanel = null;
 var expensesNode = null;
@@ -416,8 +417,6 @@ $(function() {
         }
     });
 
-    refreshMenus();
-
     expenseReportMenu = document.getElementById("openExpenses");
     $(expenseReportMenu).bind('change', function() {
         if (this.value != '') {
@@ -426,6 +425,9 @@ $(function() {
         }
     });
 
+
+
+    refreshMenus();
     renderEligibleCharges();
 
 });
@@ -446,6 +448,14 @@ function renderEligibleCharges(cb) {
 
     });
 
+    $('#createNewReportButton').bind('click',function(e){
+        currentExpenseReport = null;
+        createExpenseReportIfRequired(newReportLabel , function(p,erId){
+            refreshMenus();
+            loadExpenseReportExpenses(erId);
+        });
+
+    });
 }
 
 //-->
