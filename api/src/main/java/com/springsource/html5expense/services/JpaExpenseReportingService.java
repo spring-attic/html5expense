@@ -43,8 +43,6 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @Transactional(readOnly = true)
     public Collection<Expense> getExpensesForExpenseReport(Long reportId) {
 
-        //ExpenseReport expenseReport = this.entityManager.find(ExpenseReport.class, reportId);
-
         Collection<Expense> expenseCollection = this.entityManager.createQuery( "from Expense e WHERE e.expenseReport.id  = :id" , Expense.class)
                 .setParameter( "id", reportId)
                 .getResultList();
@@ -135,6 +133,8 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     }
 
     private String receipt(byte[] receiptBytes) {
+
+        //todo store somewhere
         return "receipt for bytes";
     }
 }

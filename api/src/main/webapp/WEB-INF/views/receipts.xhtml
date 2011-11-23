@@ -128,22 +128,25 @@
     var eligibleChargesUrl = $('#ecUrl').html();
     var createErUrl = $('#createErUrl').html();
 
+    var ecsNode = null;
     var expenseReportExpensesUrl = '/reports/reportId/expenses';
     var currentEligibleCharge = null; // global variable to hold the current EC
     var expenseReport = null;
+    var expensesPanel = null;
+    var expensesNode = null;
     var currentExpenseReport = null;
 
     /**
      * load the expense report's expenses
      */
     function loadExpenseReportExpenses(expenseReportId) {
-        var expensesNode = $('#expenses');
+
         var url = expenseReportExpensesUrl.replace('reportId', expenseReportId);
 
         $.get(url, function(results) {
             for (var i = 0; i < results.length; i++) {
                 var expense = results[i];
-                 drawExpense(expensesNode, expense);
+                drawExpense(expensesNode, expense);
             }
         }, 'json');
     }
@@ -181,7 +184,6 @@
      * @param callback
      */
     function loadEligibleCharges(callback) {
-        var eligibleCharges = [];
         $.ajax({
             url: eligibleChargesUrl,
             success: function(data) {
@@ -193,50 +195,50 @@
 
     function createExpenseReportIfRequired(purpose, cb) {
 
+        var wrappedCallback = function() {
+            cb(purpose, currentExpenseReport);
+        };
+
         if (currentExpenseReport == null) {
             $.post(createErUrl, { purpose :  purpose }, function(result) {
-                var resultingId = parseInt(result);
-                currentExpenseReport = resultingId;
-                cb(purpose, currentExpenseReport);
+                currentExpenseReport = parseInt(result);
+                wrappedCallback();
             });
         } else {
-            cb(purpose, currentExpenseReport);
+            wrappedCallback();
         }
         //loadExpenseReportExpenses(currentExpenseReport);
     }
 
     function addEligibleChargeToReport(ec, cb) {
         createExpenseReportIfRequired(newReportString, function(purpose, reportId) {
+
             var url = createExpenseReportExpenseUrl.replace('reportId', reportId);
+
             var obj = { chargeId : ec.id   };
-            alert( 'movement'+ url +":"+ec.id );
 
-//            loadExpenseReportExpenses( reportId);
-
-              $.ajax({
+            $.ajax({
                 type : 'POST',
                 url : url,
                 cache : false,
                 dataType : 'json',
                 data : {  chargeId  :  ec.id },
                 success : function(result) {
-                    alert( "we've added "+ ec.id +  " to report " + reportId  );
+
+                    cb(purpose, reportId);
                 },
-                error : function(e)  {
-                    alert ('error ' + JSON.stringify( e))
+                error : function(e) {
+                    alert('error addEligibleChargeToReport ' + JSON.stringify(e))
                 }
             });
-
-//            $.post(url, {  chargeId  :  ec.id }, function(result) {
-//                alert( "we've added "+ ec.id +  " to report " + reportId  );
-//                //cb(  purpose,  result )
-//            });
 
         });
     }
 
     $(function() {
-
+        ecsBalance = $('#ecsBalance');
+        expensesNode = $('#expenses');
+        ecsNode = $('#ecs');
         expenseReport = $('#expenseReportPanel');
 
         // setup the drop zone
@@ -247,22 +249,35 @@
                 addEligibleChargeToReport(ec, function(purpose, currentExpenseReportId) {
                     alert('going to add an expense ' + ec.id + ' item to report ' + currentExpenseReportId);
 
+
+                    // add the node to the report and *then* re-render the eligible charges because the node will dissappear
+
+                    renderEligibleCharges();
                 });
             }
         });
 
+        renderEligibleCharges();
+
+    });
+
+    function renderEligibleCharges (cb){
         loadEligibleCharges(function(data) {
-            var ecs = $('#ecs');
+            ecsNode.html("")
             var total = 0.0;
             for (var i = 0; i < data.length; i++) {
                 drawEligibleCharge(ecs, data[i]);
                 total += data[i].amount;
             }
-            $("#ecsBalance").html(renderPrice(total));
+
+            ecsBalance.html(renderPrice(total));
+            if(cb != null) {
+                cb();
+            }
 
         });
 
-    });
+    }
 
     //-->
 </script>
