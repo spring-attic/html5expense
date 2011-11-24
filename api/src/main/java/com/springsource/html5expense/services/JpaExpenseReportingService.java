@@ -16,6 +16,7 @@
 package com.springsource.html5expense.services;
 
 import com.springsource.html5expense.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
@@ -28,10 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Implementation of the business logic for the expense reports and expense report charges.
@@ -63,14 +61,24 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         entityManager.merge(expenseReport);
     }
 
+    static private class ExpenseComparator implements Comparator<Expense>{
+        @Override
+        public int compare(Expense expense, Expense expense1) {
+         return expense.getId()  .compareTo(expense1.getId());
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Collection<Expense> getExpensesForExpenseReport(Long reportId) {
 
-        Collection<Expense> expenseCollection = this.entityManager.createQuery(
+        List <Expense> expenseCollection = this.entityManager.createQuery(
                 "from Expense e WHERE e.expenseReport.id  = :id", Expense.class)
                 .setParameter("id", reportId)
                 .getResultList();
+
+        // consistant sorting
+        Collections.sort( expenseCollection, new ExpenseComparator());
 
         return expenseCollection;
     }

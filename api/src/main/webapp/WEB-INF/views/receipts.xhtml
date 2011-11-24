@@ -147,6 +147,11 @@
 
     }
 
+    .expense .menu {
+        display: inline-block;
+        float: right;
+    }
+
     .expense .amount {
         display: inline-block;
         width: 60px;
@@ -371,7 +376,12 @@ function expenseNodeId(ecId) {
 function drawExpense(expensesNode, ec) {
 
     var ecId = expenseNodeId(ec.id);
-    var menu = '<SPAN class ="menu"> <span class  ="remove"></span> <span class="hasReceiptImg" ></span></SPAN> ';
+    var menu = '';
+    //alert( JSON.stringify(ec));
+    console.log( 'receipt:'+ ec.receipt);
+    if(ec.receipt != '' && ec.receipt != null )
+        menu = '<SPAN class ="menu"> <span class  ="remove"></span> <span class="hasReceiptImg" ></span></SPAN> ';
+
 
     $(expensesNode).append("<div id='" + ecId + "' class = 'expense'> <span class ='merchant'> " +
             ec.merchant + "</span>" + "<span class ='amount'>" +
@@ -592,6 +602,8 @@ function setupDropzone() {
         afterAll: function() {
             console.log('finished uploading (afterAll())');
             $('#' + currentFocusedExpenseElement.id + ' .progress').hide();
+
+            loadExpenseReportExpenses(currentExpenseReport)
         }
     });
 
@@ -696,7 +708,7 @@ function renderEligibleCharges(cb) {
     });
 
 
-    debug()
+   // debug()
 
 
 }
