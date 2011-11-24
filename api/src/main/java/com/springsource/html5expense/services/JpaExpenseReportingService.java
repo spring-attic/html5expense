@@ -61,10 +61,10 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         entityManager.merge(expenseReport);
     }
 
-    static private class ExpenseComparator implements Comparator<Expense>{
+    static private class ExpenseComparator implements Comparator<Expense> {
         @Override
         public int compare(Expense expense, Expense expense1) {
-         return expense.getId()  .compareTo(expense1.getId());
+            return expense.getId().compareTo(expense1.getId());
         }
     }
 
@@ -72,13 +72,13 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @Transactional(readOnly = true)
     public Collection<Expense> getExpensesForExpenseReport(Long reportId) {
 
-        List <Expense> expenseCollection = this.entityManager.createQuery(
+        List<Expense> expenseCollection = this.entityManager.createQuery(
                 "from Expense e WHERE e.expenseReport.id  = :id", Expense.class)
                 .setParameter("id", reportId)
                 .getResultList();
 
         // consistant sorting
-        Collections.sort( expenseCollection, new ExpenseComparator());
+        Collections.sort(expenseCollection, new ExpenseComparator());
 
         return expenseCollection;
     }
