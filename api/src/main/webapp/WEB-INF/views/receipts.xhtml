@@ -89,8 +89,7 @@
         padding: 5px;
     }
 
-    #expensesBalance,
-    #ecsBalance {
+    #expensesBalance, #ecsBalance {
 
         padding: 5px;
         padding-left: 155px;
@@ -386,15 +385,18 @@ function expenseNodeId(ecId) {
     return 'expense' + ecId;
 }
 
-
 function drawExpense(expensesNode, ec) {
 
     var ecId = expenseNodeId(ec.id);
-    var menu = '';
-    //alert( JSON.stringify(ec));
+    var menu = '<SPAN class ="menu"> <span class  ="remove"></span>';
+    // tood add the 'remove' button (a little white trash can icon)
     console.log( 'receipt:'+ ec.receipt);
+
     if(ec.receipt != '' && ec.receipt != null )
-        menu = '<SPAN class ="menu"> <span class  ="remove"></span> <span class="hasReceiptImg" ></span></SPAN> ';
+        menu += ' <span class="hasReceiptImg" ></span>';
+
+    menu += '</SPAN> ';
+
 
 
     $(expensesNode).append("<div id='" + ecId + "' class = 'expense'> <span class ='merchant'> " +
@@ -411,6 +413,7 @@ function drawExpense(expensesNode, ec) {
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
     $('#' + ecId).bind('mouseover', cb);
     $('#' + ecId).bind('dragenter', cb);
+
 }
 
 function buildCssSprite(node, on, off) {
