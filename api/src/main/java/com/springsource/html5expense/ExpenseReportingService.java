@@ -68,9 +68,10 @@ public interface ExpenseReportingService {
      *
      * @param reportId     the expense report id
      * @param receiptBytes the receipt data as a byte array
+     * @param ext the extension of the uploaded media
      * @return a pointer to the receipt
      */
-    String attachReceipt(Long reportId, Integer expenseId, byte[] receiptBytes);
+    String attachReceipt(Long reportId, Integer expenseId,  String ext , byte[] receiptBytes);
 
     /**
      * Submit the expense report for approval.
@@ -89,4 +90,6 @@ public interface ExpenseReportingService {
     List<ExpenseReport> getOpenReports();
 
     ExpenseReport getExpenseReport(Long reportId);
+
+    Expense getExpense(Integer  expenseId);
 }

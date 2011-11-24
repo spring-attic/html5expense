@@ -135,6 +135,13 @@
             letter-spacing: 1px;
         }
 
+        .expense .progress {
+            width: 20px;
+            float: right;
+            display: none;
+
+        }
+
         .expense .amount {
             display: inline-block;
             width: 60px;
@@ -196,16 +203,12 @@
 
         <div id="expensesMenu">
             <form class="openExpensesForm">
-
-            <span class="createNewReportLabel">
-                <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
-                                                                              th:text="#{label.createNewReport}"/></a>
-
-                <span th:text="#{label.or}"/>
-
-                 <span th:text="#{label.selectExistingReport}"/>
-            </span>
-
+                <span class="createNewReportLabel">
+                    <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
+                                                                                  th:text="#{label.createNewReport}"/></a>
+                    <span th:text="#{label.or}"/>
+                    <span th:text="#{label.selectExistingReport}"/>
+                </span>
                 <select id="openExpenses"/>
             </form>
         </div>
@@ -235,6 +238,7 @@
 <span id="newReportString" class="hideme" th:text="#{label.createNewReport}"/>
 <span id="createExpenseReportExpenseUrl" class="hideme" th:text="@{/reports/reportId/expenses}"/>
 <img th:src="@{/assets/images/attach-receipt.png}" id="arImg" class="hideme"/>
+<img th:src="@{/assets/images/ajax-loader.gif}" id="loaderImg" class="hideme"/>
 
 <script lang="javascript" type="text/javascript">
 <!--
@@ -250,6 +254,7 @@ var openReportsUrl = "/reports/open-reports";
 var attachReceiptLabel = 'Attach receipt';
 var newReportLabel = 'A New Report (click to edit)';
 
+var loaderImageSrc = null;
 var dropzoneNode = null;
 var currentFocusedExpenseElement = null;
 var isDragging = false;
@@ -323,8 +328,6 @@ function fileDragging(isIt) {
         console.log('x=' + x + ',  w=' + w + ', h=' + h + ',y=' + y);
 
         dropzoneNode.css({backgroundImage  :'url( ' + attachReceiptImageSrc + ')'});
-        //dropzoneNode.html ( "<IMG src = '" + attachReceiptImageSrc + "' style = 'height: " + h +"' />")
-//        dropzoneNode.html( attachReceiptLabel );
         dropzoneNode.css({ left :x, top :y, width:w, height:h });
         dropzoneNode.show()
 
@@ -332,14 +335,17 @@ function fileDragging(isIt) {
 
 }
 
+function expenseNodeId(ecId) {
+    return 'expense' + ecId;
+}
+
 function drawExpense(expensesNode, ec) {
 
-    var ecId = 'expense' + ec.id;
+    var ecId = expenseNodeId(ec.id);
     $(expensesNode).append("<div id='" + ecId + "' class = 'expense'> <span class ='merchant'> " +
             ec.merchant + "</span>" + "<span class ='amount'>" +
             renderPrice(ec.amount) + "</span>" +
-            " <span class='category'>" + ec.category + "</span> " +
-            "</div>");
+            " <span class='category'>" + ec.category + "</span> <span class = 'progress'><img src ='" + loaderImageSrc + "' /></span></div>");
 
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
     $('#' + ecId).bind('mouseover', cb);
@@ -438,8 +444,6 @@ function refreshMenus(erIdToSelect) {
             console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
         }
     });
-
-
 }
 
 function createExpenseDropzoneCallback(reportId, expenseId) {
@@ -462,10 +466,10 @@ function setupDropzone() {
         paramname: 'file',               // POST parameter name used on serverside to reference file
         data: {
             reportId : function() {
-                return 205;
+                return currentExpenseReport;
             },
             expenseId:  function() {
-                return 178;
+                return currentExpense ;
             },
             name : 'file'
         },
@@ -508,14 +512,19 @@ function setupDropzone() {
             // user drops file
         },
         uploadStarted: function(i, file, len) {
-            console.log('uploading file ' + i + ' of ' + len + ' ' + file)
+            console.log('started uploading file ' + i + ' of ' + len + ' ' + file) ;
+
+            $('#' + currentFocusedExpenseElement.id + ' .progress').show();
+
             // a file began uploading
             // i = index => 0, 1, 2, 3, 4 etc
             // file is the actual file of the index
             // len = total files user dropped
         },
         uploadFinished: function(i, file, response, time) {
-            // response is the data you got back from server in JSON format.
+            //var r =  ( response)
+
+            $('#' + currentFocusedExpenseElement.id + ' .progress').hide();
         },
         progressUpdated: function(i, file, progress) {
             // this function is used for large files and updates intermittently
@@ -533,7 +542,8 @@ function setupDropzone() {
             // return false to cancel upload
         },
         afterAll: function() {
-            console.log('finished uploading (afterAll())');// runs after all files have been uploaded or otherwise dealt with
+            console.log('finished uploading (afterAll())');
+            $('#' + currentFocusedExpenseElement.id + ' .progress').hide();
         }
     });
 
@@ -543,6 +553,7 @@ function setupDropzone() {
 $(function() {
 
     attachReceiptImageSrc = $('#arImg').attr('src');
+    loaderImageSrc = $('#loaderImg').attr('src');
 
     console.log('the image url is ' + attachReceiptImageSrc);
 

@@ -82,9 +82,9 @@ public class ExpenseReport {
         return expense;
     }
 
-    public void attachReceipt(Integer expenseId, String receipt) {
+    public void attachReceipt(Integer expenseId, String receipt, String key) {
         assertOpen();
-        getExpense(expenseId).attachReceipt(receipt);
+        getExpense(expenseId).attachReceipt(receipt  , key );
     }
 
     public void markInReview() {

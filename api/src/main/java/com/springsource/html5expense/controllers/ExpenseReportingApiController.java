@@ -49,15 +49,9 @@ public class ExpenseReportingApiController {
 
     private Log log = LogFactory.getLog(getClass());
 
-    private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
-
     @Inject
     private ExpenseReportingService service;
 
-    @PostConstruct
-    public void begin() {
-        if (!tmpDir.exists()) tmpDir.mkdirs();
-    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses", produces = "application/json")
     @ResponseBody
@@ -99,43 +93,33 @@ public class ExpenseReportingApiController {
         return expenseCollection;
     }
 
+    private String findExtensionFromFileName(String fn) {
+        int lPosOfPeriod = fn.lastIndexOf(".");
+        if ( lPosOfPeriod != -1 && !fn.endsWith(".") ){
+            return fn.substring(lPosOfPeriod+1);
+        }
+        return null;
+    }
 
     @RequestMapping(value = "/receipts", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    public void attachReceipt(
-            @RequestParam("expenseId") Long expenseId,
-            @RequestParam("file") MultipartFile file) {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Received an upload with file " + file.getName()+ " for expense ID "+ expenseId);
-        }
-
+    @ResponseBody
+    public String attachReceipt(@RequestParam("reportId") Long reportId,
+                                @RequestParam("expenseId") Integer expenseId,
+                                @RequestParam("file") MultipartFile file) {
         try {
-            File outputFile = new File(this.tmpDir,  expenseId + ".jpg");
-            InputStream in = file.getInputStream();
-            OutputStream out = new FileOutputStream(outputFile);
-            IOUtils.copy(in, out);
-
-            if (log.isDebugEnabled()) {
-                log.debug("wrote " + file.getName() + " to " + outputFile.getAbsolutePath());
-            }
-
+            byte[] bytesForImage = file.getBytes();
+            String ext = findExtensionFromFileName(file.getOriginalFilename());
+            String receiptKey = service.attachReceipt(reportId, expenseId, ext, bytesForImage);
+            return receiptKey;
         } catch (Throwable th) {
             if (log.isErrorEnabled()) {
                 log.error("Something went wrong trying to write the file out.", th);
             }
         }
+        return null;
     }
 
-    @RequestMapping(value = "/{reportId}/expenses/{expenseId}/receipt",
-            method = RequestMethod.POST,
-            consumes = "multipart/form-data")
-    @ResponseBody
-    public String attachReceipt(@PathVariable Long reportId,
-                                @PathVariable Integer expenseId,
-                                @RequestParam(required = true) byte[] receiptBytes) {
-        return service.attachReceipt(reportId, expenseId, receiptBytes);
-    }
+
 
     /**
      * Finalizes and submits the {@link com.springsource.html5expense.ExpenseReport} for review

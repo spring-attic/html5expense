@@ -50,10 +50,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${debug}")
     private boolean debug;
 
-    @Bean(name="multipartResolver")
+    @Bean(name = "multipartResolver")
     public CommonsMultipartResolver commonsMultipartResolver() {
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
-        commonsMultipartResolver.setMaxUploadSize(20 * 10 * 1024);
+        commonsMultipartResolver.setMaxUploadSize(10 * 1024 * 1024);
         return commonsMultipartResolver;
     }
 

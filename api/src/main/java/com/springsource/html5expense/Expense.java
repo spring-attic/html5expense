@@ -43,6 +43,8 @@ public class Expense {
 
     private String receipt;
 
+    private String receiptExtension ;
+
     private String flag;
 
 
@@ -71,8 +73,14 @@ public class Expense {
         return receipt;
     }
 
-    public void attachReceipt(String receipt) {
+    public String getReceiptExtension (){
+        return this.receiptExtension ;
+    }
+
+    public void attachReceipt(String receipt, String extension ) {
         this.receipt = receipt;
+        this.receiptExtension = extension;
+
         if (isFlagged() && this.flag.equals("receiptRequired")) {
             this.flag = null;
         }
