@@ -68,23 +68,28 @@
         border: 1px solid gray;
         border-top: 0 solid gray;
         background-color: #d3d3d3;
-        height: 400px;
+
     }
 
     #expenseReportPanel {
-        border: 1px solid #90ee90;
-        background-color: #f5fffa;
+
         min-width: 500px;
         float: left;
-        height: 400px;
+
         margin-left: 10px;
         float: left;
+    }
+
+    #expenseReportPanelTable {
+        border: 1px solid #90ee90;
+        background-color: #f5fffa;
     }
 
     .ec {
         padding: 5px;
     }
 
+    #expensesBalance,
     #ecsBalance {
 
         padding: 5px;
@@ -191,6 +196,7 @@
         padding: 10px;
     }
 
+    .rowSpacer { height : 16px;    }
     /* for the icon displayed on each expense */
     .hasReceiptImg {
         display: inline-block;
@@ -231,7 +237,8 @@
     <div id="expenseReportPanel">
 
 
-        <div id="expensesMenu">
+        <div id = "expenseReportPanelTable">
+            <div id="expensesMenu">
             <form class="openExpensesForm">
                 <span class="createNewReportLabel">
                     <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
@@ -245,6 +252,7 @@
 
         <div id="reportPurpose"></div>
         <div id="expenses"></div>
+        </div>
         <div id="expensesBalance"></div>
 
     </div>
@@ -311,13 +319,19 @@ function loadExpenseReportExpenses(expenseReportId) {
     });
 
     $.get(urlForExpenses, function(results) {
+        var p = 0 ;
         for (var i = 0; i < results.length; i++) {
             var expense = results[i];
+            p+= expense.amount ;
             drawExpense(expensesNode, expense);
         }
+        $('#expensesBalance').html( renderPrice( p));
+
     }, 'json');
 
     refreshMenus(expenseReportId);
+
+
 
 }
 
@@ -326,7 +340,7 @@ function drawEligibleCharge(ecsNode, ec) {
     $(ecsNode).append("<div id='" + ecId + "' class = 'ec'> <span class ='merchant'> " +
             ec.merchant + "</span>" + "<span class ='amount'>" +
             renderPrice(ec.amount) + "</span>" +
-            " <span class='category'>" + ec.category + "</span> " +
+            " <span class='category'>" + ec.category + "</span> <span class ='rowSpacer'></span> " +
             "</div>");
 
     $('#' + ecId).draggable({
@@ -386,8 +400,8 @@ function drawExpense(expensesNode, ec) {
     $(expensesNode).append("<div id='" + ecId + "' class = 'expense'> <span class ='merchant'> " +
             ec.merchant + "</span>" + "<span class ='amount'>" +
             renderPrice(ec.amount) + "</span>" +
-            " <span class='category'>" + ec.category + "</span> <span class = 'progress'><img src ='" +
-            loaderImageSrc + "' /></span>" + menu + "</div>"
+            " <span class='category'>" + ec.category + "</span> " + menu + " <span class = 'progress'><img src ='" +
+            loaderImageSrc + "' /></span><span class ='rowSpacer'></span> </div>"
     );
 
     var hasReceiptImg = $('#' + ecId + ' .hasReceiptImg');
@@ -519,6 +533,7 @@ function createExpenseDropzoneCallback(reportId, expenseId) {
 function setupDropzone() {
 
     dropzoneNode.filedrop({
+        maxfilesize : 20,
         fallback_id: 'upload_button'  ,  // an identifier of a standard file input element
         url: '/reports/receipts',        // upload handler, handles each file separately
         paramname: 'file',               // POST parameter name used on serverside to reference file
