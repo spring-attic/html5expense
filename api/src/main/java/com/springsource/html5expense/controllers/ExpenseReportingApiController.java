@@ -109,6 +109,9 @@ public class ExpenseReportingApiController {
         try {
             byte[] bytesForImage = file.getBytes();
             String ext = findExtensionFromFileName(file.getOriginalFilename());
+            if(ext!=null ){
+                ext = ext.trim().toLowerCase();
+            }
             String receiptKey = service.attachReceipt(reportId, expenseId, ext, bytesForImage);
             return receiptKey;
         } catch (Throwable th) {
