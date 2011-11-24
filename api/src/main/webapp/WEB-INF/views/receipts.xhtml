@@ -311,6 +311,9 @@ function loadExpenseReportExpenses(expenseReportId) {
             drawExpense(expensesNode, expense);
         }
     }, 'json');
+
+    refreshMenus(expenseReportId);
+
 }
 
 function drawEligibleCharge(ecsNode, ec) {
@@ -378,9 +381,8 @@ function drawExpense(expensesNode, ec) {
     );
 
     var hasReceiptImg = $('#' + ecId + ' .hasReceiptImg');
-    var imgW = hasReceiptImg.width();
 
-    buildCssSprite($('#' + ecId + ' .hasReceiptImg'), 'hasReceiptOn', 'hasReceiptOff');
+    buildCssSprite(hasReceiptImg, 'hasReceiptOn', 'hasReceiptOff');
 
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
     $('#' + ecId).bind('mouseover', cb);
@@ -688,7 +690,6 @@ function renderEligibleCharges(cb) {
     $('#createNewReportButton').bind('click', function(e) {
         currentExpenseReport = null;
         createExpenseReportIfRequired(newReportLabel, function(p, erId) {
-            refreshMenus();
             loadExpenseReportExpenses(erId);
         });
 
@@ -702,7 +703,7 @@ function renderEligibleCharges(cb) {
 
 function debug() {
     var erId = 265;
-    refreshMenus(erId);
+    //refreshMenus(erId);
     loadExpenseReportExpenses(erId);
 }
 //-->
