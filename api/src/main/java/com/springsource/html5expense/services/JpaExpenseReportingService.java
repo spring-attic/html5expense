@@ -46,6 +46,12 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     private Log log = LogFactory.getLog(getClass());
 
+    @Override
+    public File retreiveReceipt(Integer expenseId) {
+        Expense e = getExpense(expenseId);
+        return fileForExpense(e);
+    }
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -96,6 +102,19 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     }
 
     @Transactional
+    @Override
+    public void restoreEligibleCharges(List<Integer> expenseIds) {
+        for (Integer l : expenseIds) {
+            Expense e = getExpense(l);
+            ExpenseReport expenseReport = e.getExpenseReport();
+            EligibleCharge eligibleCharge = createEligibleCharge(e.getDate(), e.getMerchant(), e.getCategory(), e.getAmount());
+            if (eligibleCharge != null) {
+                entityManager.remove(e);
+            }
+        }
+    }
+
+    @Transactional
     public Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds) {
         ExpenseReport report = getReport(reportId);
         List<Expense> expenses = new ArrayList<Expense>();
@@ -114,10 +133,26 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         if (!tmpDir.exists()) tmpDir.mkdirs();
     }
 
+
+    private String keyForExpenseReceipt(Long reportId, Integer expenseId) {
+
+        String reportAndExpenseKey = "receipt-" + reportId + "-" + (expenseId) + "";
+        return reportAndExpenseKey;
+    }
+
+    private String fileNameForReceipt(String key, String ext) {
+        return key + "." + ext;
+    }
+
+    private File fileForExpense(Expense ex) {
+        return new File(this.tmpDir, fileNameForReceipt(ex.getReceipt(), ex.getReceiptExtension()));
+    }
+
     @Transactional
     public String attachReceipt(Long reportId, Integer expenseId, String ext, byte[] receiptBytes) {
 
-        String reportAndExpenseKey = "receipt-" + reportId + "-" + (expenseId) + "";
+        String reportAndExpenseKey = keyForExpenseReceipt(reportId, expenseId);
+        Expense expense = getExpense(expenseId);
         ExpenseReport report = getReport(reportId);
         report.attachReceipt(expenseId, reportAndExpenseKey, ext);
         entityManager.merge(report);
@@ -125,7 +160,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         OutputStream out = null;
         InputStream in = null;
         try {
-            File outputFile = new File(this.tmpDir, reportAndExpenseKey + "." + ext);
+            File outputFile = fileForExpense(expense);
             in = new ByteArrayInputStream(receiptBytes);
             out = new FileOutputStream(outputFile);
             IOUtils.copy(in, out);
@@ -136,7 +171,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
             if (in != null) IOUtils.closeQuietly(in);
         }
 
-        return reportAndExpenseKey ;
+        return reportAndExpenseKey;
 
     }
 

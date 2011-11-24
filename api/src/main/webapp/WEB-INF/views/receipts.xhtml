@@ -2,196 +2,221 @@
 <html>
 <head>
 
-    <title th:text="#{application.title}">the title of the application</title>
+<title th:text="#{application.title}">the title of the application</title>
 
-    <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <script type="text/javascript" th:src="@{/assets/js/json2.js}"></script>
-    <script type="text/javascript" th:src="@{/assets/js/jquery-1.6.2.min.js}"></script>
-    <script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.16.custom.min.js}"></script>
-    <script type="text/javascript" th:src="@{/assets/js/jquery.filedrop.js}"></script>
-    <script type="text/javascript" th:src="@{/assets/js/jquery.editinplace.js}"></script>
-    <script type="text/javascript" th:src="@{/assets/js/upload.js}"></script>
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script type="text/javascript" th:src="@{/assets/js/json2.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/jquery-1.6.2.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.16.custom.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/jquery.filedrop.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/jquery.editinplace.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/upload.js}"></script>
 
-    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css"/>
+<link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css"/>
 
-    <style type="text/css">
-        .hideme {
-            display: none;
-        }
+<style type="text/css">
+    .hideme {
+        display: none;
+    }
 
-        #expensesMenu {
-            padding: 5px;
-            margin-bottom: 5px;
-            vertical-align: baseline;
-        }
+    #expensesMenu {
+        padding: 5px;
+        margin-bottom: 5px;
+        vertical-align: baseline;
+    }
 
-        #expensesMenu form {
-            display: inline;
-            margin: 0;
-            padding: 0;
-            vertical-align: baseline;
-        }
+    #expensesMenu form {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        vertical-align: baseline;
+    }
 
-        body {
-            font-family: sans-serif;
-            font-size: smaller;
-            padding: 0;
-            margin: 0;
-            margin: 0;
-            border: 0;
-        }
+    body {
+        font-family: sans-serif;
+        font-size: smaller;
+        padding: 0;
+        margin: 0;
+        margin: 0;
+        border: 0;
+    }
 
-        #dropzone {
-            position: absolute;
-            height: 5px;
-            width: 10px;
-            top: 200px;
-            left: 10px;
-            display: none;
-            border-top: 1px solid #f5fffa;
-            background-color: green;
-            text-align: center;
-            color: #90ee90;
-            border-bottom: 1px solid #f5fffa;
-            background-position: center;
-            background-repeat: no-repeat;
+    .has_receipt_img {
+        height: 10px;
+    }
 
-        }
+    #dropzone {
+        position: absolute;
+        height: 5px;
+        width: 10px;
+        top: 200px;
+        left: 10px;
+        display: none;
+        border-top: 1px solid #f5fffa;
+        background-color: green;
+        text-align: center;
+        color: #90ee90;
+        border-bottom: 1px solid #f5fffa;
+        background-position: center;
+        background-repeat: no-repeat;
 
-        #ecs {
-            border: 1px solid gray;
-            border-top: 0 solid gray;
-            background-color: #d3d3d3;
-        }
+    }
 
-        #expenseReportPanel {
-            border: 1px solid #90ee90;
-            background-color: #f5fffa;
-            min-width: 500px;
-            float: left;
-            height: 400px;
-            margin-left: 10px;
-            float: left;
-        }
+    #ecs {
+        border: 1px solid gray;
+        border-top: 0 solid gray;
+        background-color: #d3d3d3;
+        height: 400px;
+    }
 
-        .ec {
-            padding: 5px;
-        }
+    #expenseReportPanel {
+        border: 1px solid #90ee90;
+        background-color: #f5fffa;
+        min-width: 500px;
+        float: left;
+        height: 400px;
+        margin-left: 10px;
+        float: left;
+    }
 
-        #ecsBalance {
+    .ec {
+        padding: 5px;
+    }
 
-            padding: 5px;
-            padding-left: 155px;
-            width: 60px;
-            display: inline-block;
-        }
+    #ecsBalance {
 
-        .ec {
-            cursor: move;
-            border-top: 1px solid gray;
-            background-color: #d3d3d3;
-        }
+        padding: 5px;
+        padding-left: 155px;
+        width: 60px;
+        display: inline-block;
+    }
 
-        .ui-draggable-dragging {
-            border: 1px solid gray;
-        }
+    .ec {
+        cursor: move;
+        border-top: 1px solid gray;
+        background-color: #d3d3d3;
+    }
 
-        .ec .merchant {
-            display: inline-block;
-            width: 150px;
-            font-size: inherit;
-        }
+    .ui-draggable-dragging {
+        border: 1px solid gray;
+    }
 
-        .ec .category {
-            font-size: smaller;
-            text-transform: uppercase;
-            color: gray;
-            letter-spacing: 1px;
-        }
+    .ec .merchant {
+        display: inline-block;
+        width: 150px;
+        font-size: inherit;
+    }
 
-        .ec .amount {
-            display: inline-block;
-            width: 60px;
-        }
+    .ec .category {
+        font-size: smaller;
+        text-transform: uppercase;
+        color: gray;
+        letter-spacing: 1px;
+    }
 
-        .expense {
-            padding: 5px;
-            border-top: 1px solid #f5fffa;
-            background-color: #90ee90;
-        }
+    .ec .amount {
+        display: inline-block;
+        width: 60px;
+    }
 
-        .expense .merchant {
-            display: inline-block;
-            width: 150px;
-            font-size: inherit;
-        }
+    .expense {
+        padding: 5px;
+        border-top: 1px solid #f5fffa;
+        background-color: #90ee90;
+    }
 
-        .expense .category {
-            font-size: smaller;
-            text-transform: uppercase;
-            color: gray;
-            letter-spacing: 1px;
-        }
+    .expense .merchant {
+        display: inline-block;
+        width: 150px;
+        font-size: inherit;
+    }
 
-        .expense .progress {
-            width: 20px;
-            float: right;
-            display: none;
+    .expense .category {
+        font-size: smaller;
+        text-transform: uppercase;
+        color: gray;
+        letter-spacing: 1px;
+    }
 
-        }
+    .expense .progress {
+        width: 20px;
+        float: right;
+        display: none;
 
-        .expense .amount {
-            display: inline-block;
-            width: 60px;
-        }
+    }
 
-        .dollar {
-            color: gray
-        }
+    .expense .amount {
+        display: inline-block;
+        width: 60px;
+    }
 
-        #ecsPanel {
-            float: left;
+    .dollar {
+        color: gray
+    }
 
-            display: inline-block;
-            width: 350px;
-        }
+    #ecsPanel {
+        float: left;
+        height: 400px;
+        display: inline-block;
+        width: 350px;
+    }
 
-        #reportPurpose {
-            height: 1em;
-            padding: 5px;
-            font-size: larger;
-            color: green;
-        }
+    #reportPurpose {
+        height: 1em;
+        padding: 5px;
+        font-size: larger;
+        color: green;
+    }
 
-        a:link {
-            color: green;
-        }
+    a:link {
+        color: green;
+    }
 
-        #createNewReportButton {
-        }
+    #createNewReportButton {
+    }
 
-        #openExpensesForm {
-            float: left;
-            display: inline;
-        }
+    #openExpensesForm {
+        float: left;
+        display: inline;
+    }
 
-        #ws {
-            padding: 10px;
-        }
+    #ws {
+        padding: 10px;
+    }
 
-        .createNewReportLabel {
-            display: inline;
-            float: left;
-            padding-top: .3em;
-            margin-right: 5px;
+    /* for the icon displayed on each expense */
+    .hasReceiptImg {
+        display: inline-block;
+        width: 20px;
+        height: 16px;
+    }
 
-        }
-    </style>
+    .hasReceiptOff {
+        background: url(/assets/images/checkbox1.gif) no-repeat 0px 0px;
+        clip: rect(0px, 20px, 16px, 0px);
+    }
+
+    .hasReceiptOn {
+        background: url(/assets/images/checkbox1.gif) no-repeat -20px 0px;
+        clip: rect(0px, 20px, 16px, 0px);
+    }
+
+    .createNewReportLabel {
+        display: inline;
+        float: left;
+        padding-top: .3em;
+        margin-right: 5px;
+
+    }
+
+</style>
 
 </head>
 <body>
+
+
 <div id="ws">
     <div id="ecsPanel">
         <div id="ecs"></div>
@@ -268,7 +293,7 @@ var expensesPanel = null;
 var expensesNode = null;
 var attachReceiptImageSrc = null;
 var currentExpenseReport = null;
-
+var currentExpenseToRevert = null;
 
 function loadExpenseReportExpenses(expenseReportId) {
     currentExpenseReport = expenseReportId;
@@ -339,18 +364,40 @@ function expenseNodeId(ecId) {
     return 'expense' + ecId;
 }
 
+
 function drawExpense(expensesNode, ec) {
 
     var ecId = expenseNodeId(ec.id);
+    var menu = '<SPAN class ="menu"> <span class  ="remove"></span> <span class="hasReceiptImg" ></span></SPAN> ';
+
     $(expensesNode).append("<div id='" + ecId + "' class = 'expense'> <span class ='merchant'> " +
             ec.merchant + "</span>" + "<span class ='amount'>" +
             renderPrice(ec.amount) + "</span>" +
-            " <span class='category'>" + ec.category + "</span> <span class = 'progress'><img src ='" + loaderImageSrc + "' /></span></div>");
+            " <span class='category'>" + ec.category + "</span> <span class = 'progress'><img src ='" +
+            loaderImageSrc + "' /></span>" + menu + "</div>"
+    );
+
+    var hasReceiptImg = $('#' + ecId + ' .hasReceiptImg');
+    var imgW = hasReceiptImg.width();
+
+    buildCssSprite($('#' + ecId + ' .hasReceiptImg'), 'hasReceiptOn', 'hasReceiptOff');
 
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
     $('#' + ecId).bind('mouseover', cb);
     $('#' + ecId).bind('dragenter', cb);
+}
 
+function buildCssSprite(node, on, off) {
+    var hri = node;
+    hri.addClass(off)
+        .mouseover(function() {
+            hri.addClass(on);
+            hri.removeClass(off);
+        })
+        .mouseout(function() {
+            hri.addClass(off);
+            hri.removeClass(on);
+        });
 }
 
 function renderPrice(p) {
@@ -378,6 +425,7 @@ function createExpenseReportIfRequired(purpose, cb) {
     };
     if (currentExpenseReport == null) {
         $.post(createErUrl, { purpose :  purpose }, function(result) {
+            console.log('creating report ' + purpose + ':' + result);
             currentExpenseReport = parseInt(result);
             wrappedCallback();
         });
@@ -447,15 +495,13 @@ function refreshMenus(erIdToSelect) {
 }
 
 function createExpenseDropzoneCallback(reportId, expenseId) {
-
-    var callback = function() {
+    return function() {
         currentFocusedExpenseElement = this;
         currentExpense = expenseId;
         if (isDragging) {
             console.log("dragging onto expense ID #" + expenseId);
         }
     };
-    return callback;
 }
 
 function setupDropzone() {
@@ -469,12 +515,12 @@ function setupDropzone() {
                 return currentExpenseReport;
             },
             expenseId:  function() {
-                return currentExpense ;
+                return currentExpense;
             },
             name : 'file'
         },
         error: function(err, file) {
-            console.log (JSON.stringify( err));
+            console.log(JSON.stringify(err));
             switch (err) {
                 case 'BrowserNotSupported':
                     alert('browser does not support html5 drag and drop')
@@ -512,7 +558,7 @@ function setupDropzone() {
             // user drops file
         },
         uploadStarted: function(i, file, len) {
-            console.log('started uploading file ' + i + ' of ' + len + ' ' + file) ;
+            console.log('started uploading file ' + i + ' of ' + len + ' ' + file);
 
             $('#' + currentFocusedExpenseElement.id + ' .progress').show();
 
@@ -625,7 +671,7 @@ $(function() {
 
 function renderEligibleCharges(cb) {
     loadEligibleCharges(function(data) {
-        ecsNode.html("")
+        ecsNode.html("");
         var total = 0.0;
         for (var i = 0; i < data.length; i++) {
             drawEligibleCharge(ecsNode, data[i]);
@@ -647,8 +693,18 @@ function renderEligibleCharges(cb) {
         });
 
     });
+
+
+    debug()
+
+
 }
 
+function debug() {
+    var erId = 265;
+    refreshMenus(erId);
+    loadExpenseReportExpenses(erId);
+}
 //-->
 </script>
 </body>

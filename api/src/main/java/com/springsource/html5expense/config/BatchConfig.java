@@ -28,6 +28,7 @@ import org.springframework.integration.MessageChannel;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -41,8 +42,12 @@ import java.util.List;
 @ImportResource("/ec-loader.xml")
 public class BatchConfig {
 
-    @Autowired
+    @Inject
     private ComponentConfig componentConfig;
+
+    @Autowired
+    @Qualifier("newEligibleCharges")
+    private MessageChannel channel;
 
     private File batchFileDirectory;
 
@@ -94,16 +99,12 @@ public class BatchConfig {
     }
 
     @Bean
-    public JobRepositoryFactoryBean jobRepository() throws Exception {
+    public JobRepositoryFactoryBean jobRepository(  ) throws Exception {
         JobRepositoryFactoryBean bean = new JobRepositoryFactoryBean();
         bean.setTransactionManager(new DataSourceTransactionManager(componentConfig.dataSource()));
         bean.setDataSource(componentConfig.dataSource());
         return bean;
     }
-
-    @Autowired
-    @Qualifier("newEligibleCharges")
-    private MessageChannel channel;
 
     public static class MessageSendingItemWriter implements ItemWriter<DefaultFieldSet> {
 

@@ -20,8 +20,6 @@ import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.ExpenseReport;
 import com.springsource.html5expense.ExpenseReportingService;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
@@ -29,12 +27,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -83,6 +78,41 @@ public class ExpenseReportingApiController {
         return service.getEligibleCharges();
     }
 
+    private String buildMimeTypeForExpense(Expense e) {
+        String ext = e.getReceiptExtension();
+        String mime = null;
+        if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
+            mime = "image/jpeg";
+        } else if (ext.equalsIgnoreCase("gif"))
+            mime = "image/gif";
+        else
+            mime = "application/binary";
+        return mime;
+    }
+
+
+    @RequestMapping(value = "/receipts/{expenseId}")
+    public void renderMedia(HttpServletResponse httpServletResponse,
+                            OutputStream os,
+                            @PathVariable("expenseId") Integer expenseId) {
+
+        Expense expense = service.getExpense(expenseId);
+        httpServletResponse.setContentType(buildMimeTypeForExpense(expense));
+
+        File f = service.retreiveReceipt(expenseId);
+        InputStream is = null;
+        try {
+            is = new FileInputStream(f);
+            httpServletResponse.setContentLength((int) f.length());
+            IOUtils.copyLarge(is, os);
+        } catch (Exception e1) {
+            log.error(e1);
+        } finally {
+            if (is != null) IOUtils.closeQuietly(is);
+            if (os != null) IOUtils.closeQuietly(os);
+        }
+    }
+
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Collection<Expense> createExpenses(
@@ -95,8 +125,8 @@ public class ExpenseReportingApiController {
 
     private String findExtensionFromFileName(String fn) {
         int lPosOfPeriod = fn.lastIndexOf(".");
-        if ( lPosOfPeriod != -1 && !fn.endsWith(".") ){
-            return fn.substring(lPosOfPeriod+1);
+        if (lPosOfPeriod != -1 && !fn.endsWith(".")) {
+            return fn.substring(lPosOfPeriod + 1);
         }
         return null;
     }
@@ -109,7 +139,7 @@ public class ExpenseReportingApiController {
         try {
             byte[] bytesForImage = file.getBytes();
             String ext = findExtensionFromFileName(file.getOriginalFilename());
-            if(ext!=null ){
+            if (ext != null) {
                 ext = ext.trim().toLowerCase();
             }
             String receiptKey = service.attachReceipt(reportId, expenseId, ext, bytesForImage);
@@ -121,7 +151,6 @@ public class ExpenseReportingApiController {
         }
         return null;
     }
-
 
 
     /**

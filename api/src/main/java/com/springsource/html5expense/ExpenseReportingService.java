@@ -15,6 +15,7 @@
  */
 package com.springsource.html5expense;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
@@ -27,6 +28,8 @@ import java.util.List;
  * @author Josh Long
  */
 public interface ExpenseReportingService {
+
+    File retreiveReceipt ( Integer  expenseId );
 
     void updateExpenseReportPurpose(Long reportId, String title);
 
@@ -44,6 +47,8 @@ public interface ExpenseReportingService {
      * @return the unique ID of the expense report
      */
     Long createReport(String purpose);
+
+    void restoreEligibleCharges( List <Integer> expenseIds );
 
     /**
      * Retrieves the charges that are eligible to be expensed.
