@@ -454,17 +454,7 @@ function createExpenseDropzoneCallback(reportId, expenseId) {
     return callback;
 }
 
-
-/**
- * the behavior is this:
- *
- * when a drop enters a node, its report + expense ids are cached (lets get that working, first)
- *
- */
 function setupDropzone() {
-
-    // todo we need to make sure that when a drag enters a single expense,
-    // that the dropzone sits on top of it and provides some visual cues
 
     dropzoneNode.filedrop({
         fallback_id: 'upload_button'  ,  // an identifier of a standard file input element
@@ -474,7 +464,9 @@ function setupDropzone() {
             reportId : function() {
                 return 205;
             },
-            expenseId:  178,
+            expenseId:  function() {
+                return 178;
+            },
             name : 'file'
         },
         error: function(err, file) {
@@ -500,13 +492,14 @@ function setupDropzone() {
             // user dragging files over #dropzone
         },
         dragLeave: function() {
-
             // user dragging files out of #dropzone
+            fileDragging(false);
         },
         docOver: function() {
             fileDragging(true);
         },
         docLeave: function() {
+            fileDragging(false);
             // user dragging files out of the browser document window
         },
         drop: function() {
