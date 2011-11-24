@@ -53,16 +53,11 @@
             border-top: 1px solid #f5fffa;
             background-color: green;
             text-align: center;
-            font-weight: bold;
-            font-family: Arial bold, arial, sans-serif;
             color: #90ee90;
-            text-transform: uppercase;
-            font-size: smaller;
-
-            vertical-align: bottom;
-            letter-spacing: .2em;
-
             border-bottom: 1px solid #f5fffa;
+            background-position: center;
+            background-repeat: no-repeat;
+
         }
 
         #ecs {
@@ -239,6 +234,7 @@
 <span id="createErUrl" class="hideme" th:text="@{/reports}"/>
 <span id="newReportString" class="hideme" th:text="#{label.createNewReport}"/>
 <span id="createExpenseReportExpenseUrl" class="hideme" th:text="@{/reports/reportId/expenses}"/>
+<img th:src="@{/assets/images/attach-receipt.png}" id="arImg" class="hideme"/>
 
 <script lang="javascript" type="text/javascript">
 <!--
@@ -265,6 +261,7 @@ var currentEligibleCharge = null;
 var expenseReport = null;
 var expensesPanel = null;
 var expensesNode = null;
+var attachReceiptImageSrc = null;
 var currentExpenseReport = null;
 
 
@@ -325,8 +322,10 @@ function fileDragging(isIt) {
 
         console.log('x=' + x + ',  w=' + w + ', h=' + h + ',y=' + y);
 
-        dropzoneNode.html( attachReceiptLabel );
-        dropzoneNode.css({ left :x, top :y, width:w, height:h , opacity :.6});
+        dropzoneNode.css({backgroundImage  :'url( ' + attachReceiptImageSrc + ')'});
+        //dropzoneNode.html ( "<IMG src = '" + attachReceiptImageSrc + "' style = 'height: " + h +"' />")
+//        dropzoneNode.html( attachReceiptLabel );
+        dropzoneNode.css({ left :x, top :y, width:w, height:h });
         dropzoneNode.show()
 
     }
@@ -549,6 +548,10 @@ function setupDropzone() {
 
 
 $(function() {
+
+    attachReceiptImageSrc = $('#arImg').attr('src');
+
+    console.log('the image url is ' + attachReceiptImageSrc);
 
     dropzoneNode = $('#dropzone');
     ecsBalance = $('#ecsBalance');

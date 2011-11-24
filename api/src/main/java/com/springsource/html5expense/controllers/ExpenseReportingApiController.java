@@ -102,13 +102,16 @@ public class ExpenseReportingApiController {
 
     @RequestMapping(value = "/receipts", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void attachReceipt(@RequestParam("file") MultipartFile file) {
+    public void attachReceipt(
+            @RequestParam("expenseId") Long expenseId,
+            @RequestParam("file") MultipartFile file) {
+
         if (log.isDebugEnabled()) {
-            log.debug("Received an upload with file " + file.getName());
+            log.debug("Received an upload with file " + file.getName()+ " for expense ID "+ expenseId);
         }
 
         try {
-            File outputFile = new File(this.tmpDir, System.currentTimeMillis() + ".jpg");
+            File outputFile = new File(this.tmpDir,  expenseId + ".jpg");
             InputStream in = file.getInputStream();
             OutputStream out = new FileOutputStream(outputFile);
             IOUtils.copy(in, out);
