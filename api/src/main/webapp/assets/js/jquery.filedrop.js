@@ -65,13 +65,9 @@
         $(document).bind('drop', docDrop).bind('dragenter', docEnter).bind('dragover', docOver).bind('dragleave', docLeave);
     };
 
-    function drop(oge) {
-        opts.drop(oge);
-
-        var e = oge || window.event;
-        var files =  e.dataTransfer.files || e.files || e.originalEvent.dataTransfer.files  ;
-
-       // if (e.originalEvent.dataTransfer.files.length) {
+    function drop(e) {
+        opts.drop(e);
+        files = e.dataTransfer.files;
         if (files === null || files === undefined) {
             opts.error(errors[0]);
             return false;
@@ -79,7 +75,7 @@
 
         files_count = files.length;
         upload();
-        oge.preventDefault();
+        e.preventDefault();
         return false;
     }
 

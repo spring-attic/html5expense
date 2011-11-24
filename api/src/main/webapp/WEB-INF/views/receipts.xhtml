@@ -474,7 +474,7 @@ function setupDropzone() {
             name : 'file'
         },
         error: function(err, file) {
-            alert(JSON.stringify( err));
+            console.log (JSON.stringify( err));
             switch (err) {
                 case 'BrowserNotSupported':
                     alert('browser does not support html5 drag and drop')
