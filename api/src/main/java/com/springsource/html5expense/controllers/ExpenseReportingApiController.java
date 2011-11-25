@@ -47,6 +47,12 @@ public class ExpenseReportingApiController {
     @Inject
     private ExpenseReportingService service;
 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/expenses/{expenseId}")
+    public void restoreExpenseToEligibleCharge(   @PathVariable("expenseId") Integer expenseId) {
+        Expense ex = service.getExpense(expenseId);
+        service.restoreEligibleCharges(Arrays.asList(ex.getId()));
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses", produces = "application/json")
     @ResponseBody

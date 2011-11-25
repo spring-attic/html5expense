@@ -15,6 +15,16 @@
         <param-value>com.springsource.html5expense.config.WebConfig</param-value>
     </context-param>
 
+    <filter>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <url-pattern>/</url-pattern>
+        <servlet-name>appServlet</servlet-name>
+    </filter-mapping>
+
     <!-- Creates the Spring Container shared by all Servlets and Filters -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

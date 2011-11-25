@@ -416,7 +416,30 @@ function expenseNodeId(ecId) {
 
 function createRestoreExpenseCallback (expenseId) {
     return function(){
-        alert( 'retoring the expense ' + expenseId)
+        //alert( 'restoring the expense ' + expenseId);
+
+        var expenseDeletionUrl = '/' + expenseId ;
+
+        $.ajax({
+            type : 'POST',
+            url : '/reports/expenses/' +  expenseId,
+            cache : false,
+            dataType : 'json',
+            data : {
+                '_method' :'DELETE',
+                expenseId:   expenseId
+            },
+            success : function(result) {
+
+                renderEligibleCharges( function(){
+                    loadExpenseReportExpenses(currentExpenseReport) ;
+                });
+            },
+            error : function(e) {
+                console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
+            }
+        });
+
     };
 }
 
@@ -699,7 +722,7 @@ $(function() {
                         refreshMenus(currentExpenseReport);
                     },
                     error : function(e) {
-                        alert('error addEligibleChargeToReport ' + JSON.stringify(e))
+                        alert('error couldnt update purpose ' + JSON.stringify(e))
                     }
                 });
 
@@ -763,7 +786,7 @@ function renderEligibleCharges(cb) {
     });
 
 
-    debug()
+  //  debug()
 
 
 }
