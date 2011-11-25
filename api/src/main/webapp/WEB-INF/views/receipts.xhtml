@@ -449,6 +449,7 @@ function deleteExpenseReport(expenseReportId) {
         },
         success : function(result) {
             renderEligibleCharges(function() {
+                currentExpense = null ;
                 expensesNode.html("");
                 refreshMenus();
             });
@@ -640,7 +641,7 @@ function createExpenseDropzoneCallback(reportId, expenseId) {
     return function() {
         currentFocusedExpenseElement = this;
         currentExpense = expenseId;
-        if (isDragging) {
+        if (isDragging && !movingChargeToExpenses != false && movingExpensesToCharges != false) {
             console.log("dragging onto expense ID #" + expenseId);
         }
     };
@@ -696,6 +697,7 @@ function setupDropzone() {
             // user dragging files out of the browser document window
         },
         drop: function() {
+            console.log('fileDrop!drop()')
             fileDragging(false);
             console.log("drop is finished");
             // user drops file
@@ -756,11 +758,8 @@ $(function() {
     purposeReport = $("#reportPurpose");
     purposeReport.html(newReportLabel);
 
-
     setupDropzone();
 
-    /// make the trash icon animate
-//    var trashIconImg = ;
     var trashIconNode = $('#trashIcon');
     trashIconNode.click(function() {
         deleteExpenseReport(currentExpenseReport);
@@ -790,20 +789,17 @@ $(function() {
 
             });
 
-            return(html);
+            return (html);
         }
     });
 
-    // setup the drop zone
     ecsNode.droppable({
         accept : '.expense',
         drop: function(event, ui) {
-
-            console.log('something attempted a drop on the eligible charges pallete')
+            console.log('something attempted a drop on the eligible charges pallete');
             if (!movingExpensesToCharges) {
                 return;
             }
-
             console.log("moving the expense back to the charges.");
             restoreExpenseToEligibleCharges(currentlyDraggedExpenseId);
         }
@@ -817,9 +813,7 @@ $(function() {
                 return;
             }
             console.log('moving charges back to expenses');
-
             fileDragging(false);
-
             var draggable = ui.draggable;
             var ec = currentEligibleCharge;
             addEligibleChargeToReport(ec, function(purpose, currentExpenseReportId) {
@@ -871,11 +865,6 @@ function renderEligibleCharges(cb) {
     });
 }
 
-function debug() {
-    var erId = 269;
-    refreshMenus(erId);
-    loadExpenseReportExpenses(erId);
-}
 //-->
 </script>
 </body>
