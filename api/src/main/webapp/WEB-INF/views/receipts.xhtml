@@ -140,7 +140,7 @@ body {
     color: gray;
     width: 150px;
     display: inline-block;
-    border: 1px solid black;
+
     letter-spacing: 1px;
 }
 
@@ -201,20 +201,22 @@ a:link {
 
 .removeExpense {
     display: inline-block;
-    border: 1px solid black;
+    width : 21px;
 }
 
 .trashIcon {
-    width: 26px;
+    width: 13px;
     height: 16px;
     display: inline-block;
     background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
 }
+
 .trashIconOff {
-background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
+    background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
 }
+
 .trashIconOn {
-    background: url(/assets/images/trash_sprite.gif) no-repeat 0px 13px;
+    background: url(/assets/images/trash_sprite.gif) no-repeat -13px 0px;
 }
 
 .addReceipt {
@@ -226,18 +228,15 @@ background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
 .hasReceiptIcon {
     width: 19px;
     height: 16px;
-    border: 1px solid black;
     display: inline-block;
 }
 
 .hasReceiptOff {
     background: url(/assets/images/checkmark_sprite.gif) no-repeat 0px 0px;
-    /*clip: rect(0px, 20px, 16px, 0px);*/
 }
 
 .hasReceiptOn {
     background: url(/assets/images/checkmark_sprite.gif) no-repeat -20px 0px;
-    /*clip: rect(0px, 20px, 16px, 0px);*/
 }
 
 .createNewReportLabel {
@@ -415,6 +414,11 @@ function expenseNodeId(ecId) {
     return 'expense' + ecId;
 }
 
+function createRestoreExpenseCallback (expenseId) {
+    return function(){
+        alert( 'retoring the expense ' + expenseId)
+    };
+}
 
 function drawExpense(expensesNode, ec) {
 
@@ -439,9 +443,9 @@ function drawExpense(expensesNode, ec) {
     var hasReceiptImg = $('#' + ecId + ' .hasReceiptIcon');
     buildCssSprite(hasReceiptImg, 'hasReceiptOn', 'hasReceiptOff');
 
-    var trashImg  = $('#'+ecId   + ' .trashIcon');
+    var trashImg = $('#' + ecId + ' .trashIcon');
     buildCssSprite(trashImg, 'trashIconOn', 'trashIconOff');
-
+    trashImg.click(createRestoreExpenseCallback( ec.id ));
 
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
     $('#' + ecId).bind('mouseover', cb);
