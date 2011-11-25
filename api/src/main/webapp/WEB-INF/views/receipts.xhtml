@@ -179,7 +179,7 @@ body {
 
 #ecsPanel {
     float: left;
-    height: 400px;
+
     display: inline-block;
     width: 350px;
 }
@@ -269,11 +269,6 @@ a:link {
 </head>
 <body>
 
-<!--
-// .removeExpense .trashIcon
-// .addReceipt .hasReceiptIcon
--->
-
 <div id="ws">
     <div id="ecsPanel">
         <div id="ecs"></div>
@@ -307,17 +302,7 @@ a:link {
 
     </div>
 
-    <div id="dropzone">
-
-        <!--
-        <form method="POST" action="/reports/receipts" enctype="multipart/form-data">
-            <input type="name" id ="name"/>
-            <input type="file" name="file" id = "file"/>
-            <input type="submit"/>
-        </form>
-        -->
-
-    </div>
+    <div id="dropzone"></div>
 </div>
 
 <!-- configuration information -->
@@ -394,13 +379,13 @@ function drawEligibleCharge(ecsNode, ec) {
     $('#' + ecId).draggable({
         revert : 'invalid', // ie, itll revert if its not dropped
         start : function () {
-            console.log('moving charges to expenses == true')
+            console.log('moving charges to expenses == true');
             movingChargeToExpenses = true;
             currentEligibleCharge = ec;
         },
         stop : function () {
             movingChargeToExpenses = false;
-            console.log('moving charges to expenses == false')
+            console.log('moving charges to expenses == false');
         },
         drag : function () {
         }
@@ -440,7 +425,7 @@ function deleteExpenseReport(expenseReportId) {
     var expenseDeletionUrl = '/reports/' + expenseReportId;
     $.ajax({
         type : 'POST',
-        url :  expenseDeletionUrl  ,
+        url :  expenseDeletionUrl,
         cache : false,
         dataType : 'json',
         data : {
@@ -449,7 +434,7 @@ function deleteExpenseReport(expenseReportId) {
         },
         success : function(result) {
             renderEligibleCharges(function() {
-                currentExpense = null ;
+                currentExpenseReport = null ;
                 expensesNode.html("");
                 refreshMenus();
             });
