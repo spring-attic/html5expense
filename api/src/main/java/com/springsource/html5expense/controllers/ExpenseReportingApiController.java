@@ -54,6 +54,13 @@ public class ExpenseReportingApiController {
         service.restoreEligibleCharges(Arrays.asList(ex.getId()));
     }
 
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{reportId}" )
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteReport( @PathVariable("reportId") Long reportId) {
+        this.service.deleteExpenseReport( reportId);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses", produces = "application/json")
     @ResponseBody
     public Collection<Expense> expenseForExpenseReport(@PathVariable(value = "reportId") Long reportId) {

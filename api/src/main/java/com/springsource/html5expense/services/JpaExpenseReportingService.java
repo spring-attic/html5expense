@@ -94,6 +94,23 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return entityManager.createQuery("from EligibleCharge", EligibleCharge.class).getResultList();
     }
 
+
+    @Transactional
+    public void deleteExpenseReport(Long expenseReportId) {
+        Collection<Expense> expenses;
+        expenses = getExpensesForExpenseReport(expenseReportId);
+        if (expenses.size() > 0) {
+            List<Integer> ids = new ArrayList<Integer>();
+            for (Expense e : expenses)
+                ids.add(e.getId());
+            restoreEligibleCharges(ids);
+        }
+        expenses = getExpensesForExpenseReport(expenseReportId);
+        log.debug("there are " + expenses.size() + " expenses  in the report #" + expenseReportId);
+        ExpenseReport expenseReport = getExpenseReport( expenseReportId);
+        entityManager.remove(expenseReport);
+    }
+
     @Override
     @Transactional
     public EligibleCharge createEligibleCharge(Date date, String merchant, String category, BigDecimal amt) {

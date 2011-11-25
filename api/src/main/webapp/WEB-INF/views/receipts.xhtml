@@ -436,6 +436,37 @@ function expenseNodeId(ecId) {
     return 'expense' + ecId;
 }
 
+function deleteExpenseReport ( expenseReportId ){
+
+    var expenseDeletionUrl = '/reports/' + expenseReportId;
+
+    $.ajax({
+        type : 'POST',
+        url :  expenseDeletionUrl  ,
+        cache : false,
+        dataType : 'json',
+        data : {
+            '_method' :'DELETE',
+            expenseReportId:   expenseReportId
+        },
+        success : function(result) {
+
+
+            renderEligibleCharges(function(){
+                createNewExpenseReport();
+                alert ('trying to delete the expense report ');
+
+
+
+            });
+
+        },
+        error : function(e) {
+            console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
+        }
+    });
+}
+
 function restoreExpenseToEligibleCharges(expenseId) {
 
     var expenseDeletionUrl = '/' + expenseId;
@@ -484,12 +515,6 @@ function drawExpense(expensesNode, ec) {
 
     var hasReceiptImg = $('#' + ecId + ' .hasReceiptIcon');
     buildCssSprite(hasReceiptImg, 'hasReceiptOn', 'hasReceiptOff');
-
-    /* var trashImg = $('#' + ecId + ' .trashIcon');
-     buildCssSprite(trashImg, 'trashIconOn', 'trashIconOff');
-     trashImg.click(function() {
-     restoreExpenseToEligibleCharges(ec.id);
-     });*/
 
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
     var ceExpenseNode = $('#' + ecId);
@@ -747,6 +772,11 @@ $(function() {
 
     /// make the trash icon animate
 //    var trashIconImg = ;
+    var trashIconNode = $('#trashIcon');
+    trashIconNode.click(function(){
+        deleteExpenseReport( currentExpenseReport);
+    });
+
     buildCssSprite($('#trashIcon'), 'trashIconOn', 'trashIconOff');
 
     purposeReport.editInPlace({
@@ -818,14 +848,26 @@ $(function() {
         }
     });
 
+    $('#createNewReportButton').bind('click', function(e) {
+             createNewExpenseReport();
+        });
 
     refreshMenus();
     renderEligibleCharges();
 
 });
 
+function createNewExpenseReport(){
+     currentExpenseReport = null;
+        createExpenseReportIfRequired(newReportLabel, function(p, erId) {
+            loadExpenseReportExpenses(erId);
+        });
+}
+
 function renderEligibleCharges(cb) {
+    console.log('rendering eligible charges');
     loadEligibleCharges(function(data) {
+
         ecsNode.html("");
         var total = 0.0;
         for (var i = 0; i < data.length; i++) {
@@ -837,21 +879,7 @@ function renderEligibleCharges(cb) {
         if (cb != null) {
             cb();
         }
-
     });
-
-    $('#createNewReportButton').bind('click', function(e) {
-        currentExpenseReport = null;
-        createExpenseReportIfRequired(newReportLabel, function(p, erId) {
-            loadExpenseReportExpenses(erId);
-        });
-
-    });
-
-
-    //  debug()
-
-
 }
 
 function debug() {
