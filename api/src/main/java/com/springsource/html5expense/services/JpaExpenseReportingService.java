@@ -109,6 +109,8 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         log.debug("there are " + expenses.size() + " expenses  in the report #" + expenseReportId);
         ExpenseReport expenseReport = getExpenseReport( expenseReportId);
         entityManager.remove(expenseReport);
+        entityManager.flush();
+
     }
 
     @Override

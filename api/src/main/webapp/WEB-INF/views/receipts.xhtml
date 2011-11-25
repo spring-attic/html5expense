@@ -453,10 +453,8 @@ function deleteExpenseReport ( expenseReportId ){
 
 
             renderEligibleCharges(function(){
-                createNewExpenseReport();
-                alert ('trying to delete the expense report ');
-
-
+               expensesNode.html("");
+                refreshMenus() ;
 
             });
 
