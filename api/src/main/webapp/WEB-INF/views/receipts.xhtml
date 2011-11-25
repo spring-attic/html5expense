@@ -69,8 +69,9 @@ body {
 }
 
 #reportMenu {
-   margin: 5px;
-    margin-right: 0; margin-left: 0;
+    margin: 5px;
+    margin-right: 0;
+    margin-left: 0;
 }
 
 #expenseReportPanel {
@@ -286,7 +287,8 @@ a:link {
             <div id="expensesMenu">
                 <form class="openExpensesForm">
                 <span class="createNewReportLabel">
-                    <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport" th:text="#{label.createNewReport}"/></a>
+                    <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
+                                                                                  th:text="#{label.createNewReport}"/></a>
                     <span th:text="#{label.or}"/>
                     <span th:text="#{label.selectExistingReport}"/>
                 </span>
@@ -422,8 +424,6 @@ function fileDragging(isIt) {
         var x = cfe.position().left;
         var y = cfe.position().top;
 
-        //console.log('x=' + x + ',  w=' + w + ', h=' + h + ',y=' + y);
-
         dropzoneNode.css({backgroundImage  :'url( ' + attachReceiptImageSrc + ')'});
         dropzoneNode.css({ left :x, top :y, width:w, height:h });
         dropzoneNode.show()
@@ -436,10 +436,8 @@ function expenseNodeId(ecId) {
     return 'expense' + ecId;
 }
 
-function deleteExpenseReport ( expenseReportId ){
-
+function deleteExpenseReport(expenseReportId) {
     var expenseDeletionUrl = '/reports/' + expenseReportId;
-
     $.ajax({
         type : 'POST',
         url :  expenseDeletionUrl  ,
@@ -450,14 +448,10 @@ function deleteExpenseReport ( expenseReportId ){
             expenseReportId:   expenseReportId
         },
         success : function(result) {
-
-
-            renderEligibleCharges(function(){
-               expensesNode.html("");
-                refreshMenus() ;
-
+            renderEligibleCharges(function() {
+                expensesNode.html("");
+                refreshMenus();
             });
-
         },
         error : function(e) {
             console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
@@ -466,9 +460,7 @@ function deleteExpenseReport ( expenseReportId ){
 }
 
 function restoreExpenseToEligibleCharges(expenseId) {
-
     var expenseDeletionUrl = '/' + expenseId;
-
     $.ajax({
         type : 'POST',
         url : '/reports/expenses/' + expenseId,
@@ -479,7 +471,6 @@ function restoreExpenseToEligibleCharges(expenseId) {
             expenseId:   expenseId
         },
         success : function(result) {
-
             renderEligibleCharges(function() {
                 loadExpenseReportExpenses(currentExpenseReport);
             });
@@ -771,8 +762,8 @@ $(function() {
     /// make the trash icon animate
 //    var trashIconImg = ;
     var trashIconNode = $('#trashIcon');
-    trashIconNode.click(function(){
-        deleteExpenseReport( currentExpenseReport);
+    trashIconNode.click(function() {
+        deleteExpenseReport(currentExpenseReport);
     });
 
     buildCssSprite($('#trashIcon'), 'trashIconOn', 'trashIconOff');
@@ -847,19 +838,19 @@ $(function() {
     });
 
     $('#createNewReportButton').bind('click', function(e) {
-             createNewExpenseReport();
-        });
+        createNewExpenseReport();
+    });
 
     refreshMenus();
     renderEligibleCharges();
 
 });
 
-function createNewExpenseReport(){
-     currentExpenseReport = null;
-        createExpenseReportIfRequired(newReportLabel, function(p, erId) {
-            loadExpenseReportExpenses(erId);
-        });
+function createNewExpenseReport() {
+    currentExpenseReport = null;
+    createExpenseReportIfRequired(newReportLabel, function(p, erId) {
+        loadExpenseReportExpenses(erId);
+    });
 }
 
 function renderEligibleCharges(cb) {
