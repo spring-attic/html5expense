@@ -68,6 +68,11 @@ body {
 
 }
 
+#reportMenu {
+   margin: 5px;
+    margin-right: 0; margin-left: 0;
+}
+
 #expenseReportPanel {
 
     min-width: 500px;
@@ -100,8 +105,13 @@ body {
     background-color: #d3d3d3;
 }
 
-.ui-draggable-dragging {
+.expense.ui-draggable-dragging {
+    border: 1px solid #f5fffa;
+}
+
+.ec.ui-draggable-dragging {
     border: 1px solid gray;
+
 }
 
 .ec .merchant {
@@ -123,6 +133,7 @@ body {
 }
 
 .expense {
+    cursor: move;
     padding: 5px;
     border-top: 1px solid #f5fffa;
     background-color: #90ee90;
@@ -173,10 +184,13 @@ body {
 }
 
 #reportPurpose {
+    display: inline-block;
+
     height: 1em;
     padding: 5px;
     font-size: larger;
     color: green;
+
 }
 
 a:link {
@@ -201,12 +215,14 @@ a:link {
 
 .removeExpense {
     display: inline-block;
-    width : 21px;
+    width: 21px;
 }
 
 .trashIcon {
-    width: 13px;
-    height: 16px;
+    float: right;
+    margin: 5px;
+    width: 16px;
+    height: 20px;
     display: inline-block;
     background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
 }
@@ -216,7 +232,7 @@ a:link {
 }
 
 .trashIconOn {
-    background: url(/assets/images/trash_sprite.gif) no-repeat -13px 0px;
+    background: url(/assets/images/trash_sprite.gif) no-repeat -16px 0px;
 }
 
 .addReceipt {
@@ -270,8 +286,7 @@ a:link {
             <div id="expensesMenu">
                 <form class="openExpensesForm">
                 <span class="createNewReportLabel">
-                    <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
-                                                                                  th:text="#{label.createNewReport}"/></a>
+                    <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport" th:text="#{label.createNewReport}"/></a>
                     <span th:text="#{label.or}"/>
                     <span th:text="#{label.selectExistingReport}"/>
                 </span>
@@ -279,7 +294,11 @@ a:link {
                 </form>
             </div>
 
-            <div id="reportPurpose"></div>
+            <div id="reportMenu">
+                <div id="reportPurpose"></div>
+                <div id="trashIcon" class="trashIcon"></div>
+
+            </div>
             <div id="expenses"></div>
         </div>
         <div id="expensesBalance"></div>
@@ -320,7 +339,8 @@ var reportPurposeUrl = '/reports/reportId/purpose';
 var openReportsUrl = "/reports/open-reports";
 var attachReceiptLabel = 'Attach receipt';
 var newReportLabel = 'A New Report (click to edit)';
-
+var currentlyDraggedExpenseId = null;
+var movingChargeToExpenses = false, movingExpensesToCharges = false;
 var loaderImageSrc = null;
 var dropzoneNode = null;
 var currentFocusedExpenseElement = null;
@@ -359,8 +379,6 @@ function loadExpenseReportExpenses(expenseReportId) {
     }, 'json');
 
     refreshMenus(expenseReportId);
-
-
 }
 
 function drawEligibleCharge(ecsNode, ec) {
@@ -374,9 +392,13 @@ function drawEligibleCharge(ecsNode, ec) {
     $('#' + ecId).draggable({
         revert : 'invalid', // ie, itll revert if its not dropped
         start : function () {
+            console.log('moving charges to expenses == true')
+            movingChargeToExpenses = true;
             currentEligibleCharge = ec;
         },
         stop : function () {
+            movingChargeToExpenses = false;
+            console.log('moving charges to expenses == false')
         },
         drag : function () {
         }
@@ -400,7 +422,7 @@ function fileDragging(isIt) {
         var x = cfe.position().left;
         var y = cfe.position().top;
 
-        console.log('x=' + x + ',  w=' + w + ', h=' + h + ',y=' + y);
+        //console.log('x=' + x + ',  w=' + w + ', h=' + h + ',y=' + y);
 
         dropzoneNode.css({backgroundImage  :'url( ' + attachReceiptImageSrc + ')'});
         dropzoneNode.css({ left :x, top :y, width:w, height:h });
@@ -414,41 +436,38 @@ function expenseNodeId(ecId) {
     return 'expense' + ecId;
 }
 
-function createRestoreExpenseCallback (expenseId) {
-    return function(){
-        //alert( 'restoring the expense ' + expenseId);
+function restoreExpenseToEligibleCharges(expenseId) {
 
-        var expenseDeletionUrl = '/' + expenseId ;
+    var expenseDeletionUrl = '/' + expenseId;
 
-        $.ajax({
-            type : 'POST',
-            url : '/reports/expenses/' +  expenseId,
-            cache : false,
-            dataType : 'json',
-            data : {
-                '_method' :'DELETE',
-                expenseId:   expenseId
-            },
-            success : function(result) {
+    $.ajax({
+        type : 'POST',
+        url : '/reports/expenses/' + expenseId,
+        cache : false,
+        dataType : 'json',
+        data : {
+            '_method' :'DELETE',
+            expenseId:   expenseId
+        },
+        success : function(result) {
 
-                renderEligibleCharges( function(){
-                    loadExpenseReportExpenses(currentExpenseReport) ;
-                });
-            },
-            error : function(e) {
-                console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
-            }
-        });
-
-    };
+            renderEligibleCharges(function() {
+                loadExpenseReportExpenses(currentExpenseReport);
+            });
+        },
+        error : function(e) {
+            console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
+        }
+    });
 }
+
 
 function drawExpense(expensesNode, ec) {
 
     var ecId = expenseNodeId(ec.id);
-    var menu = '<SPAN class ="menu"> <span class = "removeExpense"><span class  ="trashIcon"></span></span>';
+    var menu = '<SPAN class ="menu"> ';//<span class = "removeExpense"><span class  ="trashIcon"></span></span>
     // tood add the 'remove' button (a little white trash can icon)
-    console.log('receipt:' + ec.receipt);
+    //console.log('receipt:' + ec.receipt);
 
     if (ec.receipt != '' && ec.receipt != null)
         menu += '<span class ="addReceipt"><span class="hasReceiptIcon" ></span></span>';
@@ -466,15 +485,35 @@ function drawExpense(expensesNode, ec) {
     var hasReceiptImg = $('#' + ecId + ' .hasReceiptIcon');
     buildCssSprite(hasReceiptImg, 'hasReceiptOn', 'hasReceiptOff');
 
-    var trashImg = $('#' + ecId + ' .trashIcon');
-    buildCssSprite(trashImg, 'trashIconOn', 'trashIconOff');
-    trashImg.click(createRestoreExpenseCallback( ec.id ));
+    /* var trashImg = $('#' + ecId + ' .trashIcon');
+     buildCssSprite(trashImg, 'trashIconOn', 'trashIconOff');
+     trashImg.click(function() {
+     restoreExpenseToEligibleCharges(ec.id);
+     });*/
 
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
-    $('#' + ecId).bind('mouseover', cb);
-    $('#' + ecId).bind('dragenter', cb);
+    var ceExpenseNode = $('#' + ecId);
+    ceExpenseNode.bind('mouseover', cb);
+    ceExpenseNode.bind('dragenter', cb);
+
+    ceExpenseNode.draggable({
+        revert : 'invalid', // ie, itll revert if its not dropped
+        start : function () {
+            movingExpensesToCharges = true;
+            console.log('moving expenses to charges == true');
+            currentlyDraggedExpenseId = ec.id;
+        },
+        stop : function () {
+            movingExpensesToCharges = false;
+            currentlyDraggedExpenseId = null;
+            console.log('moving expenses to charges == false')
+        },
+        drag : function () {
+        }
+    });
 
 }
+
 
 function buildCssSprite(node, on, off) {
     var hri = node;
@@ -706,6 +745,10 @@ $(function() {
 
     setupDropzone();
 
+    /// make the trash icon animate
+//    var trashIconImg = ;
+    buildCssSprite($('#trashIcon'), 'trashIconOn', 'trashIconOff');
+
     purposeReport.editInPlace({
         callback: function(originalElement, html, original) {
             createExpenseReportIfRequired(html, function(p, cid) {
@@ -733,8 +776,28 @@ $(function() {
     });
 
     // setup the drop zone
-    expenseReport.droppable({
+    ecsNode.droppable({
+        accept : '.expense',
         drop: function(event, ui) {
+
+            console.log('something attempted a drop on the eligible charges pallete')
+            if (!movingExpensesToCharges) {
+                return;
+            }
+
+            console.log("moving the expense back to the charges.");
+            restoreExpenseToEligibleCharges(currentlyDraggedExpenseId);
+        }
+    });
+
+    expenseReport.droppable({
+        accept : '.ec',
+        drop: function(event, ui) {
+            console.log('something attempted a drop on the expenses pallete');
+            if (!movingChargeToExpenses) {
+                return;
+            }
+            console.log('moving charges back to expenses');
 
             fileDragging(false);
 
@@ -786,7 +849,7 @@ function renderEligibleCharges(cb) {
     });
 
 
-  //  debug()
+    //  debug()
 
 
 }

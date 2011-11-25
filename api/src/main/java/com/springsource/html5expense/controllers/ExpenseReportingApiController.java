@@ -49,7 +49,7 @@ public class ExpenseReportingApiController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/expenses/{expenseId}")
-    public void restoreExpenseToEligibleCharge(   @PathVariable("expenseId") Integer expenseId) {
+    public void restoreExpenseToEligibleCharge(@PathVariable("expenseId") Integer expenseId) {
         Expense ex = service.getExpense(expenseId);
         service.restoreEligibleCharges(Arrays.asList(ex.getId()));
     }
