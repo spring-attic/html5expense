@@ -363,6 +363,7 @@ var previewNode = null;
 var report = { purpose:'' , expenses : '' , id: 0 };
 
 function loadExpenseReportExpensesLocally( expenseReportId, purpose, results ){
+    console.log('expenseReportId: '+ expenseReportId  + '; purpose: '+ purpose + '; results: '+ results.length);
     // save the report for efficient re-use later
     report.id = expenseReportId;
     report.expenses = results;
@@ -828,7 +829,6 @@ function setupDropzone() {
         afterAll: function() {
             console.log('finished uploading (afterAll())');
             $('#' + currentFocusedExpenseElement.id + ' .progress').hide();
-
             loadExpenseReportExpenses(currentExpenseReport)
         }
     });
@@ -874,13 +874,17 @@ $(function() {
                     dataType : 'json',
                     data : {  title  :  html },
                     success : function(result) {
-                        report.purpose = result;
+
                         refreshMenus(currentExpenseReport);
                     },
                     error : function(e) {
                         alert('error couldnt update purpose ' + JSON.stringify(e))
                     }
                 });
+
+                console.log( 'the results: '+ html );
+                report.purpose = html;
+                console.log( 'the purpose: '+ report.purpose);
 
             });
 
@@ -932,7 +936,6 @@ $(function() {
 
     refreshMenus();
     renderEligibleCharges();
-
     resetExpenseReport();
 });
 
