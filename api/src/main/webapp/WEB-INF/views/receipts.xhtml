@@ -360,28 +360,40 @@ var currentExpenseToRevert = null;
 var expenseReceiptImagePreviewUrl = '/reports/receipts/receiptId?uid';
 var previewNode = null;
 
-function loadExpenseReportExpenses(expenseReportId) {
+var report = { purpose:'' , expenses : '' , id: 0 };
+
+function loadExpenseReportExpensesLocally( expenseReportId, purpose, results ){
+    // save the report for efficient re-use later
+    report.id = expenseReportId;
+    report.expenses = results;
+    report.purpose = purpose;
+
     currentExpenseReport = expenseReportId;
+    expensesNode.html("");
+    purposeReport.html( purpose);
+    var p = 0;
+    for (var i = 0; i < results.length; i++) {
+        var expense = results[i];
+        p += expense.amount;
+        drawExpense(expensesNode, expense);
+    }
+    $('#expensesBalance').html(renderPrice(p));
+    refreshMenus(expenseReportId);
+}
+
+function loadExpenseReportExpenses(expenseReportId) {
+    var purpose = null ;
+    var results = [];
     var urlForReport = '/reports/' + expenseReportId;
     var urlForExpenses = expenseReportExpensesUrl.replace('reportId', '' + expenseReportId);
-    expensesNode.html("");
-
     $.get(urlForReport, function(result) {
-        purposeReport.html(result.purpose);
+        purpose = (result.purpose);
+        $.get(urlForExpenses, function(rs) {
+            results = rs;
+            loadExpenseReportExpensesLocally(expenseReportId, purpose, results);
+        }, 'json');
+
     });
-
-    $.get(urlForExpenses, function(results) {
-        var p = 0;
-        for (var i = 0; i < results.length; i++) {
-            var expense = results[i];
-            p += expense.amount;
-            drawExpense(expensesNode, expense);
-        }
-        $('#expensesBalance').html(renderPrice(p));
-
-    }, 'json');
-
-    refreshMenus(expenseReportId);
 }
 
 function drawEligibleCharge(ecsNode, ec) {
@@ -497,7 +509,7 @@ function buildExpandingPreview(hasReceiptImage, previewDiv, expense) {
     prev = $(prev);
     prev.addClass('previewDiv');
 
-    var isVisible = false ;
+    var isVisible = false;
     $(hasReceiptImage).click(function() {
         if (expense.receipt == null) {
             return;
@@ -584,7 +596,7 @@ function drawExpense(expensesNode, ec) {
     ceExpenseNode.bind('dragenter', cb);
 
     var previewNode = $('#' + ecId + ' .receiptPreview');
-    var hideMePreviewNode= buildExpandingPreview(hasReceiptImg, previewNode, ec);
+    var hideMePreviewNode = buildExpandingPreview(hasReceiptImg, previewNode, ec);
 
     ceExpenseNode.draggable({
         revert : 'invalid', // ie, itll revert if its not dropped
@@ -598,6 +610,11 @@ function drawExpense(expensesNode, ec) {
             movingExpensesToCharges = false;
             currentlyDraggedExpenseId = null;
             console.log('moving expenses to charges == false');
+            // the links stop working when jquery does its drag magic
+            // so we need to redraw quickly, but we're just going to
+            // redraw the locally cached data
+            loadExpenseReportExpensesLocally(report.id, report.purpose, report.expenses);
+
         },
         drag : function () {
         }
@@ -857,6 +874,7 @@ $(function() {
                     dataType : 'json',
                     data : {  title  :  html },
                     success : function(result) {
+                        report.purpose = result;
                         refreshMenus(currentExpenseReport);
                     },
                     error : function(e) {
