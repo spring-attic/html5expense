@@ -18,6 +18,17 @@
 
 <style type="text/css">
 
+.previewDiv {
+    margin-top : 10px;
+
+}
+
+.preview  {
+   border: 1px solid black;
+
+
+}
+
 .hideme {
     display: none;
 }
@@ -76,7 +87,7 @@ body {
 
 #expenseReportPanel {
 
-    min-width: 500px;
+
     float: left;
 
     margin-left: 10px;
@@ -85,6 +96,7 @@ body {
 
 #expenseReportPanelTable {
     border: 1px solid #90ee90;
+    width : 600px;
     background-color: #f5fffa;
 }
 
@@ -211,7 +223,8 @@ a:link {
 }
 
 .rowSpacer {
-    height: 18px;  display: inline-block;
+    height: 20px;
+    display: inline-block;
     /*border:1px solid black ;   */
 }
 
@@ -244,18 +257,28 @@ a:link {
 }
 
 .hasReceiptIcon {
-    width: 19px;
-    height: 16px;
+    width: 25px;
+    height: 20px;
     display: inline-block;
+    background: url(/assets/images/attachments/receipts.gif) no-repeat 0 0;
 }
 
-.hasReceiptOff {
-    background: url(/assets/images/checkmark_sprite.gif) no-repeat 0px 0px;
+.hasReceiptFalse {
+    background: url(/assets/images/attachments/receipts-required.gif) no-repeat 0px 0px;
 }
 
-.hasReceiptOn {
-    background: url(/assets/images/checkmark_sprite.gif) no-repeat -20px 0px;
+.hasReceiptTrue {
+    background: url(/assets/images/attachments/receipts-provided.gif) no-repeat 0px 0px;
+
 }
+
+    /*.hasReceiptOff {*/
+    /*background: url(/assets/images/checkmark_sprite.gif) no-repeat 0px 0px;*/
+    /*}*/
+
+    /*.hasReceiptOn {*/
+    /*background: url(/assets/images/checkmark_sprite.gif) no-repeat -20px 0px;*/
+    /*}*/
 
 .createNewReportLabel {
     display: inline;
@@ -304,6 +327,8 @@ a:link {
     </div>
 
     <div id="dropzone"></div>
+
+    <div id="preview"></div>
 </div>
 
 <!-- configuration information -->
@@ -342,8 +367,11 @@ var expenseReport = null;
 var expensesPanel = null;
 var expensesNode = null;
 var attachReceiptImageSrc = null;
+var receiptText = 'Receipts'; // need to i18n this text
 var currentExpenseReport = null;
 var currentExpenseToRevert = null;
+var expenseReceiptImagePreviewUrl = '/reports/receipts/receiptId?uid';
+var previewNode = null;
 
 function loadExpenseReportExpenses(expenseReportId) {
     currentExpenseReport = expenseReportId;
@@ -423,14 +451,15 @@ function expenseNodeId(ecId) {
     return 'expense' + ecId;
 }
 
-function resetExpenseReport (cb ){
-    currentExpenseReport = null ;
+function resetExpenseReport(cb) {
+    currentExpenseReport = null;
     expensesNode.html("");
     refreshMenus();
     $('#expensesBalance').html(renderPrice(0));
-    purposeReport.html( newReportLabel);
-    if(cb) cb();
+    purposeReport.html(newReportLabel);
+    if (cb) cb();
 }
+
 
 function deleteExpenseReport(expenseReportId) {
     var expenseDeletionUrl = '/reports/' + expenseReportId;
@@ -476,17 +505,82 @@ function restoreExpenseToEligibleCharges(expenseId) {
     });
 }
 
+function buildExpandingPreview(hasReceiptImage, previewDiv, expense) {
+    var expensesNodeWidth = expensesNode.outerWidth();
+    var prev = document.createElement('DIV');
+    prev = $(prev);
+    prev.addClass('previewDiv');
+
+
+    $(hasReceiptImage).click(function() {
+        if (expense.receipt == null) {
+            return;
+        }
+
+        previewDiv.show();
+
+        var nUrl = expenseReceiptImagePreviewUrl
+                .replace('receiptId', '' + expense.id)
+                .replace('uid', new Date().getTime() + '');   // defeat the cache
+
+        prev.html('<IMG class="preview" src ="' + nUrl + '" width ="'+ previewDiv.width()+ '"  />');
+
+    });
+
+    previewDiv.append(prev);
+
+    previewDiv.hide();
+
+    return prev;
+}
+
+
+function scale(srcWidth, srcHeight, maxWidth, maxHeight) {
+
+    var resizeWidth = srcWidth;
+    var resizeHeight = srcHeight;
+
+    var aspect = resizeWidth / resizeHeight;
+
+    // simple cheat test
+    if (srcWidth == maxWidth)
+        return { height : srcHeight, width: srcWidth };
+
+    if (resizeWidth > maxWidth) {
+        resizeWidth = maxWidth;
+        resizeHeight = resizeWidth / aspect;
+    }
+
+    if (resizeHeight > maxHeight) {
+        aspect = resizeWidth / resizeHeight;
+        resizeHeight = maxHeight;
+        resizeWidth = resizeHeight + aspect;
+    }
+
+    return { width : resizeWidth , height : resizeHeight };
+}
+
+
+function loadImageSize(imgSrc, cb) {
+    var newImg = new Image();
+    newImg.src = imgSrc;
+    var height = newImg.height;
+    var width = newImg.width;
+    p = $(newImg).load(function() {
+        var x = {width: newImg.width, height: newImg.height};
+        console.log(JSON.stringify(x));
+        cb(x);
+        return x;
+    });
+
+}
+
 
 function drawExpense(expensesNode, ec) {
 
     var ecId = expenseNodeId(ec.id);
-    var menu = '<SPAN class ="menu"><span class ="rowSpacer"></span> ';//<span class = "removeExpense"><span class  ="trashIcon"></span></span>
-    // tood add the 'remove' button (a little white trash can icon)
-    //console.log('receipt:' + ec.receipt);
-
-    if (ec.receipt != '' && ec.receipt != null)
-        menu += '<span class ="addReceipt"><span class="hasReceiptIcon" ></span></span>';
-
+    var menu = '<SPAN class ="menu"><span class ="rowSpacer"></span> ';
+    menu += '<span class ="addReceipt"><span class="hasReceiptIcon" ></span></span>';
     menu += '</SPAN> ';
 
 
@@ -494,16 +588,30 @@ function drawExpense(expensesNode, ec) {
             ec.merchant + "</span>" + "<span class ='amount'>" +
             renderPrice(ec.amount) + "</span>" +
             " <span class='category'>" + ec.category + "</span> " + menu + " <span class = 'progress'><img src ='" +
-            loaderImageSrc + "' /></span> </div>"
+            loaderImageSrc + "' /></span><div class ='receiptPreview'></div></div>"
     );
 
     var hasReceiptImg = $('#' + ecId + ' .hasReceiptIcon');
-    buildCssSprite(hasReceiptImg, 'hasReceiptOn', 'hasReceiptOff');
+    hasReceiptImg.attr('title', receiptText);
+
+    var hasReceipt = ec.receipt != null && ec.receipt != null;
+
+    console.log(JSON.stringify(ec))
+
+    if (!hasReceipt && ec.flag == 'receiptRequired')
+        hasReceiptImg.addClass('hasReceiptFalse');
+
+    if (hasReceipt)
+        hasReceiptImg.addClass('hasReceiptTrue');
 
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
     var ceExpenseNode = $('#' + ecId);
     ceExpenseNode.bind('mouseover', cb);
     ceExpenseNode.bind('dragenter', cb);
+
+    var previewNode = $('#' + ecId + ' .receiptPreview');
+    buildExpandingPreview(hasReceiptImg, previewNode, ec);
+
 
     ceExpenseNode.draggable({
         revert : 'invalid', // ie, itll revert if its not dropped
@@ -520,6 +628,7 @@ function drawExpense(expensesNode, ec) {
         drag : function () {
         }
     });
+
 
 }
 
@@ -740,6 +849,7 @@ function setupDropzone() {
 
 $(function() {
 
+    previewNode = $('#preview');
     attachReceiptImageSrc = $('#arImg').attr('src');
     loaderImageSrc = $('#loaderImg').attr('src');
 
