@@ -362,8 +362,8 @@ var previewNode = null;
 
 var report = { purpose:'' , expenses : '' , id: 0 };
 
-function loadExpenseReportExpensesLocally( expenseReportId, purpose, results ){
-    console.log('expenseReportId: '+ expenseReportId  + '; purpose: '+ purpose + '; results: '+ results.length);
+function loadExpenseReportExpensesLocally(expenseReportId, purpose, results, cb) {
+    console.log('expenseReportId: ' + expenseReportId + '; purpose: ' + purpose + '; results: ' + results.length);
     // save the report for efficient re-use later
     report.id = expenseReportId;
     report.expenses = results;
@@ -371,19 +371,24 @@ function loadExpenseReportExpensesLocally( expenseReportId, purpose, results ){
 
     currentExpenseReport = expenseReportId;
     expensesNode.html("");
-    purposeReport.html( purpose);
+    purposeReport.html(purpose);
     var p = 0;
     for (var i = 0; i < results.length; i++) {
         var expense = results[i];
         p += expense.amount;
         drawExpense(expensesNode, expense);
     }
+
     $('#expensesBalance').html(renderPrice(p));
+
     refreshMenus(expenseReportId);
+
+    if (cb != null) cb();
+
 }
 
 function loadExpenseReportExpenses(expenseReportId) {
-    var purpose = null ;
+    var purpose = null;
     var results = [];
     var urlForReport = '/reports/' + expenseReportId;
     var urlForExpenses = expenseReportExpensesUrl.replace('reportId', '' + expenseReportId);
@@ -510,23 +515,58 @@ function buildExpandingPreview(hasReceiptImage, previewDiv, expense) {
     prev = $(prev);
     prev.addClass('previewDiv');
 
-    var isVisible = false;
-    $(hasReceiptImage).click(function() {
-        if (expense.receipt == null) {
-            return;
+    // first, lets see if the records already in the array
+    var tmpRec = null;
+    for (var i = 0; i < previewedNodes.length; i++) {
+        if (previewedNodes[i].expenseId == expense.id) {
+            tmpRec = previewedNodes[i];
+            break;
         }
-        previewDiv.toggle();
+    }
 
+    if (tmpRec == null) {
+        tmpRec = {
+            expenseId: expense.id,
+            node : previewDiv,
+            visible : false,
+            toggle:function() {
+                if (!this.visible) {
+                    this.show();
+                }
+                else {
+                    this.hide();
+                }
+            },
+            show:function() {
+                this.node.show();
+                this.visible = true;
+                console.log('show(): this.visible=' + this.visible)
+            },
+            hide:function() {
+                this.node.hide();
+                this.visible = false;
+                console.log('hide(): this.visible=' + this.visible)
+            }
+        };
+        previewedNodes.push(tmpRec);
+    }
+
+
+    if (expense.receipt != null) {
         var nUrl = expenseReceiptImagePreviewUrl
                 .replace('receiptId', '' + expense.id)
                 .replace('uid', new Date().getTime() + '');   // defeat the cache
         prev.html('<IMG class="preview" src ="' + nUrl + '" width ="' + previewDiv.width() + '"  />');
-    });
+        previewDiv.append(prev);
+        tmpRec.node = previewDiv;
+        if (tmpRec.visible != true)
+            tmpRec.hide(); /// safe default
 
-    previewDiv.append(prev);
-    previewDiv.hide();
-
-    return prev;
+        $(hasReceiptImage).click(function() {
+            tmpRec.toggle();
+        });
+    }
+    return tmpRec;
 }
 
 function scale(srcWidth, srcHeight, maxWidth, maxHeight) {
@@ -598,28 +638,33 @@ function drawExpense(expensesNode, ec) {
 
     var previewNode = $('#' + ecId + ' .receiptPreview');
     var hideMePreviewNode = buildExpandingPreview(hasReceiptImg, previewNode, ec);
-
     ceExpenseNode.draggable({
         revert : 'invalid', // ie, itll revert if its not dropped
         start : function () {
             movingExpensesToCharges = true;
-            console.log('moving expenses to charges == true');
             currentlyDraggedExpenseId = ec.id;
-            hideMePreviewNode.hide()
+            var v = hideMePreviewNode.visible;
+            hideMePreviewNode.hide();
+            hideMePreviewNode.visible = v;
+            console.log('start(): node.visible=' + hideMePreviewNode.visible)
+
         },
         stop : function () {
             movingExpensesToCharges = false;
             currentlyDraggedExpenseId = null;
             console.log('moving expenses to charges == false');
-            // the links stop working when jquery does its drag magic
-            // so we need to redraw quickly, but we're just going to
-            // redraw the locally cached data
-            loadExpenseReportExpensesLocally(report.id, report.purpose, report.expenses);
-
+            loadExpenseReportExpensesLocally(report.id, report.purpose, report.expenses, function() {
+                for( var i =  0 ; i < previewedNodes.length ; i++) {
+                    var pn = previewedNodes [i];
+                    console.log( 'expenseId: '+ pn.expenseId + ' is visible? '+ (pn.visible == true ? 'y':'n'));
+                }
+            });
         },
         drag : function () {
         }
     });
+
+
 }
 
 
@@ -835,6 +880,7 @@ function setupDropzone() {
 
 }
 
+var previewedNodes = [];
 
 $(function() {
 
@@ -882,9 +928,9 @@ $(function() {
                     }
                 });
 
-                console.log( 'the results: '+ html );
+                console.log('the results: ' + html);
                 report.purpose = html;
-                console.log( 'the purpose: '+ report.purpose);
+                console.log('the purpose: ' + report.purpose);
 
             });
 
