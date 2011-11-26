@@ -19,13 +19,12 @@
 <style type="text/css">
 
 .previewDiv {
-    margin-top : 10px;
+    margin-top: 10px;
 
 }
 
-.preview  {
-   border: 1px solid black;
-
+.preview {
+    border: 1px solid black;
 
 }
 
@@ -87,7 +86,6 @@ body {
 
 #expenseReportPanel {
 
-
     float: left;
 
     margin-left: 10px;
@@ -96,7 +94,7 @@ body {
 
 #expenseReportPanelTable {
     border: 1px solid #90ee90;
-    width : 600px;
+    width: 600px;
     background-color: #f5fffa;
 }
 
@@ -287,47 +285,36 @@ a:link {
     margin-right: 5px;
 
 }
-
 </style>
-
 </head>
 <body>
-
 <div id="ws">
     <div id="ecsPanel">
         <div id="ecs"></div>
         <div id="ecsBalance"></div>
     </div>
-
     <div id="expenseReportPanel">
-
-
         <div id="expenseReportPanelTable">
             <div id="expensesMenu">
                 <form class="openExpensesForm">
-                <span class="createNewReportLabel">
-                    <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
-                                                                                  th:text="#{label.createNewReport}"/></a>
-                    <span th:text="#{label.or}"/>
-                    <span th:text="#{label.selectExistingReport}"/>
-                </span>
+                    <span class="createNewReportLabel">
+                        <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
+                                                                                      th:text="#{label.createNewReport}"/></a>
+                        <span th:text="#{label.or}"/>
+                        <span th:text="#{label.selectExistingReport}"/>
+                    </span>
                     <select id="openExpenses"/>
                 </form>
             </div>
-
             <div id="reportMenu">
                 <div id="reportPurpose"></div>
                 <div id="trashIcon" class="trashIcon"></div>
-
             </div>
             <div id="expenses"></div>
         </div>
         <div id="expensesBalance"></div>
-
     </div>
-
     <div id="dropzone"></div>
-
     <div id="preview"></div>
 </div>
 
@@ -460,7 +447,6 @@ function resetExpenseReport(cb) {
     if (cb) cb();
 }
 
-
 function deleteExpenseReport(expenseReportId) {
     var expenseDeletionUrl = '/reports/' + expenseReportId;
     $.ajax({
@@ -511,29 +497,24 @@ function buildExpandingPreview(hasReceiptImage, previewDiv, expense) {
     prev = $(prev);
     prev.addClass('previewDiv');
 
-
+    var isVisible = false ;
     $(hasReceiptImage).click(function() {
         if (expense.receipt == null) {
             return;
         }
-
-        previewDiv.show();
+        previewDiv.toggle();
 
         var nUrl = expenseReceiptImagePreviewUrl
                 .replace('receiptId', '' + expense.id)
                 .replace('uid', new Date().getTime() + '');   // defeat the cache
-
-        prev.html('<IMG class="preview" src ="' + nUrl + '" width ="'+ previewDiv.width()+ '"  />');
-
+        prev.html('<IMG class="preview" src ="' + nUrl + '" width ="' + previewDiv.width() + '"  />');
     });
 
     previewDiv.append(prev);
-
     previewDiv.hide();
 
     return prev;
 }
-
 
 function scale(srcWidth, srcHeight, maxWidth, maxHeight) {
 
@@ -556,10 +537,8 @@ function scale(srcWidth, srcHeight, maxWidth, maxHeight) {
         resizeHeight = maxHeight;
         resizeWidth = resizeHeight + aspect;
     }
-
     return { width : resizeWidth , height : resizeHeight };
 }
-
 
 function loadImageSize(imgSrc, cb) {
     var newImg = new Image();
@@ -572,9 +551,7 @@ function loadImageSize(imgSrc, cb) {
         cb(x);
         return x;
     });
-
 }
-
 
 function drawExpense(expensesNode, ec) {
 
@@ -582,7 +559,6 @@ function drawExpense(expensesNode, ec) {
     var menu = '<SPAN class ="menu"><span class ="rowSpacer"></span> ';
     menu += '<span class ="addReceipt"><span class="hasReceiptIcon" ></span></span>';
     menu += '</SPAN> ';
-
 
     $(expensesNode).append("<div id='" + ecId + "' class = 'expense'> <span class ='merchant'> " +
             ec.merchant + "</span>" + "<span class ='amount'>" +
@@ -596,8 +572,6 @@ function drawExpense(expensesNode, ec) {
 
     var hasReceipt = ec.receipt != null && ec.receipt != null;
 
-    console.log(JSON.stringify(ec))
-
     if (!hasReceipt && ec.flag == 'receiptRequired')
         hasReceiptImg.addClass('hasReceiptFalse');
 
@@ -610,8 +584,7 @@ function drawExpense(expensesNode, ec) {
     ceExpenseNode.bind('dragenter', cb);
 
     var previewNode = $('#' + ecId + ' .receiptPreview');
-    buildExpandingPreview(hasReceiptImg, previewNode, ec);
-
+    var hideMePreviewNode= buildExpandingPreview(hasReceiptImg, previewNode, ec);
 
     ceExpenseNode.draggable({
         revert : 'invalid', // ie, itll revert if its not dropped
@@ -619,17 +592,16 @@ function drawExpense(expensesNode, ec) {
             movingExpensesToCharges = true;
             console.log('moving expenses to charges == true');
             currentlyDraggedExpenseId = ec.id;
+            hideMePreviewNode.hide()
         },
         stop : function () {
             movingExpensesToCharges = false;
             currentlyDraggedExpenseId = null;
-            console.log('moving expenses to charges == false')
+            console.log('moving expenses to charges == false');
         },
         drag : function () {
         }
     });
-
-
 }
 
 
@@ -647,7 +619,7 @@ function buildCssSprite(node, on, off) {
 }
 
 function renderPrice(p) {
-    p = p + ''; //make a string
+    p = p + '';
     if (p.indexOf(".") != -1) {
         var np1 = p.split(".")[0];
         var np2 = p.split(".")[1].substring(0, 2);
