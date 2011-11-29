@@ -18,7 +18,7 @@ package com.springsource.html5expense.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 
@@ -35,7 +35,7 @@ public class SecurityConfig {
 
 	// OAuth beans
 	@Bean
-	public OAuth2ProviderTokenServices tokenServices() {
+	public AuthorizationServerTokenServices tokenServices() {
 		// TODO: Pull the authentication endpoint URL from the environment
 		//       Or, if the oauth service becomes a "native" CF service, then this whole bean could be consumed as a CF service.
 		return new EndpointTokenServices("https://haboauth.cloudfoundry.com/me/authentication");
