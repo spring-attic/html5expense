@@ -597,7 +597,7 @@ function loadImageSize(imgSrc, cb) {
     var newImg = new Image();
     newImg.src = imgSrc;
     var height = newImg.height;
-    var width = newImg.width;
+    var width = newImg.width;                                     t
     p = $(newImg).load(function() {
         var x = {width: newImg.width, height: newImg.height};
         console.log(JSON.stringify(x));
