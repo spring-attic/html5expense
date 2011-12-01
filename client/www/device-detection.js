@@ -24,10 +24,10 @@ function DetectDevice() {
     console.log(uagent);
     if ((uagent.search(iphone) > -1) || (uagent.search(ipod) > -1)) {
         console.log('iOS Device');
-        document.write('\x3Cscript type="text/javascript" src="phonegap-iphone-1.1.0.js">\x3C/script>');
+        document.write('\x3Cscript type="text/javascript" src="phonegap-iphone-1.2.0.js">\x3C/script>');
     } else if (uagent.search(android) > -1) {
         console.log('Android Device');
-        document.write('\x3Cscript type="text/javascript" src="phonegap-android-1.1.0.js">\x3C/script>');
+        document.write('\x3Cscript type="text/javascript" src="phonegap-android-1.2.0.js">\x3C/script>');
     } else {
         console.log('Browser');
         function deviceready() {
