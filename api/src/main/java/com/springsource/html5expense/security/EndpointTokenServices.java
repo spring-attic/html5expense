@@ -28,14 +28,14 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * Implementation of OAuth2ProviderTokenServices that loads authentication via the OAuth service's authentication endpoint.
  * @author wallsc
  */
-public class EndpointTokenServices implements OAuth2ProviderTokenServices {
+public class EndpointTokenServices implements AuthorizationServerTokenServices {
 
 	private final String oauthAuthenticationUrl;
 	
