@@ -22,7 +22,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.OAuth2ProviderTokenServices;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.RandomValueTokenServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,10 +38,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 @Controller
 public class IdentityController {
 	
-	private final OAuth2ProviderTokenServices tokenServices;
+	private final AuthorizationServerTokenServices tokenServices;
 
 	@Inject
-	public IdentityController(OAuth2ProviderTokenServices tokenServices) {
+	public IdentityController(AuthorizationServerTokenServices tokenServices) {
 		this.tokenServices = tokenServices;
 	}
 
@@ -56,7 +57,9 @@ public class IdentityController {
 		// TODO: Naively pull the access token from the header for now...if this works, refine this
 		String authHeader = request.getHeader("Authorization");
 		String accessToken = authHeader.split("\\s")[1];
-		return tokenServices.loadAuthentication(accessToken);
+		// TODO - unlike  OAuth2ProviderTokenServices, AuthorizationServerTokenServices does not have a loadAuthentication method 
+		// - what should be used here instead?
+		return ((RandomValueTokenServices) tokenServices).loadAuthentication(accessToken);
 	}
 
 }
