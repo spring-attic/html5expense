@@ -4,12 +4,10 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-	<provider id="oauth2ProviderFilter" token-services-ref="tokenServices">
-		<authorization-server client-details-service-ref="clientDetails">
-			<authorization-code />
-			<password />
-		</authorization-server>
-		<resource-server resource-id="identityResource" />
-	</provider>
+	<authorization-server client-details-service-ref="clientDetails" token-services-ref="tokenServices">
+		<authorization-code />
+		<password />
+	</authorization-server>
+	<resource-server id="resourceServerFilter" resource-id="identityResource" token-services-ref="tokenServices" />
 
 </beans:beans>

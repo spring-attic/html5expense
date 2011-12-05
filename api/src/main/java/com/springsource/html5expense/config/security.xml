@@ -6,7 +6,7 @@
 
 	<http auto-config="false" access-decision-manager-ref="accessDecisionManager" entry-point-ref="entryPoint">	
 		<intercept-url pattern="/reports/**" access="SCOPE_READ" /> <!-- TODO: Break out into finer-grained scopes? -->
-		<custom-filter ref="oauth2ProviderFilter" after="EXCEPTION_TRANSLATION_FILTER" />
+		<custom-filter ref="resourceServerFilter" after="EXCEPTION_TRANSLATION_FILTER" />
 	</http>
 
 	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
