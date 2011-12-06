@@ -22,12 +22,14 @@ import com.springsource.html5expense.ExpenseReportingService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.h2.store.fs.FileObjectOutputStream;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Arrays;
@@ -63,7 +65,8 @@ public class ExpenseReportingApiController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses", produces = "application/json")
     @ResponseBody
-    public Collection<Expense> expenseForExpenseReport(@PathVariable(value = "reportId") Long reportId) {
+    public Collection<Expense> expenseForExpenseReport(  HttpServletRequest request,
+                                                         @PathVariable(  "reportId") Long reportId) {
         return this.service.getExpensesForExpenseReport(reportId);
     }
 
@@ -128,8 +131,7 @@ public class ExpenseReportingApiController {
 
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public Collection<Expense> createExpenses(
-            @PathVariable Long reportId, @RequestParam(required = true, value = "chargeId") Long chargeId) {
+    public Collection<Expense> createExpenses( @PathVariable Long reportId, @RequestParam(required = true, value = "chargeId") Long chargeId) {
 
         Collection<Expense> expenseCollection = service.createExpenses(reportId, Arrays.asList(chargeId));
 

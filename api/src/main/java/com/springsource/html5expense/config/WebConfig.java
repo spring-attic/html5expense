@@ -25,6 +25,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.View;
@@ -45,9 +46,14 @@ import java.util.Locale;
 @Import(ComponentConfig.class)
 @PropertySource("/config.properties")
 @EnableWebMvc
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig extends WebMvcConfigurerAdapter
+ {
+     @Override
+     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 
-    @Value("${debug}")
+     }
+
+     @Value("${debug}")
     private boolean debug;
 
     private int maxUploadSizeInMb = 20 * 1024 * 1024;
@@ -63,11 +69,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
-
-    /*  @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("receipts");
-    }*/
 
     @Override
     public void configureViewControllers(ViewControllerConfigurer configurer) {
@@ -116,4 +117,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
 
     }
+
+
 }

@@ -35,6 +35,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,7 @@ import java.util.Map;
 @ComponentScan(basePackageClasses = JpaExpenseReportingService.class)
 public class ComponentConfig {
 
+
     @Bean
     public DataSource dataSource() throws Exception {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -64,7 +66,8 @@ public class ComponentConfig {
 
     @Bean
     public PlatformTransactionManager transactionManager() throws Exception {
-        return new JpaTransactionManager(entityManagerFactory().getObject());
+        EntityManagerFactory emf  = entityManagerFactory().getObject() ;
+        return new JpaTransactionManager( emf );
     }
 
     @Bean
@@ -74,7 +77,6 @@ public class ComponentConfig {
         jpaVendorAdapter.setShowSql(true);
 
         Map<String, String> properties = new HashMap<String, String>();
-//        properties.put("hibernate.hbm2ddl.auto", "create");
         properties.put("hibernate.dialect", H2Dialect.class.getName());
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();

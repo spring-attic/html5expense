@@ -16,9 +16,9 @@ public class ExpenseReportingViewController {
     @Inject
     private ExpenseReportingService expenseReportingService ;
 
-    @RequestMapping(value = "/" ,method = RequestMethod.GET)
+    @RequestMapping(value = "/foo" ,method = RequestMethod.GET)
     public String showExpenses ( ModelMap map) throws Exception {
-     //   Collection<EligibleCharge> eligibleCharges = this.expenseReportingService.getEligibleCharges() ;
+
         return "receipts";
     }
 }
