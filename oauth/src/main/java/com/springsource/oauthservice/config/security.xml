@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd 
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-	<http auto-config="true" access-decision-manager-ref="accessDecisionManager">
-		<intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/develop/**" access="ROLE_USER" />
-		<intercept-url pattern="/me" access="SCOPE_READ" />
-		<intercept-url pattern="/me/**" access="SCOPE_READ" />
-		<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY,DENY_OAUTH" />
-		<anonymous />
-		<custom-filter ref="resourceServerFilter" after="EXCEPTION_TRANSLATION_FILTER" />
-	</http>
+    <http auto-config="true" access-decision-manager-ref="accessDecisionManager">
+        <intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <intercept-url pattern="/develop/**" access="ROLE_USER" />
+        <intercept-url pattern="/me" access="SCOPE_READ" />
+        <intercept-url pattern="/me/**" access="SCOPE_READ" />
+        <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY,DENY_OAUTH" />
+        <anonymous />
+        <custom-filter ref="resourceServerFilter" after="EXCEPTION_TRANSLATION_FILTER" />
+    </http>
 
-	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
-		<beans:property name="decisionVoters">
-			<beans:list>
-				<beans:bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter" />
-				<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
-				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
-			</beans:list>
-		</beans:property>
-	</beans:bean>
+    <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+        <beans:property name="decisionVoters">
+            <beans:list>
+                <beans:bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter" />
+                <beans:bean class="org.springframework.security.access.vote.RoleVoter" />
+                <beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+            </beans:list>
+        </beans:property>
+    </beans:bean>
 
-	<authentication-manager alias="authenticationManager">
-		<authentication-provider user-service-ref="userService" />
-	</authentication-manager>
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref="userService" />
+    </authentication-manager>
 
-	<!-- TODO: To be replaced with a common user service -->
-	<user-service id="userService">
-		<user name="craig" password="password" authorities="ROLE_USER" />
-	</user-service>
+    <!-- TODO: To be replaced with a common user service -->
+    <user-service id="userService">
+        <user name="demo" password="demo" authorities="ROLE_USER" />
+        <user name="craig" password="demo" authorities="ROLE_USER" />
+        <user name="roy" password="demo" authorities="ROLE_USER" />
+    </user-service>
 
-	<beans:import resource="oauth.xml" />
+    <beans:import resource="oauth.xml" />
 </beans:beans>
