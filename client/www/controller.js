@@ -39,8 +39,15 @@ var apiUrl = 'http://html5expense-api.cloudfoundry.com/';
 // Use the following URL to test against a local instance of the service while running on the iPhone simulator
 // var apiUrl = 'http://127.0.0.1:8080/api/';
 
+
+var oauthUrl = 'http://html5expense-oauth.cloudfoundry.com/';
+
 function getApiUrl(path) {
     return apiUrl + path;
+}
+
+function getOauthUrl(path) {
+    return oauthUrl + path;
 }
 
 
@@ -107,8 +114,7 @@ $('#sign-in').live('pagecreate', function(event) {
 function authorize() {
     $.mobile.showPageLoadingMsg();
 
-//    var url = getApiUrl('oauth/token');
-    var url = 'http://haboauth.cloudfoundry.com/oauth/token';
+    var url = getOauthUrl('oauth/token');
     var postData = {
          grant_type : 'password',
          username : $('#username').val(),
