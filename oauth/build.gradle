@@ -23,7 +23,7 @@ junitVersion = '4.7'
 logbackVersion = '0.9.29'
 s2OAuthVersion = '1.0.0.M5'
 slf4jVersion = '1.6.2'
-springVersion = '3.1.0.RC1'
+springVersion = '3.1.0.RC2'
 tilesVersion = '2.2.2'
 
 dependencies {
