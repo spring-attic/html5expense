@@ -38,7 +38,7 @@ public class SecurityConfig {
 	public ResourceServerTokenServices tokenServices() {
 		// TODO: Pull the authentication endpoint URL from the environment
 		//       Or, if the oauth service becomes a "native" CF service, then this whole bean could be consumed as a CF service.
-		return new EndpointTokenServices("https://haboauth.cloudfoundry.com/me/authentication");
+		return new EndpointTokenServices("https://html5expense-oauth.cloudfoundry.com/me/authentication");
 	}
 	
 }
