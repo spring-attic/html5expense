@@ -20,8 +20,6 @@
 var expenseReport;
 
 // camera related values
-var pictureSource;
-var destinationType;
 var imageQuality = 50;
 var imageWidth = 300;
 
@@ -30,16 +28,10 @@ var clientId = '09e749d8309f4044';
 var clientSecret = '189309492722aa5a';
 
 
-// Use the following URL to test against the CloudFoundry instance of the service
+// The following URL specifies the API application running on Cloud Foundry
 var apiUrl = 'http://html5expense-api.cloudfoundry.com/';
 
-// Use the following URL to test against a local instance of the service while running on the Android emulator
-// var apiUrl = 'http://10.0.2.2:8080/api/';
-
-// Use the following URL to test against a local instance of the service while running on the iPhone simulator
-// var apiUrl = 'http://127.0.0.1:8080/api/';
-
-
+// This URL specifies the OAuth application running on Cloud Foundry
 var oauthUrl = 'http://html5expense-oauth.cloudfoundry.com/';
 
 function getApiUrl(path) {
@@ -48,34 +40,6 @@ function getApiUrl(path) {
 
 function getOauthUrl(path) {
     return oauthUrl + path;
-}
-
-
-// ***************************************
-// Initialization
-// ***************************************
-
-// In order to use the camera hardware, we need to hook into the device
-document.addEventListener('deviceready', onDeviceReady, false);
-
-function onDeviceReady() {
-    pictureSource = navigator.camera.PictureSourceType;
-    destinationType = navigator.camera.DestinationType;
-
-    // TODO: also check the offline/online events for enabling
-
-    var networkState = navigator.network.connection.type;
-
-    var states = {};
-    states[Connection.UNKNOWN] = 'Unknown connection';
-    states[Connection.ETHERNET] = 'Ethernet connection';
-    states[Connection.WIFI] = 'WiFi connection';
-    states[Connection.CELL_2G] = 'Cell 2G connection';
-    states[Connection.CELL_3G] = 'Cell 3G connection';
-    states[Connection.CELL_4G] = 'Cell 4G connection';
-    states[Connection.NONE] = 'No network connection';
-
-    console.log('Connection type: ' + states[networkState]);
 }
 
 
@@ -94,6 +58,7 @@ $('#home').live('pageshow', function(event) {
         content += '<li><a href="#sign-in">Sign In</a></li>';
         content += '<li><a href="#about">About</a></li>';
     }
+    
     $('#home-menu-items').html(content).listview('refresh');
 });
 
@@ -115,7 +80,7 @@ function authorize() {
     $.mobile.showPageLoadingMsg();
 
     var url = getOauthUrl('oauth/token');
-    var postData = {
+    var data = {
          grant_type : 'password',
          username : $('#username').val(),
          password : $('#password').val(),
@@ -124,14 +89,14 @@ function authorize() {
          scope : 'read'
     };
     
-    console.log(postData);
+    console.log(data);
     
     $.ajax({
         type : 'POST',
         url : url,
         cache : false,
         dataType : 'json',
-        data : postData,
+        data : data,
         success : onAuthorizeSuccess,
         error : onAuthorizeError
     });
@@ -164,8 +129,10 @@ function onAuthorizeError(jqXHR, textStatus, errorThrown) {
 
 $('#sign-out').live('pagecreate', function(event) {
     $('#sign-out-confirm').click(function() {
+        $.mobile.showPageLoadingMsg();
         removeAccessToken();
-        $.mobile.changePage('#home');
+        $.mobile.hidePageLoadingMsg();
+        $.mobile.changePage('#sign-in-again');
     });
 });
 
@@ -191,18 +158,21 @@ function submitCreateNewReportForm() {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl('reports');
-    var formData = $('#create-new-purpose-form').serialize();
+    var data = {
+            purpose : $('#purpose').val(),
+            access_token : getAccessTokenValue()
+        };
 
     console.log('URL: ' + url);
-    console.log('Data: ' + formData);
 
     $.ajax({
         type : 'POST',
         url : url,
         cache : false,
-        data : formData,
+        data : data,
         success : onCreateReportSuccess,
         error : onCreateReportError
+        
     });
 }
 
@@ -237,16 +207,20 @@ $('#create-new-expenses').live('pagecreate', function(event) {
         });
 
         var url = getApiUrl('reports/' + expenseReport.id + '/expenses');
-        var postData = $.toJSON({
-            chargeIds : arrayIds
+        var data = $.toJSON({
+            chargeIds : arrayIds,
+            access_token : getAccessTokenValue()
         });
+        
+        console.log('URL: ' + url);
+        console.log('data: ' + data);
 
         $.ajax({
             type : 'POST',
             url : url,
             cache : false,
             dataType : 'json',
-            data : postData,
+            data : data,
             contentType : 'application/json; charset=utf-8',
             success : onAssociateExpensesSuccess,
             error : onAssociateExpensesError
@@ -260,12 +234,18 @@ $('#create-new-expenses').live('pagebeforeshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl('reports/eligible-charges');
+    var data = {
+        access_token : getAccessTokenValue()
+    };
+
+    console.log('URL: ' + url);
 
     $.ajax({
         type : 'GET',
         url : url,
         cache : false,
         dataType : 'json',
+        data : data,
         success : onFetchEligibleExpensesSuccess,
         error : onFetchEligibleExpensesError
     });
@@ -332,7 +312,7 @@ $('#create-new-add-receipt').live('pagecreate', function(event) {
         navigator.camera.getPicture(onPhotoCaptureSuccess, onPhotoCaptureError, {
             quality : imageQuality,
             targetWidth : imageWidth,
-            destinationType : destinationType.FILE_URI
+            destinationType : navigator.camera.DestinationType.FILE_URI
         });
         return false;
     });
@@ -364,52 +344,56 @@ function onPhotoCaptureSuccess(imageURI) {
 
     var image = document.getElementById('receiptImage');
     image.src = imageURI;
+    
+    var formData = new FormData();
+    formData.append("receiptBytes", imageURI.substr(imageURI.lastIndexOf('/') + 1));
+    
 
-    /*
-     * the FileTransfer function returns a FileUploadResult object upon success
-     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadResult
-     */
-    function onFileTransferSuccess(result) {
-        $.mobile.hidePageLoadingMsg();
-        console.log('Bytes Sent: ' + result.byteSent);
-        console.log('Response Code: ' + result.responseCode);
-        console.log('Response: ' + result.response);
-        alert('Image uploaded successfully!');
-
-        if (expenseReport.flaggedExpenses.length > 0) {
-            updateExpenseDetails();
-        } else {
-            $.mobile.changePage($('#create-new-confirm'));
-        }
-    }
-
-    /*
-     * the FileTransfer function returns a FileTransferError object upon failure
-     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransferError
-     */
-    function onFileTransferError(error) {
-        $.mobile.hidePageLoadingMsg();
-        console.log('Error Code: ' + error.code);
-        alert('Image failed to upload! Please try again.');
-    }
-
-    /*
-     * use a FileUploadOptions object to upload the image data
-     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadOptions
-     */
-    var opts = new FileUploadOptions();
-    opts.fileKey = 'receiptBytes';
-    opts.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-    opts.mimeType = 'image/jpeg';
-    opts.params = {};
-
-    /*
-     * the FileTransfer function performs the AJAX request
-     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransfer
-     */
-    var url = getApiUrl('reports/' + expenseReport.id + '/expenses/' + expense.id + '/receipt');
-    var fileTransfer = new FileTransfer();
-    fileTransfer.upload(imageURI, url, onFileTransferSuccess, onFileTransferError, opts);
+//    /*
+//     * the FileTransfer function returns a FileUploadResult object upon success
+//     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadResult
+//     */
+//    function onFileTransferSuccess(result) {
+//        $.mobile.hidePageLoadingMsg();
+//        console.log('Bytes Sent: ' + result.byteSent);
+//        console.log('Response Code: ' + result.responseCode);
+//        console.log('Response: ' + result.response);
+//        alert('Image uploaded successfully!');
+//
+//        if (expenseReport.flaggedExpenses.length > 0) {
+//            updateExpenseDetails();
+//        } else {
+//            $.mobile.changePage($('#create-new-confirm'));
+//        }
+//    }
+//
+//    /*
+//     * the FileTransfer function returns a FileTransferError object upon failure
+//     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransferError
+//     */
+//    function onFileTransferError(error) {
+//        $.mobile.hidePageLoadingMsg();
+//        console.log('Error Code: ' + error.code);
+//        alert('Image failed to upload! Please try again.');
+//    }
+//
+//    /*
+//     * use a FileUploadOptions object to upload the image data
+//     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadOptions
+//     */
+//    var opts = new FileUploadOptions();
+//    opts.fileKey = 'receiptBytes';
+//    opts.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+//    opts.mimeType = 'image/jpeg';
+//    opts.params = {};
+//
+//    /*
+//     * the FileTransfer function performs the AJAX request
+//     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransfer
+//     */
+//    var url = getApiUrl('reports/' + expenseReport.id + '/expenses/' + expense.id + '/receipt?access_token=' + getAccessToken().access_token);
+//    var fileTransfer = new FileTransfer();
+//    fileTransfer.upload(imageURI, url, onFileTransferSuccess, onFileTransferError, opts);
 }
 
 function onPhotoCaptureError(message) {
@@ -426,6 +410,9 @@ $('#create-new-confirm').live('pagecreate', function(event) {
         $.mobile.showPageLoadingMsg();
 
         var url = getApiUrl('reports/' + expenseReport.id);
+        var data = {
+            access_token : getAccessTokenValue()
+        };
 
         console.log('URL: ' + url);
 
@@ -433,11 +420,13 @@ $('#create-new-confirm').live('pagecreate', function(event) {
             type : 'GET',
             url : url,
             cache : false,
+            data : data,
             success : onSubmitExpenseReportSuccess,
             error : onSubmitExpenseReportError
         });
 
         return false;
+        
     });
 });
 
@@ -482,12 +471,18 @@ $('#expense-reports-open').live('pageshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl("reports");
+    var data = {
+        access_token : getAccessTokenValue()
+    };
+    
+    console.log('URL: ' + url);
 
     $.ajax({
         type : 'GET',
         url : url,
         cache : false,
         dataType : 'json',
+        data : data,
         success : onFetchOpenExpenseReportsSuccess,
         error : onFetchOpenExpenseReportsError
     });
@@ -596,7 +591,7 @@ function isAuthorized() {
     return false;
 }
 
-var ACCESS_TOKEN = 'AccessToken';
+var ACCESS_TOKEN = 'access_token';
 
 // saves the access token to local storage
 function setAccessToken(accessToken) {
@@ -611,7 +606,12 @@ function getAccessToken() {
     return t && JSON.parse(t);
 }
 
-// remove the access token (deauthorize)
+//remove the access token from local storage
 function removeAccessToken() {
     localStorage.removeItem(ACCESS_TOKEN);
+}
+
+// returns the access token value for use in protected requests to the API service
+function getAccessTokenValue() {
+	return getAccessToken().access_token;
 }

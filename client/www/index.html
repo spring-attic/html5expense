@@ -64,14 +64,14 @@
             <h1>Sign Out</h1>
         </div>
         <!-- /header -->
-        
+
         <div data-role="content">
-            <p>Are you sure you want to sign out?</p>
+            <p>Do you wish to sign out?
             <form id="sign-out-form">
                 <div class="ui-body">
                     <fieldset class="ui-grid-a">
                         <div class="ui-block-a">
-                            <a data-role="button" data-rel="back">Cancel</a>
+                            <a href="#home" data-role="button">Cancel</a>
                         </div>
                         <div class="ui-block-b">
                             <button id="sign-out-confirm" type="submit">Confirm</button>
@@ -81,7 +81,29 @@
             </form>
         </div>
         <!-- /content -->
-        
+
+        <div data-role="footer">
+            <h4>HTML5 Expense</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+    
+    <!-- Start of Sign In Again page -->
+    <div data-role="page" id="sign-in-again">
+
+        <div data-role="header">
+            <h1>Sign In Again</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <ul data-role="listview">
+                <li><a href="#sign-in">Sign In</a></li>
+            </ul>
+        </div>
+        <!-- /content -->
+
         <div data-role="footer">
             <h4>HTML5 Expense</h4>
         </div>
@@ -328,10 +350,10 @@
     <!-- scripts -->
     <script src=device-detection.js></script>
     <script src=jquery-1.6.4.min.js></script>
-    <script src=jquery.mobile-1.0.min.js></script>
     <script src=jquery.validate-1.8.1.js></script>
     <script src=jquery.json-2.3.js></script>
     <script src=jquery.currency.1.0.0.min.js></script>
+    <script src=jquery.mobile-1.0.min.js></script>
     <script src=controller.js></script>
     <!-- /scripts -->
 </body>
