@@ -1,0 +1,9 @@
+This application will have:
+ - support for receiving eligible charges from external submission types (e.g., a batch file, or through email)
+ - support for a web UI  (connecting through a secure API)
+ - support for a mobile UI (connecting through a secure API)
+ - support for business logic using standard transactional services.
+ - support for pulling information out of an itinerary on tripit and using that to help flesh out line items.
+ - add support for deploying finished generated texpense report to box
+ - add support for picking and adding images from box.net to expense report
+ - add support for picking and adding images from desktop using html5 and storing *to* box.net

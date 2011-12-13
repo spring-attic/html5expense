@@ -15,12 +15,9 @@
  */
 package com.springsource.html5expense.impl;
 
-import com.springsource.html5expense.EligibleCharge;
-import com.springsource.html5expense.Expense;
-import com.springsource.html5expense.ExpenseReportingService;
-import com.springsource.html5expense.State;
-import junit.framework.Assert;
-import org.joda.time.LocalDate;
+import com.springsource.html5expense.*;
+import com.springsource.html5expense.config.ComponentConfig;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,16 +35,16 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = TestConfig.class)
-public class JpaExpenseReportingServiceTest {
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = ComponentConfig.class)
+public class TestJpaExpenseReportingService {
+    private String itsMission = "To boldly go where no application's gone before!";
 
-    private EligibleCharge expensiveCharge;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Inject
     private ExpenseReportingService expenseReportingService;
@@ -55,36 +52,34 @@ public class JpaExpenseReportingServiceTest {
     @Inject
     private PlatformTransactionManager transactionManager;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    private String itsMission = "\"to go... where no man... has gone before!\"";
-
+    private EligibleCharge expensiveCharge;
     private List<EligibleCharge> charges;
+
 
     @Before
     public void installSomeCharges() throws Throwable {
         final List<EligibleCharge> chargesToAdd = Arrays.asList(
-                                   new EligibleCharge(new LocalDate(), "Starbucks", "food", new BigDecimal(4)),
-                                   new EligibleCharge(new LocalDate(), "dinner at Morton's Steak House", "food", new BigDecimal(59.99)));
+                new EligibleCharge(new Date(), "Starbucks", "food", new BigDecimal(4)),
+                new EligibleCharge(new Date(), "dinner at Morton's Steak House", "food", new BigDecimal(59.99)));
 
         // clean out the data
         TransactionTemplate transactionTemplate = new TransactionTemplate(this.transactionManager);
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+
+                entityManager.createQuery("DELETE FROM " + Expense.class.getName()).executeUpdate();
+                entityManager.createQuery("DELETE FROM " + ExpenseReport.class.getName()).executeUpdate();
+                entityManager.createQuery("DELETE FROM " + EligibleCharge.class.getName()).executeUpdate();
+                return null;
+            }
+        });
+
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                for (Class<?> t : new Class[]{ExpenseEntity.class, ExpenseReportEntity.class, EligibleCharge.class}) {
-                    entityManager.createQuery(String.format("DELETE FROM %s", t.getName())).executeUpdate();
-                }
-            }
-        });
-        // install charges
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
                 for (EligibleCharge ec : chargesToAdd) {
                     entityManager.persist(ec);
                 }
-                return null;
             }
         });
 
@@ -92,18 +87,19 @@ public class JpaExpenseReportingServiceTest {
         expensiveCharge = charges.get(1);
     }
 
-    @Test
-    public void testIdentifyingEligibleCharges() throws Throwable {
-        Collection<EligibleCharge> eligibleCharges = expenseReportingService.getEligibleCharges();
-        Assert.assertTrue(eligibleCharges.size() == this.charges.size());
-    }
 
     @Test
     public void testCreateReport() throws Throwable {
         Long expenseReportId = expenseReportingService.createReport(itsMission);
         Assert.assertTrue("the ID must be greater than 0", expenseReportId > 0);
         Assert.assertEquals(1, expenseReportingService.getOpenReports().size());
-        Assert.assertEquals(entityManager.find(ExpenseReportEntity.class, expenseReportId).getPurpose(), itsMission);
+        Assert.assertEquals(entityManager.find(ExpenseReport.class, expenseReportId).getPurpose(), itsMission);
+    }
+
+    @Test
+    public void testIdentifyingEligibleCharges() throws Throwable {
+        Collection<EligibleCharge> eligibleCharges = expenseReportingService.getEligibleCharges();
+        Assert.assertTrue(eligibleCharges.size() == this.charges.size());
     }
 
     @Test
@@ -117,26 +113,49 @@ public class JpaExpenseReportingServiceTest {
         Assert.assertNotNull(expenseCollection);
         Assert.assertTrue(expenseCollection.size() == 2);
     }
+/*
 
-    @Test
-    public void testAttachingReceipts() throws Throwable {
-        Long expenseReportId = expenseReportingService.createReport(itsMission);
-        Collection<Expense> expenses = expenseReportingService.createExpenses(expenseReportId, Arrays.asList(expensiveCharge.getId()));
-        Integer expenseId = expenses.iterator().next().getId();
-        String receiptClaim = expenseReportingService.attachReceipt(expenseReportId, expenseId, new byte[0]);
-        Assert.assertNotNull(receiptClaim);
-        ExpenseEntity entity = entityManager.find(ExpenseEntity.class, expenseId);
-        Assert.assertFalse(entity.isFlagged());
-        Assert.assertEquals(receiptClaim, entity.getReceipt());
+    @Test public void testAttachingReceipts() throws Throwable {
+    Long expenseReportId = expenseReportingService.createReport(itsMission);
+    Collection<Expense> expenses = expenseReportingService.createExpenses(expenseReportId, Arrays.asList(expensiveCharge.getId()));
+    Integer expenseId = expenses.iterator().next().getId();
+    String receiptClaim = expenseReportingService.attachReceipt(expenseReportId, expenseId, new byte[0]);
+    Assert.assertNotNull(receiptClaim);
+    Expense entity = entityManager.find(Expense.class, expenseId);
+    Assert.assertFalse(entity.isFlagged());
+    Assert.assertEquals(receiptClaim, entity.getReceipt());
     }
+*/
 
     @Test
     @Transactional
     public void testSubmittingReports() throws Throwable {
         Long expenseReportId = expenseReportingService.createReport(itsMission);
         expenseReportingService.submitReport(expenseReportId);
-        ExpenseReportEntity erEntity = entityManager.find(ExpenseReportEntity.class, expenseReportId);
-        Assert.assertEquals(erEntity.data().getState(), State.IN_REVIEW);
+        ExpenseReport er = entityManager.find(ExpenseReport.class, expenseReportId);
+        Assert.assertEquals(er.getState(), State.IN_REVIEW);
     }
 
 }
+/**
+
+ @RunWith(SpringJUnit4ClassRunner.class)
+ @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = ComponentConfig.class)
+ public class TestJpaExpenseReportingService {
+
+ private EligibleCharge expensiveCharge;
+
+ @Inject private ExpenseReportingService expenseReportingService;
+
+ @Inject private PlatformTransactionManager transactionManager;
+
+ @PersistenceContext private EntityManager entityManager;
+
+ @Inject private DataSource dataSource;
+
+ private String itsMission = "\"to go... where no man... has gone before!\"";
+
+ private List<EligibleCharge> charges;
+
+ }
+ */

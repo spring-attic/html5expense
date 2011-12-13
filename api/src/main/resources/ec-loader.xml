@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:integration="http://www.springframework.org/schema/integration"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+		 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd"
+        >
+
+    <!--<batch:job-repository id="jobRepository"-->
+      <!--data-source="dataSource"/>-->
+
+    <batch:job id="read-eligible-charges">
+        <batch:step id="read-file-chunks">
+            <batch:tasklet>
+                <batch:chunk commit-interval="5" reader="reader" writer="writer" />
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+    <integration:channel id = "newEligibleCharges"/>
+
+    <integration:service-activator input-channel="newEligibleCharges"
+                                   ref="eligibleChargeProcessor"  />
+
+</beans>

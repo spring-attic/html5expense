@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.springsource.html5expense.impl;
+package com.springsource.html5expense.services;
 
 public class Flag {
 
