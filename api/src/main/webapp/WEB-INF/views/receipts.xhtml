@@ -2,290 +2,21 @@
 <html>
 <head>
 
-<title th:text="#{application.title}">the title of the application</title>
+    <title th:text="#{application.title}">the title of the application</title>
 
-<!--[if lt IE 9]>
-<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
-<script type="text/javascript" th:src="@{/assets/js/json2.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/jquery-1.6.2.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.16.custom.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/jquery.filedrop.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/jquery.editinplace.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/upload.js}"></script>
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" th:src="@{/assets/js/json2.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery-1.6.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.16.custom.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery.filedrop.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery.editinplace.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/upload.js}"></script>
 
-<link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css"/>
 
-<style type="text/css">
 
-.previewDiv {
-    margin-top: 10px;
-
-}
-
-.preview {
-    border: 1px solid black;
-
-}
-
-.hideme {
-    display: none;
-}
-
-#expensesMenu {
-    padding: 5px;
-    margin-bottom: 5px;
-    vertical-align: baseline;
-}
-
-#expensesMenu form {
-    display: inline;
-    margin: 0;
-    padding: 0;
-    vertical-align: baseline;
-}
-
-body {
-    font-family: sans-serif;
-    font-size: smaller;
-    padding: 0;
-    margin: 0;
-    margin: 0;
-    border: 0;
-}
-
-#dropzone {
-    position: absolute;
-    height: 5px;
-    width: 10px;
-    top: 200px;
-    left: 10px;
-    display: none;
-    border-top: 1px solid #f5fffa;
-    background-color: green;
-    text-align: center;
-    color: #90ee90;
-    border-bottom: 1px solid #f5fffa;
-    background-position: center;
-    background-repeat: no-repeat;
-
-}
-
-#ecs {
-    border: 1px solid gray;
-    border-top: 0 solid gray;
-    background-color: #d3d3d3;
-
-}
-
-#reportMenu {
-    margin: 5px;
-    margin-right: 0;
-    margin-left: 0;
-}
-
-#expenseReportPanel {
-
-    float: left;
-
-    margin-left: 10px;
-    float: left;
-}
-
-#expenseReportPanelTable {
-    border: 1px solid #90ee90;
-    width: 600px;
-    background-color: #f5fffa;
-}
-
-.ec {
-    padding: 5px;
-}
-
-#expensesBalance, #ecsBalance {
-
-    padding: 5px;
-    padding-left: 155px;
-    width: 60px;
-    display: inline-block;
-}
-
-.ec {
-    cursor: move;
-    border-top: 1px solid gray;
-    background-color: #d3d3d3;
-}
-
-.expense.ui-draggable-dragging {
-    border: 1px solid #f5fffa;
-}
-
-.ec.ui-draggable-dragging {
-    border: 1px solid gray;
-
-}
-
-.ec .merchant {
-    display: inline-block;
-    width: 150px;
-    font-size: inherit;
-}
-
-.ec .category {
-    font-size: smaller;
-    text-transform: uppercase;
-    color: gray;
-    letter-spacing: 1px;
-}
-
-.ec .amount {
-    display: inline-block;
-    width: 60px;
-}
-
-.expense {
-    cursor: move;
-    padding: 5px;
-    border-top: 1px solid #f5fffa;
-    background-color: #90ee90;
-}
-
-.expense .merchant {
-    display: inline-block;
-    width: 150px;
-    font-size: inherit;
-}
-
-.expense .category {
-    font-size: smaller;
-    text-transform: uppercase;
-    color: gray;
-    width: 150px;
-    display: inline-block;
-
-    letter-spacing: 1px;
-}
-
-.expense .progress {
-    width: 20px;
-    float: right;
-    display: none;
-
-}
-
-.expense .menu {
-    display: inline-block;
-    /*  float: right; */
-}
-
-.expense .amount {
-    display: inline-block;
-    width: 60px;
-}
-
-.dollar {
-    color: gray
-}
-
-#ecsPanel {
-    float: left;
-
-    display: inline-block;
-    width: 350px;
-}
-
-#reportPurpose {
-    display: inline-block;
-
-    height: 1em;
-    padding: 5px;
-    font-size: larger;
-    color: green;
-
-}
-
-a:link {
-    color: green;
-}
-
-#createNewReportButton {
-}
-
-#openExpensesForm {
-    float: left;
-    display: inline;
-}
-
-#ws {
-    padding: 10px;
-}
-
-.rowSpacer {
-    height: 20px;
-    display: inline-block;
-    /*border:1px solid black ;   */
-}
-
-.removeExpense {
-    display: inline-block;
-    width: 21px;
-}
-
-.trashIcon {
-    float: right;
-    margin: 5px;
-    width: 16px;
-    height: 20px;
-    display: inline-block;
-    background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
-}
-
-.trashIconOff {
-    background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
-}
-
-.trashIconOn {
-    background: url(/assets/images/trash_sprite.gif) no-repeat -16px 0px;
-}
-
-.addReceipt {
-    display: inline-block;
-    width: 26px;
-    height: 16px;
-}
-
-.hasReceiptIcon {
-    width: 25px;
-    height: 20px;
-    display: inline-block;
-    background: url(/assets/images/attachments/receipts.gif) no-repeat 0 0;
-}
-
-.hasReceiptFalse {
-    background: url(/assets/images/attachments/receipts-required.gif) no-repeat 0px 0px;
-}
-
-.hasReceiptTrue {
-    background: url(/assets/images/attachments/receipts-provided.gif) no-repeat 0px 0px;
-
-}
-
-    /*.hasReceiptOff {*/
-    /*background: url(/assets/images/checkmark_sprite.gif) no-repeat 0px 0px;*/
-    /*}*/
-
-    /*.hasReceiptOn {*/
-    /*background: url(/assets/images/checkmark_sprite.gif) no-repeat -20px 0px;*/
-    /*}*/
-
-.createNewReportLabel {
-    display: inline;
-    float: left;
-    padding-top: .3em;
-    margin-right: 5px;
-
-}
-</style>
 </head>
 <body>
 <div id="ws">
@@ -298,8 +29,7 @@ a:link {
             <div id="expensesMenu">
                 <form class="openExpensesForm">
                     <span class="createNewReportLabel">
-                        <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport"
-                                                                                      th:text="#{label.createNewReport}"/></a>
+                        <a href="javascript:void(0)" id="createNewReportButton"><span id="createNewReport" th:text="#{label.createNewReport}"/></a>
                         <span th:text="#{label.or}"/>
                         <span th:text="#{label.selectExistingReport}"/>
                     </span>
@@ -319,28 +49,39 @@ a:link {
 </div>
 
 <!-- configuration information -->
-<span id="ecUrl" class="hideme" th:text="@{/reports/eligible-charges/}"/>
-<span id="createErUrl" class="hideme" th:text="@{/reports}"/>
+<span id="baseUrl" class="hideme" th:text="@{/}"/>
 <span id="newReportString" class="hideme" th:text="#{label.createNewReport}"/>
-<span id="createExpenseReportExpenseUrl" class="hideme" th:text="@{/reports/reportId/expenses}"/>
+<span id="attachReceipt" class="hideme" th:text="#{label.attachReceipt}"/>
+<span id="receipts" class="hideme" th:text="#{label.receipts}"/>
+
 <img th:src="@{/assets/images/attach-receipt.png}" id="arImg" class="hideme"/>
 <img th:src="@{/assets/images/ajax-loader.gif}" id="loaderImg" class="hideme"/>
 
 <script lang="javascript" type="text/javascript">
 <!--
 
-// some global urls
-var createExpenseReportExpenseUrl = $('#createExpenseReportExpenseUrl').html();
-var newReportString = $('#newReportString').html();
-var eligibleChargesUrl = $('#ecUrl').html();
-var createErUrl = $('#createErUrl').html();
-var expenseReportExpensesUrl = '/reports/reportId/expenses';
-var reportPurposeUrl = '/reports/reportId/purpose';
-var openReportsUrl = "/reports/open-reports";
-var attachReceiptLabel = 'Attach receipt';
-var newReportLabel = 'A New Report (click to edit)';
+
+var baseUrl =                           $('#baseUrl').html();
+var attachReceiptLabel =                $('#attachReceipt').html();
+var newReportLabel =                    $('#newReportString').html();
+var receiptText =                       $('#receipts').html();
+var newReportString =                   $('#newReportString').html();
+
+var createExpenseReportExpenseUrl =     baseUrl +   "reports/reportId/expenses";
+var eligibleChargesUrl =                baseUrl +   'reports/eligible-charges/';
+var createErUrl =                       baseUrl +   'reports';
+var expenseReportUrl =                  baseUrl +   'reports/expenseReportId';
+var expenseUrl =                        baseUrl +   'reports/expenses/expenseId';
+var expenseReportExpensesUrl =          baseUrl +   'reports/reportId/expenses';
+var reportPurposeUrl =                  baseUrl +   'reports/reportId/purpose';
+var openReportsUrl =                    baseUrl +   "reports/open-reports";
+var receiptsUrl =                       baseUrl +   'reports/receipts';
+var expenseReceiptImagePreviewUrl =     baseUrl +   'reports/receipts/receiptId';
+
+var previewedNodes = [];
 var currentlyDraggedExpenseId = null;
-var movingChargeToExpenses = false, movingExpensesToCharges = false;
+var movingChargeToExpenses = false;
+var movingExpensesToCharges = false;
 var loaderImageSrc = null;
 var dropzoneNode = null;
 var currentFocusedExpenseElement = null;
@@ -354,10 +95,8 @@ var expenseReport = null;
 var expensesPanel = null;
 var expensesNode = null;
 var attachReceiptImageSrc = null;
-var receiptText = 'Receipts'; // need to i18n this text
 var currentExpenseReport = null;
 var currentExpenseToRevert = null;
-var expenseReceiptImagePreviewUrl = '/reports/receipts/receiptId?uid';
 var previewNode = null;
 
 var report = { purpose:'' , expenses : '' , id: 0 };
@@ -390,7 +129,7 @@ function loadExpenseReportExpensesLocally(expenseReportId, purpose, results, cb)
 function loadExpenseReportExpenses(expenseReportId) {
     var purpose = null;
     var results = [];
-    var urlForReport = '/reports/' + expenseReportId;
+    var urlForReport = expenseReportUrl.replace('expenseReportId',''+expenseReportId); // '/reports/' + expenseReportId;
     var urlForExpenses = expenseReportExpensesUrl.replace('reportId', '' + expenseReportId);
     $.get(urlForReport, function(result) {
         purpose = (result.purpose);
@@ -465,8 +204,9 @@ function resetExpenseReport(cb) {
     if (cb) cb();
 }
 
+
 function deleteExpenseReport(expenseReportId) {
-    var expenseDeletionUrl = '/reports/' + expenseReportId;
+    var expenseDeletionUrl = expenseReportUrl.replace('expenseReportId', expenseReportId);
     $.ajax({
         type : 'POST',
         url :  expenseDeletionUrl,
@@ -487,11 +227,12 @@ function deleteExpenseReport(expenseReportId) {
     });
 }
 
+
 function restoreExpenseToEligibleCharges(expenseId) {
-    var expenseDeletionUrl = '/' + expenseId;
+    //var expenseDeletionUrl = '/' + expenseId;
     $.ajax({
         type : 'POST',
-        url : '/reports/expenses/' + expenseId,
+        url : expenseUrl.replace('expenseId', expenseId + ''),
         cache : false,
         dataType : 'json',
         data : {
@@ -553,9 +294,8 @@ function buildExpandingPreview(hasReceiptImage, previewDiv, expense) {
 
 
     if (expense.receipt != null) {
-        var nUrl = expenseReceiptImagePreviewUrl
-                .replace('receiptId', '' + expense.id)
-                .replace('uid', new Date().getTime() + '');   // defeat the cache
+        var nUrl = expenseReceiptImagePreviewUrl.replace('receiptId', '' + expense.id) + ('?uid=' + new Date().getTime() + '' );
+
         prev.html('<IMG class="preview" src ="' + nUrl + '" width ="' + previewDiv.width() + '"  />');
         previewDiv.append(prev);
         tmpRec.node = previewDiv;
@@ -597,7 +337,7 @@ function loadImageSize(imgSrc, cb) {
     var newImg = new Image();
     newImg.src = imgSrc;
     var height = newImg.height;
-    var width = newImg.width;                                     t
+    var width = newImg.width;
     p = $(newImg).load(function() {
         var x = {width: newImg.width, height: newImg.height};
         console.log(JSON.stringify(x));
@@ -625,11 +365,13 @@ function drawExpense(expensesNode, ec) {
 
     var hasReceipt = ec.receipt != null && ec.receipt != null;
 
-    if (!hasReceipt && ec.flag == 'receiptRequired')
+    if (!hasReceipt && ec.flag == 'receiptRequired') {
         hasReceiptImg.addClass('hasReceiptFalse');
+    }
 
-    if (hasReceipt)
+    if (hasReceipt) {
         hasReceiptImg.addClass('hasReceiptTrue');
+    }
 
     var cb = createExpenseDropzoneCallback(currentExpenseReport, ec.id);
     var ceExpenseNode = $('#' + ecId);
@@ -639,7 +381,7 @@ function drawExpense(expensesNode, ec) {
     var previewNode = $('#' + ecId + ' .receiptPreview');
     var hideMePreviewNode = buildExpandingPreview(hasReceiptImg, previewNode, ec);
     ceExpenseNode.draggable({
-        revert : 'invalid', // ie, itll revert if its not dropped
+        revert : 'invalid',
         start : function () {
             movingExpensesToCharges = true;
             currentlyDraggedExpenseId = ec.id;
@@ -654,9 +396,9 @@ function drawExpense(expensesNode, ec) {
             currentlyDraggedExpenseId = null;
             console.log('moving expenses to charges == false');
             loadExpenseReportExpensesLocally(report.id, report.purpose, report.expenses, function() {
-                for( var i =  0 ; i < previewedNodes.length ; i++) {
+                for (var i = 0; i < previewedNodes.length; i++) {
                     var pn = previewedNodes [i];
-                    console.log( 'expenseId: '+ pn.expenseId + ' is visible? '+ (pn.visible == true ? 'y':'n'));
+                    console.log('expenseId: ' + pn.expenseId + ' is visible? ' + (pn.visible ? 'y' : 'n'));
                 }
             });
         },
@@ -766,8 +508,6 @@ function refreshMenus(erIdToSelect) {
                         menu.selectedIndex = mIndex;
                 }
             });
-
-
         },
         error : function(e) {
             console.log('error addEligibleChargeToReport ' + JSON.stringify(e))
@@ -785,14 +525,15 @@ function createExpenseDropzoneCallback(reportId, expenseId) {
     };
 }
 
+
 function setupDropzone() {
 
     dropzoneNode.filedrop({
 
         maxfilesize : 20,
-        fallback_id: 'upload_button'  ,  // an identifier of a standard file input element
-        url: '/reports/receipts',        // upload handler, handles each file separately
-        paramname: 'file',               // POST parameter name used on serverside to reference file
+        fallback_id: 'upload_button'  ,
+        url: receiptsUrl ,
+        paramname: 'file',
         data: {
             reportId : function() {
                 return currentExpenseReport;
@@ -836,24 +577,16 @@ function setupDropzone() {
             // user dragging files out of the browser document window
         },
         drop: function() {
-            console.log('fileDrop!drop()')
+            console.log('fileDrop!drop()');
             fileDragging(false);
             console.log("drop is finished");
             // user drops file
         },
         uploadStarted: function(i, file, len) {
             console.log('started uploading file ' + i + ' of ' + len + ' ' + file);
-
             $('#' + currentFocusedExpenseElement.id + ' .progress').show();
-
-            // a file began uploading
-            // i = index => 0, 1, 2, 3, 4 etc
-            // file is the actual file of the index
-            // len = total files user dropped
         },
         uploadFinished: function(i, file, response, time) {
-            //var r =  ( response)
-
             $('#' + currentFocusedExpenseElement.id + ' .progress').hide();
         },
         progressUpdated: function(i, file, progress) {
@@ -880,7 +613,7 @@ function setupDropzone() {
 
 }
 
-var previewedNodes = [];
+
 
 $(function() {
 
@@ -968,7 +701,7 @@ $(function() {
         }
     });
 
-    expenseReportMenu = document.getElementById("openExpenses");// cant use jquery
+    expenseReportMenu = document.getElementById("openExpenses");
     $(expenseReportMenu).bind('change', function() {
         if (this.value != '') {
             var eri = parseInt(this.value);
