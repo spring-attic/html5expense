@@ -29,10 +29,10 @@ var clientSecret = '189309492722aa5a';
 
 
 // The following URL specifies the API application running on Cloud Foundry
-var apiUrl = 'http://html5expense-api.cloudfoundry.com/';
+var apiUrl = 'https://html5expense-api.cloudfoundry.com/';
 
 // This URL specifies the OAuth application running on Cloud Foundry
-var oauthUrl = 'http://html5expense-oauth.cloudfoundry.com/';
+var oauthUrl = 'https://html5expense-oauth.cloudfoundry.com/';
 
 function getApiUrl(path) {
     return apiUrl + path;
@@ -158,10 +158,7 @@ function submitCreateNewReportForm() {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl('reports');
-    var data = {
-            purpose : $('#purpose').val(),
-            access_token : getAccessTokenValue()
-        };
+    var data = $('#create-new-purpose-form').serialize();
 
     console.log('URL: ' + url);
 
@@ -169,6 +166,7 @@ function submitCreateNewReportForm() {
         type : 'POST',
         url : url,
         cache : false,
+        headers : getAuthorizationHeader(),
         data : data,
         success : onCreateReportSuccess,
         error : onCreateReportError
@@ -208,8 +206,7 @@ $('#create-new-expenses').live('pagecreate', function(event) {
 
         var url = getApiUrl('reports/' + expenseReport.id + '/expenses');
         var data = $.toJSON({
-            chargeIds : arrayIds,
-            access_token : getAccessTokenValue()
+            chargeIds : arrayIds
         });
         
         console.log('URL: ' + url);
@@ -219,6 +216,7 @@ $('#create-new-expenses').live('pagecreate', function(event) {
             type : 'POST',
             url : url,
             cache : false,
+            headers : getAuthorizationHeader(),
             dataType : 'json',
             data : data,
             contentType : 'application/json; charset=utf-8',
@@ -345,55 +343,55 @@ function onPhotoCaptureSuccess(imageURI) {
     var image = document.getElementById('receiptImage');
     image.src = imageURI;
     
-    var formData = new FormData();
-    formData.append("receiptBytes", imageURI.substr(imageURI.lastIndexOf('/') + 1));
+//    var formData = new FormData();
+//    formData.append("receiptBytes", imageURI.substr(imageURI.lastIndexOf('/') + 1));
     
 
-//    /*
-//     * the FileTransfer function returns a FileUploadResult object upon success
-//     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadResult
-//     */
-//    function onFileTransferSuccess(result) {
-//        $.mobile.hidePageLoadingMsg();
-//        console.log('Bytes Sent: ' + result.byteSent);
-//        console.log('Response Code: ' + result.responseCode);
-//        console.log('Response: ' + result.response);
-//        alert('Image uploaded successfully!');
-//
-//        if (expenseReport.flaggedExpenses.length > 0) {
-//            updateExpenseDetails();
-//        } else {
-//            $.mobile.changePage($('#create-new-confirm'));
-//        }
-//    }
-//
-//    /*
-//     * the FileTransfer function returns a FileTransferError object upon failure
-//     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransferError
-//     */
-//    function onFileTransferError(error) {
-//        $.mobile.hidePageLoadingMsg();
-//        console.log('Error Code: ' + error.code);
-//        alert('Image failed to upload! Please try again.');
-//    }
-//
-//    /*
-//     * use a FileUploadOptions object to upload the image data
-//     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadOptions
-//     */
-//    var opts = new FileUploadOptions();
-//    opts.fileKey = 'receiptBytes';
-//    opts.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-//    opts.mimeType = 'image/jpeg';
-//    opts.params = {};
-//
-//    /*
-//     * the FileTransfer function performs the AJAX request
-//     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransfer
-//     */
-//    var url = getApiUrl('reports/' + expenseReport.id + '/expenses/' + expense.id + '/receipt?access_token=' + getAccessToken().access_token);
-//    var fileTransfer = new FileTransfer();
-//    fileTransfer.upload(imageURI, url, onFileTransferSuccess, onFileTransferError, opts);
+    /*
+     * the FileTransfer function returns a FileUploadResult object upon success
+     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadResult
+     */
+    function onFileTransferSuccess(result) {
+        $.mobile.hidePageLoadingMsg();
+        console.log('Bytes Sent: ' + result.byteSent);
+        console.log('Response Code: ' + result.responseCode);
+        console.log('Response: ' + result.response);
+        alert('Image uploaded successfully!');
+
+        if (expenseReport.flaggedExpenses.length > 0) {
+            updateExpenseDetails();
+        } else {
+            $.mobile.changePage($('#create-new-confirm'));
+        }
+    }
+
+    /*
+     * the FileTransfer function returns a FileTransferError object upon failure
+     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransferError
+     */
+    function onFileTransferError(error) {
+        $.mobile.hidePageLoadingMsg();
+        console.log('Error Code: ' + error.code);
+        alert('Image failed to upload! Please try again.');
+    }
+
+    /*
+     * use a FileUploadOptions object to upload the image data
+     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileUploadOptions
+     */
+    var opts = new FileUploadOptions();
+    opts.fileKey = 'receiptBytes';
+    opts.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+    opts.mimeType = 'image/jpeg';
+    opts.params = {};
+
+    /*
+     * the FileTransfer function performs the AJAX request
+     * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransfer
+     */
+    var url = getApiUrl('reports/' + expenseReport.id + '/expenses/' + expense.id + '/receipt?access_token=' + getAccessToken().access_token);
+    var fileTransfer = new FileTransfer();
+    fileTransfer.upload(imageURI, url, onFileTransferSuccess, onFileTransferError, opts);
 }
 
 function onPhotoCaptureError(message) {
@@ -410,9 +408,6 @@ $('#create-new-confirm').live('pagecreate', function(event) {
         $.mobile.showPageLoadingMsg();
 
         var url = getApiUrl('reports/' + expenseReport.id);
-        var data = {
-            access_token : getAccessTokenValue()
-        };
 
         console.log('URL: ' + url);
 
@@ -420,7 +415,7 @@ $('#create-new-confirm').live('pagecreate', function(event) {
             type : 'GET',
             url : url,
             cache : false,
-            data : data,
+            headers : getAuthorizationHeader(),
             success : onSubmitExpenseReportSuccess,
             error : onSubmitExpenseReportError
         });
@@ -471,18 +466,15 @@ $('#expense-reports-open').live('pageshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
     var url = getApiUrl("reports");
-    var data = {
-        access_token : getAccessTokenValue()
-    };
-    
+
     console.log('URL: ' + url);
 
     $.ajax({
         type : 'GET',
         url : url,
         cache : false,
+        headers : getAuthorizationHeader(),
         dataType : 'json',
-        data : data,
         success : onFetchOpenExpenseReportsSuccess,
         error : onFetchOpenExpenseReportsError
     });
@@ -614,4 +606,8 @@ function removeAccessToken() {
 // returns the access token value for use in protected requests to the API service
 function getAccessTokenValue() {
 	return getAccessToken().access_token;
+}
+
+function getAuthorizationHeader() {
+    return { Authorization : 'Bearer ' + getAccessTokenValue() };
 }
