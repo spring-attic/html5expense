@@ -16,14 +16,14 @@ configurations {
 
 cglibVersion = '2.2'
 cloudFoundryVersion = '0.8.1'
-jacksonVersion = '1.8.5'
+jacksonVersion = '1.9.2'
 javaxInjectVersion = '1'
 jstlVersion = '1.2'
 junitVersion = '4.7'
 logbackVersion = '0.9.29'
 s2OAuthVersion = '1.0.0.M5'
 slf4jVersion = '1.6.2'
-springVersion = '3.1.0.RC2'
+springVersion = '3.1.0.RELEASE'
 tilesVersion = '2.2.2'
 
 dependencies {
