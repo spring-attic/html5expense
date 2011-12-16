@@ -2,7 +2,11 @@
 
 ## Overview ##
 
-The HTML5 Expense project is an expense reporting reference app demonstrating HTML5 and cross-platform mobile development.  The project includes an iOS and Android client built using PhoneGap, jQuery, and jQuery Mobile.  The API component is a Spring MVC application.
+The HTML5 Expense project is an expense reporting reference app demonstrating HTML5 and cross-platform mobile development. The project includes the following components.
+
+1. iOS and Android clients built using PhoneGap, jQuery, and jQuery Mobile.
+2. API Spring MVC application to which the client makes RESTful requests.
+3. OAUTH Spring application built with Spring Security Oauth that manages access to the API.
 
 ## More Information ##
 
