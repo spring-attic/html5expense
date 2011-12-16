@@ -1,4 +1,4 @@
-# HTML5 Expense - OAuth App #
+# HTML5 EXPENSE - OAUTH #
 
 ## Overview ##
 
