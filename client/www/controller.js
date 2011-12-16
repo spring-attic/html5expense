@@ -35,7 +35,11 @@ var apiUrl = 'https://html5expense-api.cloudfoundry.com/';
 var oauthUrl = 'https://html5expense-oauth.cloudfoundry.com/';
 
 function getApiUrl(path) {
-    return apiUrl + path;
+    if (typeof path === 'undefined') {
+        return apiUrl + 'reports/';
+    } else {
+        return apiUrl + 'reports/' + path;
+    }
 }
 
 function getOauthUrl(path) {
@@ -52,13 +56,15 @@ $('#home').live('pageshow', function(event) {
     if (isAuthorized()) {
         content += '<li><a href="#create-new-purpose">Create New</a></li>';
         content += '<li><a href="#expense-reports-open">Open Expense Reports</a></li>';
+        content += '<li><a href="#expense-reports-submitted">Submitted Expense Reports</a></li>';
+        content += '<li>Settings</li>';
         content += '<li><a href="#sign-out">Sign Out</a></li>';
         content += '<li><a href="#about">About</a></li>';
     } else {
         content += '<li><a href="#sign-in">Sign In</a></li>';
         content += '<li><a href="#about">About</a></li>';
     }
-    
+
     $('#home-menu-items').html(content).listview('refresh');
 });
 
@@ -81,16 +87,16 @@ function authorize() {
 
     var url = getOauthUrl('oauth/token');
     var data = {
-         grant_type : 'password',
-         username : $('#username').val(),
-         password : $('#password').val(),
-         client_id : clientId,
-         client_secret : clientSecret,
-         scope : 'read'
+        grant_type : 'password',
+        username : $('#username').val(),
+        password : $('#password').val(),
+        client_id : clientId,
+        client_secret : clientSecret,
+        scope : 'read'
     };
-    
+
     console.log(data);
-    
+
     $.ajax({
         type : 'POST',
         url : url,
@@ -111,7 +117,7 @@ function onAuthorizeSuccess(data, textStatus, jqXHR) {
         console.log(data.access_token);
         setAccessToken(data);
     }
- 
+
     $.mobile.changePage('#home');
 }
 
@@ -157,7 +163,7 @@ $('#create-new-purpose').live('pagebeforeshow', function(event) {
 function submitCreateNewReportForm() {
     $.mobile.showPageLoadingMsg();
 
-    var url = getApiUrl('reports');
+    var url = getApiUrl();
     var data = $('#create-new-purpose-form').serialize();
 
     console.log('URL: ' + url);
@@ -170,7 +176,7 @@ function submitCreateNewReportForm() {
         data : data,
         success : onCreateReportSuccess,
         error : onCreateReportError
-        
+
     });
 }
 
@@ -204,11 +210,11 @@ $('#create-new-expenses').live('pagecreate', function(event) {
             arrayIds.push(Number($(this).val()));
         });
 
-        var url = getApiUrl('reports/' + expenseReport.id + '/expenses');
+        var url = getApiUrl(expenseReport.id + '/expenses');
         var data = $.toJSON({
             chargeIds : arrayIds
         });
-        
+
         console.log('URL: ' + url);
         console.log('data: ' + data);
 
@@ -231,7 +237,7 @@ $('#create-new-expenses').live('pagecreate', function(event) {
 $('#create-new-expenses').live('pagebeforeshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
-    var url = getApiUrl('reports/eligible-charges');
+    var url = getApiUrl('eligible-charges');
     var data = {
         access_token : getAccessTokenValue()
     };
@@ -342,10 +348,6 @@ function onPhotoCaptureSuccess(imageURI) {
 
     var image = document.getElementById('receiptImage');
     image.src = imageURI;
-    
-//    var formData = new FormData();
-//    formData.append("receiptBytes", imageURI.substr(imageURI.lastIndexOf('/') + 1));
-    
 
     /*
      * the FileTransfer function returns a FileUploadResult object upon success
@@ -389,7 +391,7 @@ function onPhotoCaptureSuccess(imageURI) {
      * the FileTransfer function performs the AJAX request
      * http://docs.phonegap.com/en/1.0.0/phonegap_file_file.md.html#FileTransfer
      */
-    var url = getApiUrl('reports/' + expenseReport.id + '/expenses/' + expense.id + '/receipt?access_token=' + getAccessToken().access_token);
+    var url = getApiUrl(expenseReport.id + '/expenses/' + expense.id + '/receipt?access_token=' + getAccessTokenValue());
     var fileTransfer = new FileTransfer();
     fileTransfer.upload(imageURI, url, onFileTransferSuccess, onFileTransferError, opts);
 }
@@ -407,7 +409,7 @@ $('#create-new-confirm').live('pagecreate', function(event) {
     $('#create-new-confirm-submit').click(function() {
         $.mobile.showPageLoadingMsg();
 
-        var url = getApiUrl('reports/' + expenseReport.id);
+        var url = getApiUrl(expenseReport.id);
 
         console.log('URL: ' + url);
 
@@ -421,7 +423,7 @@ $('#create-new-confirm').live('pagecreate', function(event) {
         });
 
         return false;
-        
+
     });
 });
 
@@ -462,10 +464,12 @@ function onSubmitExpenseReportError(jqXHR, textStatus, errorThrown) {
 // Open Expense Reports
 // ***************************************
 
+var openExpenseReports;
+
 $('#expense-reports-open').live('pageshow', function(event, ui) {
     $.mobile.showPageLoadingMsg();
 
-    var url = getApiUrl("reports");
+    var url = getApiUrl();
 
     console.log('URL: ' + url);
 
@@ -479,23 +483,12 @@ $('#expense-reports-open').live('pageshow', function(event, ui) {
         error : onFetchOpenExpenseReportsError
     });
 
-    $('.expense-report-list-item').live('click', function() {
-        // var expenseReportId = $(this).jqmData('id');
-        // $('#review-status-details').jqmData('expenseReportId', expenseReportId);
-        // expenseReport = getOpenExpenseReport(expenseReportId);
-        // $.mobile.changePage('#create-new-confirm');
+    $('.open-list-item').live('click', function() {
+        var expenseReportId = $(this).jqmData('id');
+        expenseReport = getExpenseReport(openExpenseReports, expenseReportId);
+        $.mobile.changePage('#create-new-confirm');
     });
 });
-
-var openExpenseReports;
-function getOpenExpenseReport(id) {
-    $.each(openExpenseReports, function(i, r) {
-        if (r.id == id) {
-            return r;
-        }
-    });
-    return null;
-}
 
 function onFetchOpenExpenseReportsSuccess(data, textStatus, jqXHR) {
     openExpenseReports = data;
@@ -508,7 +501,7 @@ function onFetchOpenExpenseReportsSuccess(data, textStatus, jqXHR) {
         var content = '';
         $.each(openExpenseReports, function(i, expenseReport) {
             if (expenseReport.purpose != null) {
-                content += '<li data-id=' + expenseReport.id + ' class="expense-report-list-item"><a href="#">';
+                content += '<li data-id=' + expenseReport.id + ' class="open-list-item"><a href="#">';
                 content += '<p class="ui-li-count">' + expenseReport.expenses.length + '</p>';
                 content += '<h3>' + expenseReport.purpose + '</h3>';
                 content += '<p>Status: ' + expenseReport.state + '</p>';
@@ -532,16 +525,91 @@ function onFetchOpenExpenseReportsError(jqXHR, textStatus, errorThrown) {
 
 
 // ***************************************
-// Review Status Details
+// Submitted Expense Reports
 // ***************************************
 
-$('#review-status-details').live('pagebeforeshow', function(event, ui) {
-    var expenseReportId = $('#review-status-details').jqmData('expenseReportId');
-    if (expenseReportId != null) {
-        $('#review-status-details-text').text('Details about expense report #' + expenseReportId + ' here.');
+var submittedExpenseReports;
+
+$('#expense-reports-submitted').live('pageshow', function(event, ui) {
+    $.mobile.showPageLoadingMsg();
+
+    var url = getApiUrl('submitted');
+
+    console.log('URL: ' + url);
+
+    $.ajax({
+        type : 'GET',
+        url : url,
+        cache : false,
+        headers : getAuthorizationHeader(),
+        dataType : 'json',
+        success : onFetchSubmittedExpenseReportsSuccess,
+        error : onFetchSubmittedExpenseReportsError
+    });
+
+    $('.submitted-list-item').live('click', function() {
+        var expenseReportId = $(this).jqmData('id');
+        console.log('Selected id: ' + expenseReportId);
+        expenseReport = getExpenseReport(submittedExpenseReports, expenseReportId);
+        console.log('Selected Report: ' + $.toJSON(expenseReport));
+        $.mobile.changePage('#submitted-expense-report-details');
+    });
+
+});
+
+function onFetchSubmittedExpenseReportsSuccess(data, textStatus, jqXHR) {
+    submittedExpenseReports = data;
+
+    console.log('Status: ' + textStatus);
+    console.log('Data: ' + $.toJSON(data));
+
+    if (submittedExpenseReports.length == 0) {
+        $.mobile.hidePageLoadingMsg();
+        $('#expense-reports-submitted-list').html('').listview('refresh');
+        alert('There are no submitted expense reports');
     } else {
-        alert('No expense report available to display');
+        var content = '';
+        $.each(submittedExpenseReports, function(i, expenseReport) {
+            if (expenseReport.purpose != null) {
+                content += '<li data-id=' + expenseReport.id + ' class="submitted-list-item"><a href="#">';
+                content += '<p class="ui-li-count">' + expenseReport.expenses.length + '</p>';
+                content += '<h3>' + expenseReport.purpose + '</h3>';
+                content += '<p>Status: ' + expenseReport.state + '</p>';
+                content += '</a></li>';
+            }
+
+            // set the new content and refresh the UI
+            $('#expense-reports-submitted-list').html(content).listview('refresh');
+
+            $.mobile.hidePageLoadingMsg();
+        });
     }
+}
+
+function onFetchSubmittedExpenseReportsError(jqXHR, textStatus, errorThrown) {
+    $.mobile.hidePageLoadingMsg();
+    console.log('Status: ' + textStatus);
+    console.log('Error: ' + errorThrown);
+    alert('Error fetching submitted expense reports');
+}
+
+
+// ***************************************
+// Submitted Expense Report Details
+// ***************************************
+
+$('#submitted-expense-report-details').live('pageshow', function(event) {
+    var content = '<li data-role="list-divider">Expenses</li>';
+    $.each(expenseReport.expenses, function(i, expense) {
+        content += '<li>';
+        content += '<p class="ui-li-aside">$' + $.currency(expense.amount) + '</p>';
+        content += '<h3>' + expense.merchant + '</h3>';
+        content += '<p>' + expense.category + '</p>';
+        content += '<p>' + formatDate(expense.date) + '</p>';
+        content += '</li>';
+    });
+
+    $('#submitted-expense-report-expenses-list').html(content).listview('refresh');
 });
 
 
@@ -598,16 +666,36 @@ function getAccessToken() {
     return t && JSON.parse(t);
 }
 
-//remove the access token from local storage
+// remove the access token from local storage
 function removeAccessToken() {
     localStorage.removeItem(ACCESS_TOKEN);
 }
 
 // returns the access token value for use in protected requests to the API service
 function getAccessTokenValue() {
-	return getAccessToken().access_token;
+    return getAccessToken().access_token;
 }
 
+// returns a JavaScript object for use in the headers field of a jQuery AJAX request
 function getAuthorizationHeader() {
-    return { Authorization : 'Bearer ' + getAccessTokenValue() };
+    return {
+        Authorization : 'Bearer ' + getAccessTokenValue()
+    };
+}
+
+function getExpenseReport(reports, id) {
+    if (reports === 'undefined') {
+        console.log('invalid reports array');
+        return null;
+    } else if (id === 'undefined') {
+        console.log('invalid id');
+        return null;
+    }
+    for (var i = 0; i < reports.length; i++) {
+        var report = reports[i];
+        if (report.id == id) {
+            return report;
+        }
+    }
+    return null;
 }

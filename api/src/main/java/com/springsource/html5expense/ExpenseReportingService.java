@@ -96,6 +96,13 @@ public interface ExpenseReportingService {
      */
     List<ExpenseReport> getOpenReports();
 
+    /**
+     * Returns all the expense reports the user has submitted.
+     * A submitted report is under review or approved.
+     * @return the user's submitted expense reports
+     */
+    List<ExpenseReport> getSubmittedReports();
+
     ExpenseReport getExpenseReport(Long reportId);
 
     Expense getExpense(Integer  expenseId);

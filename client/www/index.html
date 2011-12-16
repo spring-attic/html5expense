@@ -314,29 +314,38 @@
         <!-- /footer -->
     </div>
     <!-- /page -->
-    
-    <!-- Start of Review Status - Detail -->
-    <div data-role="page" id="review-status-details" data-add-back-btn="true">
+
+    <!-- Start of Submitted Expense Reports page -->
+    <div data-role="page" id="expense-reports-submitted" data-add-back-btn="true">
 
         <div data-role="header">
-            <h1>Confirm</h1>
+            <h1>Submitted</h1>
         </div>
         <!-- /header -->
 
         <div data-role="content">
-            <form method="get" action="#home">
-                <p id="review-status-details-text"></p>
-                <div class="ui-body">
-                    <fieldset class="ui-grid-a">
-                        <div class="ui-block-a">
-                            <button type="submit">Cancel</button>
-                        </div>
-                        <div class="ui-block-b">
-                            <button type="submit">Save</button>
-                        </div>
-                    </fieldset>
-                </div>
-            </form>
+            <ul data-role="listview" id="expense-reports-submitted-list">
+            </ul>
+        </div>
+        <!-- /content -->
+
+        <div data-role="footer">
+            <h4>HTML5 Expense</h4>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+
+    <!-- Start of Submitted Expense Report Details page -->
+    <div data-role="page" id="submitted-expense-report-details" data-add-back-btn="true">
+
+        <div data-role="header">
+            <h1>Details</h1>
+        </div>
+        <!-- /header -->
+
+        <div data-role="content">
+            <ul data-role="listview" data-inset="true" id="submitted-expense-report-expenses-list"></ul>
         </div>
         <!-- /content -->
 
