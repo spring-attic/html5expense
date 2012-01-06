@@ -1,4 +1,3 @@
-
 # HTML5 EXPENSE CLIENT #
 
 Expense reporting reference app demonstrating HTML5 and cross-platform mobile
@@ -17,10 +16,10 @@ Install Xcode from the [Mac App Store](http://itunes.apple.com/us/app/xcode/id44
 
 The PhoneGap installer will create a new Xcode project template, which you can use to create new iOS PhoneGap projects.  The HTML5 Expense client was created with this template.
 
-1. Download version 1.0.0 or newer of [PhoneGap](http://www.phonegap.com/).
+1. Download version 1.3.0 or newer of [PhoneGap](http://www.phonegap.com/).
 2. Unzip the PhoneGap package.
-3. From the iOS directory, open the PhoneGap-1.0.0.dmg disk image.
-4. Double click the PhoneGap-1.0.0.pkg from within the disk image contents to install.
+3. From the iOS directory, open the PhoneGap-1.3.0.dmg disk image.
+4. Double click the PhoneGap-1.3.0.pkg from within the disk image contents to install.
 
 ### Android ###
 
@@ -44,7 +43,7 @@ PhoneGap does not provide an installer for Android projects, however when you cr
 
 ## Project Structure ##
 
-The 'www' directory contains the HTML, CSS, and JavaScript that is being used within the iOS and Android Phonegap projects.  A symbolic link (symlink) is used within each project to point back to this folder.  In the iOS project, the symlink is 'iphone/www'.  In the Android project it is located at 'android/assets/www'.  Symlinks are supported in Mac OS X, Linux, Windows Vista, and Windows 7.  This PhoneGap [wiki page](http://wiki.phonegap.com/w/page/28103995/phonegap%20project%20structure) describes this solution for shared web resources across device types.
+The 'shared/www' directory contains the HTML, CSS, and JavaScript that is being used within the iOS and Android Phonegap projects.  A symbolic link (symlink) is used within each project to point back to this folder.  In the iOS project, the symlink is 'ios/www'.  In the Android project it is located at 'android/assets/www'.  Symlinks are supported in Mac OS X, Linux, Windows Vista, and Windows 7.  This PhoneGap [wiki page](http://wiki.phonegap.com/w/page/28103995/phonegap%20project%20structure) describes this solution for shared web resources across device types.
 
 ## Open the Client Projects ##
 
@@ -54,7 +53,13 @@ This section describes how to open the iOS and Android projects within Xcode and
 
 After you have completed the environment setup for Xcode, you can open the iOS client project.
 
-TODO: complete this section
+#### Open Project in Xcode ####
+
+1. Open Xcode.
+2. Select File -> Open, or click the Open Other button on the welcome screen.
+3. In the Open dialog, browse to the html5expense/client/ios directory and click Open.
+
+The project should now build successfully
 
 ### Android ###
 
@@ -80,7 +85,7 @@ That completes the steps to import the project.  Note the html5expense project l
 2. Navigate to Build Path -> Configure Build Path.
 3. Select the Libraries tab.
 4. Click Add JARs...
-5. In the JAR Selection dialog, navigate to html5expense/libs/phonegap-1.1.0.jar and click OK.  The PhoneGap jar should now be listed in the "JARs and class folders on the build path" section.
+5. In the JAR Selection dialog, navigate to html5expense/libs/phonegap-1.3.0.jar and click OK.  The PhoneGap jar should now be listed in the "JARs and class folders on the build path" section.
 6. Click OK.
 
 The project should now build successfully, and the red X should disappear from the project listing.
