@@ -152,7 +152,7 @@
 		? JSON.parse
 		: function( src ) {
 
-		var filtered = 
+		var filtered =
 			src
 			.replace( /\\["\\\/bfnrtu]/g, '@' )
 			.replace( /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
