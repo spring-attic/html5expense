@@ -72,7 +72,6 @@ public class ExpenseReport {
         return state == State.APPROVED || state == State.IN_REVIEW;
     }
 
-    public ExpenseEntity createExpense(EligibleCharge charge) {
     public Expense createExpense(EligibleCharge charge) {
         return this.createExpense(charge.getDate(), charge.getMerchant(),
                 charge.getCategory(), charge.getAmount(), charge.getI());

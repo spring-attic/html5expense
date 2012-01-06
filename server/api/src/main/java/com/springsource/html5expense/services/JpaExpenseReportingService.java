@@ -16,7 +16,7 @@
 package com.springsource.html5expense.services;
 
 import com.springsource.html5expense.*;
-import org.apache.commons.collections.CollectionUtils;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
@@ -35,6 +35,7 @@ import java.util.*;
  * Implementation of the business logic for the expense reports and expense report charges.
  *
  * @author Josh Long
+ * @author Roy Clarkson
  * @see ExpenseReportingService
  */
 @Service
@@ -228,6 +229,21 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
             reports.add(report);
         }
 
+        return reports;
+    }
+    
+    @Transactional(readOnly=true)
+    public List<ExpenseReport> getSubmittedReports() {
+        List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
+        List<ExpenseReport> entities = entityManager.createQuery(
+                "from ExpenseReport er where er.state = :in_review or er.state = :approved", ExpenseReport.class)
+                 .setParameter("in_review", State.IN_REVIEW)
+                 .setParameter("approved", State.APPROVED)
+                 .getResultList();
+
+        for (ExpenseReport report : entities) {
+            reports.add(report);
+        }
         return reports;
     }
 

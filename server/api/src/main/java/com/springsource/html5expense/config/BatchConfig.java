@@ -1,8 +1,12 @@
 package com.springsource.html5expense.config;
 
-import com.springsource.html5expense.integrations.EligibleChargeProcessor;
-import com.springsource.html5expense.integrations.EligibleChargeProcessorHeaders;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -20,19 +24,20 @@ import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
-import javax.inject.Inject;
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import com.springsource.html5expense.integrations.EligibleChargeProcessor;
+import com.springsource.html5expense.integrations.EligibleChargeProcessorHeaders;
 
 /**
  * @author Josh Long

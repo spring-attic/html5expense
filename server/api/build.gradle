@@ -7,6 +7,7 @@ repositories {
     mavenRepo urls: 'http://maven.springframework.org/release'
     mavenRepo urls: 'http://maven.springframework.org/milestone'
     mavenRepo urls: 'http://maven.springframework.org/snapshot'
+    mavenRepo urls: 'https://oss.sonatype.org/content/repositories/snapshots'
     mavenCentral()
 }
 
@@ -30,6 +31,7 @@ commonsIoVersion = '2.0.1'
 hibernateVersion = '3.6.5.Final'
 cloudFoundryVersion = '0.8.1'
 s2OAuthVersion = '1.0.0.M5'
+thymeleafVersion = '1.1.3-SNAPSHOT'
 
 dependencies {
     compile "joda-time:joda-time:$jodaTimeVersion"
@@ -41,12 +43,16 @@ dependencies {
     compile "org.springframework:spring-context:$springVersion"
     compile "org.springframework:spring-webmvc:$springVersion"
     compile "org.springframework:spring-orm:$springVersion"
+    compile "org.springframework.security.oauth:spring-security-oauth2:$s2OAuthVersion"
+    compile "org.springframework.integration:spring-integration-jms:2.1.0.RC1"
+    compile "org.springframework.batch:spring-batch-core:2.1.6.RELEASE"
     compile "javax.inject:javax.inject:$javaxInjectVersion"
     compile "org.codehaus.jackson:jackson-mapper-asl:$jacksonVersion"
     compile "commons-fileupload:commons-fileupload:$commonsFileuploadVersion"
     compile "commons-io:commons-io:$commonsIoVersion"
+    compile "commons-lang:commons-lang:2.5"
     compile "org.cloudfoundry:cloudfoundry-runtime:$cloudFoundryVersion"
-    compile "org.springframework.security.oauth:spring-security-oauth2:$s2OAuthVersion"
+    compile "org.thymeleaf:thymeleaf-spring3:$thymeleafVersion"
     testCompile "org.springframework:spring-test:$springVersion"
     testCompile "junit:junit:$junitVersion"
     providedCompile "javax.servlet:servlet-api:$servletVersion"

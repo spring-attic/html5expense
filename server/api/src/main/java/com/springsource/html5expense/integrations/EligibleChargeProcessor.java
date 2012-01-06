@@ -1,13 +1,14 @@
 package com.springsource.html5expense.integrations;
 
-import com.springsource.html5expense.ExpenseReportingService;
-import org.springframework.integration.annotation.Header;
-import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import javax.inject.Inject;
+
+import org.springframework.integration.annotation.Header;
+import org.springframework.integration.annotation.ServiceActivator;
+
+import com.springsource.html5expense.ExpenseReportingService;
 
 /**
  * This is the gateway for all incoming eligible charges.
