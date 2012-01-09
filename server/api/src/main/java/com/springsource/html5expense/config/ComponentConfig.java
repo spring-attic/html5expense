@@ -18,15 +18,15 @@ package com.springsource.html5expense.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.h2.Driver;
 import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -43,33 +43,41 @@ import com.springsource.html5expense.services.JpaExpenseReportingService;
  *
  * @author Keith Donald
  * @author Josh Long
+ * @author Roy Clarkson
  */
 @Configuration
 @EnableTransactionManagement
+@ImportResource("classpath:com/springsource/html5expense/config/data.xml")
 @ComponentScan(basePackageClasses = JpaExpenseReportingService.class)
 public class ComponentConfig {
 
-
-    @Bean
-    public DataSource dataSource() throws Exception {
-        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setUrl("jdbc:h2:tcp://localhost/~/expenses");
-        dataSource.setDriverClass(Driver.class);
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
+    @Inject
+    private DataSource dataSource;
+    
+    public DataSource dataSource() {
         return dataSource;
     }
+
+//    @Bean
+//    public DataSource dataSource() throws Exception {
+//        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+//        dataSource.setUrl("jdbc:h2:tcp://localhost/~/expenses");
+//        dataSource.setDriverClass(Driver.class);
+//        dataSource.setUsername("sa");
+//        dataSource.setPassword("");
+//        return dataSource;
+//    }
 
     @Bean
     public PlatformTransactionManager transactionManager() throws Exception {
         EntityManagerFactory emf  = entityManagerFactory().getObject() ;
-        return new JpaTransactionManager( emf );
+        return new JpaTransactionManager(emf);
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setGenerateDdl(true);
+        jpaVendorAdapter.setGenerateDdl(false);
         jpaVendorAdapter.setShowSql(true);
 
         Map<String, String> properties = new HashMap<String, String>();
@@ -78,7 +86,7 @@ public class ComponentConfig {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(jpaVendorAdapter);
         factory.setJpaPropertyMap(properties);
-        factory.setDataSource(dataSource());
+        factory.setDataSource(dataSource);
         factory.setPackagesToScan(new String[]{Expense.class.getPackage().getName()});
 
         return factory;

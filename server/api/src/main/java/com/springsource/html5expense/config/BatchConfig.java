@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -46,7 +47,7 @@ import com.springsource.html5expense.integrations.EligibleChargeProcessorHeaders
 @Import(ComponentConfig.class)
 @ImportResource("/ec-loader.xml")
 public class BatchConfig {
-
+    
     @Inject
     private ComponentConfig componentConfig;
 
