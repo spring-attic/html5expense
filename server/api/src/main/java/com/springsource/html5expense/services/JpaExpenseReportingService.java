@@ -236,7 +236,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     public List<ExpenseReport> getSubmittedReports() {
         List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
         List<ExpenseReport> entities = entityManager.createQuery(
-                "from ExpenseReport er where er.state = :in_review or er.state = :approved", ExpenseReport.class)
+                "from ExpenseReport where state = :in_review or state = :approved", ExpenseReport.class)
                  .setParameter("in_review", State.IN_REVIEW)
                  .setParameter("approved", State.APPROVED)
                  .getResultList();
