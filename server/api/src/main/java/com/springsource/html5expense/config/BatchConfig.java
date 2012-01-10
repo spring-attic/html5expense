@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
