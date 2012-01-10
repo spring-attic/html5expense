@@ -16,22 +16,29 @@
 package com.springsource.html5expense.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.cloudfoundry.runtime.env.CloudEnvironment;
+import org.cloudfoundry.runtime.env.RdbmsServiceInfo;
+import org.cloudfoundry.runtime.service.relational.PostgresqlServiceCreator;
 import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.Assert;
 
 import com.springsource.html5expense.Expense;
 import com.springsource.html5expense.services.JpaExpenseReportingService;
@@ -47,15 +54,33 @@ import com.springsource.html5expense.services.JpaExpenseReportingService;
  */
 @Configuration
 @EnableTransactionManagement
-@ImportResource("classpath:com/springsource/html5expense/config/data.xml")
 @ComponentScan(basePackageClasses = JpaExpenseReportingService.class)
 public class ComponentConfig {
-
-    @Inject
-    private DataSource dataSource;
     
+    @Bean
     public DataSource dataSource() {
-        return dataSource;
+        CloudEnvironment ce = new CloudEnvironment();
+        List<RdbmsServiceInfo> l = ce.getServiceInfos(RdbmsServiceInfo.class);
+        Assert.isTrue(l.size() == 1, "There must be only one RDBMS service bound to this application");
+        RdbmsServiceInfo rsi = l.iterator().next();        
+        PostgresqlServiceCreator creator = new PostgresqlServiceCreator();
+        return creator.createService(rsi);
+    }
+    
+    @Bean
+    DataSourceInitializer dataSourceInitializer() {
+        DataSourceInitializer dsi = new DataSourceInitializer();
+        dsi.setDataSource(dataSource());
+        dsi.setEnabled(true);
+        ResourceDatabasePopulator dp = new ResourceDatabasePopulator();
+        dp.setContinueOnError(true);
+        dp.setIgnoreFailedDrops(true);
+        dp.setScripts(new Resource[]{ 
+            new ClassPathResource("com/springsource/html5expense/config/schema.sql"),
+            new ClassPathResource("com/springsource/html5expense/config/demo-data.sql")
+            });
+        dsi.setDatabasePopulator(dp);
+        return dsi;
     }
 
 //    @Bean
@@ -77,7 +102,7 @@ public class ComponentConfig {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setGenerateDdl(false);
+        jpaVendorAdapter.setGenerateDdl(true);
         jpaVendorAdapter.setShowSql(true);
 
         Map<String, String> properties = new HashMap<String, String>();
@@ -86,7 +111,7 @@ public class ComponentConfig {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(jpaVendorAdapter);
         factory.setJpaPropertyMap(properties);
-        factory.setDataSource(dataSource);
+        factory.setDataSource(dataSource());
         factory.setPackagesToScan(new String[]{Expense.class.getPackage().getName()});
 
         return factory;

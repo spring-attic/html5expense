@@ -23,21 +23,21 @@ public class EligibleCharge {
     }
 
     private String merchant, category;
-    private Date date;
+    private Date charge_date;
     private BigDecimal amount;
 
     public EligibleCharge() {
     }
 
-    public EligibleCharge(Date date, String merchant, String category, BigDecimal bigDecimal) {
+    public EligibleCharge(Date charge_date, String merchant, String category, BigDecimal bigDecimal) {
         this.merchant = merchant;
         this.category = category;
-        this.date = date;
+        this.charge_date = charge_date;
         this.amount = bigDecimal;
     }
 
     public Date getDate() {
-        return date;
+        return charge_date;
     }
 
     public String getMerchant() {

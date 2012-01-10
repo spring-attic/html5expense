@@ -31,7 +31,7 @@ public class Expense {
     @ManyToOne
     private ExpenseReport expenseReport;
 
-    private Date date;
+    private Date expense_date;
 
     private String merchant;
 
@@ -48,8 +48,8 @@ public class Expense {
     private String flag;
 
 
-    Expense(ExpenseReport er, Date date, String merchant, String category, BigDecimal amount, Long chargeId) {
-        this.date = date;
+    Expense(ExpenseReport er, Date expense_date, String merchant, String category, BigDecimal amount, Long chargeId) {
+        this.expense_date = expense_date;
         this.expenseReport = er;
         this.merchant = merchant;
         this.category = category;
@@ -99,7 +99,7 @@ public class Expense {
     }
 
     public Date getDate() {
-        return date;
+        return expense_date;
     }
 
     public ExpenseReport getExpenseReport() {
