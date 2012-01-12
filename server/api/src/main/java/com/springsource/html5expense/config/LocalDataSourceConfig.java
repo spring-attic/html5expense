@@ -11,25 +11,25 @@ import javax.sql.DataSource;
 //@Profile("local")
 public class LocalDataSourceConfig implements DataSourceConfig {
 
-    private Class <Driver> driverClass = Driver.class ;
+    private Class<Driver> driverClass = Driver.class;
 
-    private String  db = "expenses",
-                    host = "127.0.0.1",
-                    user = "expenses",
-                    pw = "expenses";
+    private String db = "expenses",
+            host = "127.0.0.1",
+            user = "expenses",
+            pw = "expenses";
 
     private int port = 5432;
 
-    private String url = String.format("jdbc:postgresql://%s:%s/%s" ,this.host,this.port, db) ;
+    private String url = String.format("jdbc:postgresql://%s:%s/%s", this.host, this.port, db);
 
     @Bean
     @Override
     public DataSource dataSource() {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setUrl( this.url);
-        dataSource.setDriverClass( this.driverClass);
-        dataSource.setUsername( this.user);
-        dataSource.setPassword( this.pw);
+        dataSource.setUrl(this.url);
+        dataSource.setDriverClass(this.driverClass);
+        dataSource.setUsername(this.user);
+        dataSource.setPassword(this.pw);
         return dataSource;
     }
 }

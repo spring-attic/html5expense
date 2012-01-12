@@ -1,12 +1,7 @@
 package com.springsource.html5expense.config;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.springsource.html5expense.integrations.EligibleChargeProcessor;
+import com.springsource.html5expense.integrations.EligibleChargeProcessorHeaders;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -24,30 +19,29 @@ import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
-import com.springsource.html5expense.integrations.EligibleChargeProcessor;
-import com.springsource.html5expense.integrations.EligibleChargeProcessorHeaders;
+import javax.inject.Inject;
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Josh Long
  */
 @Configuration
-@Import( {DataSourceConfig.class , ComponentConfig.class})
+@Import({DataSourceConfig.class, ComponentConfig.class})
 @ImportResource("/ec-loader.xml")
 public class BatchConfig {
 
-    @Inject private DataSourceConfig dataSourceConfig ;
+    @Inject
+    private DataSourceConfig dataSourceConfig;
 
     @Inject
     private ComponentConfig componentConfig;
@@ -106,10 +100,10 @@ public class BatchConfig {
     }
 
     @Bean
-    public JobRepositoryFactoryBean jobRepository(  ) throws Exception {
+    public JobRepositoryFactoryBean jobRepository() throws Exception {
         JobRepositoryFactoryBean bean = new JobRepositoryFactoryBean();
-        bean.setTransactionManager(new DataSourceTransactionManager( dataSourceConfig.dataSource()));
-        bean.setDataSource( dataSourceConfig.dataSource());
+        bean.setTransactionManager(new DataSourceTransactionManager(dataSourceConfig.dataSource()));
+        bean.setDataSource(dataSourceConfig.dataSource());
         return bean;
     }
 

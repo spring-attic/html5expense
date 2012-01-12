@@ -15,6 +15,7 @@
  */
 package com.springsource.html5expense.config;
 
+import com.springsource.html5expense.security.EndpointTokenServices;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -22,23 +23,21 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 
-import com.springsource.html5expense.security.EndpointTokenServices;
-
 @Configuration
 @ImportResource("classpath:security.xml")
 public class SecurityConfig {
 
-	@Bean
-	public AuthenticationEntryPoint entryPoint() {
-		return new Http403ForbiddenEntryPoint();
-	}
+    @Bean
+    public AuthenticationEntryPoint entryPoint() {
+        return new Http403ForbiddenEntryPoint();
+    }
 
-	// OAuth beans
-	@Bean
-	public ResourceServerTokenServices tokenServices() {
-		// TODO: Pull the authentication endpoint URL from the environment
-		//       Or, if the oauth service becomes a "native" CF service, then this whole bean could be consumed as a CF service.
-		return new EndpointTokenServices("https://html5expense-oauth.cloudfoundry.com/me/authentication");
-	}
+    // OAuth beans
+    @Bean
+    public ResourceServerTokenServices tokenServices() {
+        // TODO: Pull the authentication endpoint URL from the environment
+        //       Or, if the oauth service becomes a "native" CF service, then this whole bean could be consumed as a CF service.
+        return new EndpointTokenServices("https://html5expense-oauth.cloudfoundry.com/me/authentication");
+    }
 
 }

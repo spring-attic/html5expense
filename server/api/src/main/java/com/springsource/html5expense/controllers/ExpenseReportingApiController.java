@@ -15,6 +15,21 @@
  */
 package com.springsource.html5expense.controllers;
 
+import com.springsource.html5expense.EligibleCharge;
+import com.springsource.html5expense.Expense;
+import com.springsource.html5expense.ExpenseReport;
+import com.springsource.html5expense.ExpenseReportingService;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -22,28 +37,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.springsource.html5expense.EligibleCharge;
-import com.springsource.html5expense.Expense;
-import com.springsource.html5expense.ExpenseReport;
-import com.springsource.html5expense.ExpenseReportingService;
 
 /**
  * @author Roy Clarkson
@@ -80,9 +73,8 @@ public class ExpenseReportingApiController {
 
     /**
      * Create a new {@link com.springsource.html5expense.ExpenseReport} with an associated description for the purpose
-     * 
-     * @param purpose
-     *            the reason for the expense report. i.e. conference, business meal, etc.
+     *
+     * @param purpose the reason for the expense report. i.e. conference, business meal, etc.
      * @return the ID of the new expense report
      */
     @RequestMapping(method = RequestMethod.POST)
@@ -94,7 +86,7 @@ public class ExpenseReportingApiController {
     /**
      * Retrieve a list of charges that can be associated with an {@link com.springsource.html5expense.ExpenseReport}.
      * These charges are not currently associated with any other expense report.
-     * 
+     *
      * @return collection of {@link com.springsource.html5expense.EligibleCharge} objects
      */
     @RequestMapping(value = "/eligible-charges", method = RequestMethod.GET, produces = "application/json")
@@ -173,9 +165,8 @@ public class ExpenseReportingApiController {
 
     /**
      * Finalizes and submits the {@link com.springsource.html5expense.ExpenseReport} for review
-     * 
-     * @param reportId
-     *            the ID of the {@link com.springsource.html5expense.ExpenseReport}
+     *
+     * @param reportId the ID of the {@link com.springsource.html5expense.ExpenseReport}
      */
     @RequestMapping(value = "/{reportId}", method = RequestMethod.POST)
     public void submitReport(@PathVariable Long reportId) {
@@ -190,7 +181,7 @@ public class ExpenseReportingApiController {
 
     /**
      * Retrieves all of the open, or incomplete, expense reports for the user
-     * 
+     *
      * @return list of {@link com.springsource.html5expense.ExpenseReport} objects
      */
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
@@ -198,13 +189,16 @@ public class ExpenseReportingApiController {
     public List<ExpenseReport> getOpenReports() {
         return service.getOpenReports();
     }
-    
+
     /**
      * Retrieves all of the submitted expense reports for the user
+     *
      * @return list of {@link ExpenseReport} objects
      */
     @RequestMapping(value = "/submitted", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<ExpenseReport> getSubmittedReports() {
+    public
+    @ResponseBody
+    List<ExpenseReport> getSubmittedReports() {
         return service.getSubmittedReports();
     }
 

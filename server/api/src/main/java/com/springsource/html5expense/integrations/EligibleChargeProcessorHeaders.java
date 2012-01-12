@@ -11,7 +11,7 @@ public class EligibleChargeProcessorHeaders {
     /**
      * Well known header for the date of the Eligible charge
      */
-    static public final String EC_DATE= "ec_date";
+    static public final String EC_DATE = "ec_date";
     /**
      * well known header for the merchant
      */
@@ -20,11 +20,11 @@ public class EligibleChargeProcessorHeaders {
     /**
      * well known header for the amount
      */
-    static public final String EC_AMOUNT  = "ec_amount";
+    static public final String EC_AMOUNT = "ec_amount";
 
     /**
      * well known header for the category
      */
-    static public final String EC_CATEGORY= "ec_category";
+    static public final String EC_CATEGORY = "ec_category";
 
 }

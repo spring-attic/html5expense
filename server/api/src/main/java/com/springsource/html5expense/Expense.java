@@ -43,7 +43,7 @@ public class Expense {
 
     private String receipt;
 
-    private String receiptExtension ;
+    private String receiptExtension;
 
     private String flag;
 
@@ -73,11 +73,11 @@ public class Expense {
         return receipt;
     }
 
-    public String getReceiptExtension (){
-        return this.receiptExtension ;
+    public String getReceiptExtension() {
+        return this.receiptExtension;
     }
 
-    public void attachReceipt(String receipt, String extension ) {
+    public void attachReceipt(String receipt, String extension) {
         this.receipt = receipt;
         this.receiptExtension = extension;
 

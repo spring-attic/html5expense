@@ -5,8 +5,6 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import javax.servlet.ServletContext;
 
 /**
- *
- *
  * Removing <CODE>web.xml</CODE>
  *
  * @author Josh Long
@@ -16,24 +14,24 @@ public class Html5ExpenseWebApplicationInitializer /*implements WebApplicationIn
     private AnnotationConfigWebApplicationContext applicationContextForServletContext(ServletContext sc, String... pkgs) {
         final AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
         applicationContext.setServletContext(sc);
-        if(pkgs !=null && pkgs.length > 0)
-        applicationContext.scan(pkgs);
+        if (pkgs != null && pkgs.length > 0)
+            applicationContext.scan(pkgs);
         return applicationContext;
     }
-    
-    /*         
-<filter>
-        <filter-name>hiddenHttpMethodFilter</filter-name>
-        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>hiddenHttpMethodFilter</filter-name>
-        <url-pattern>/</url-pattern>
-        <servlet-name>appServlet</servlet-name>
-    </filter-mapping>
- */
 
-  //  @Override
+    /*         
+   <filter>
+           <filter-name>hiddenHttpMethodFilter</filter-name>
+           <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+       </filter>
+       <filter-mapping>
+           <filter-name>hiddenHttpMethodFilter</filter-name>
+           <url-pattern>/</url-pattern>
+           <servlet-name>appServlet</servlet-name>
+       </filter-mapping>
+    */
+
+    //  @Override
     /*public void onStartup(ServletContext servletContext) throws ServletException {
 
         AnnotationConfigWebApplicationContext servicesContext = applicationContextForServletContext( servletContext ) ; 

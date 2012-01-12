@@ -29,18 +29,18 @@ import java.util.List;
  */
 public interface ExpenseReportingService {
 
-    void deleteExpenseReport(Long expenseReportId)  ;
+    void deleteExpenseReport(Long expenseReportId);
 
     File retrieveReceipt(Integer expenseId);
 
     void updateExpenseReportPurpose(Long reportId, String title);
 
-    Collection<Expense> getExpensesForExpenseReport (  Long reportId ) ;
+    Collection<Expense> getExpensesForExpenseReport(Long reportId);
 
     /**
      * Responsible for installing new {@link EligibleCharge}s into the database
      */
-    EligibleCharge createEligibleCharge(Date date, String merchant, String category, BigDecimal amt) ;
+    EligibleCharge createEligibleCharge(Date date, String merchant, String category, BigDecimal amt);
 
     /**
      * Creates a new expense report.
@@ -50,7 +50,7 @@ public interface ExpenseReportingService {
      */
     Long createReport(String purpose);
 
-    void restoreEligibleCharges( List <Integer> expenseIds );
+    void restoreEligibleCharges(List<Integer> expenseIds);
 
     /**
      * Retrieves the charges that are eligible to be expensed.
@@ -75,10 +75,10 @@ public interface ExpenseReportingService {
      *
      * @param reportId     the expense report id
      * @param receiptBytes the receipt data as a byte array
-     * @param ext the extension of the uploaded media
+     * @param ext          the extension of the uploaded media
      * @return a pointer to the receipt
      */
-    String attachReceipt(Long reportId, Integer expenseId,  String ext , byte[] receiptBytes);
+    String attachReceipt(Long reportId, Integer expenseId, String ext, byte[] receiptBytes);
 
     /**
      * Submit the expense report for approval.
@@ -99,11 +99,12 @@ public interface ExpenseReportingService {
     /**
      * Returns all the expense reports the user has submitted.
      * A submitted report is under review or approved.
+     *
      * @return the user's submitted expense reports
      */
     List<ExpenseReport> getSubmittedReports();
 
     ExpenseReport getExpenseReport(Long reportId);
 
-    Expense getExpense(Integer  expenseId);
+    Expense getExpense(Integer expenseId);
 }

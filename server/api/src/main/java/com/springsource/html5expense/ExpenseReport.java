@@ -19,7 +19,9 @@ import com.springsource.html5expense.services.Flag;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "EXPENSE_REPORT")
@@ -39,7 +41,7 @@ public class ExpenseReport {
     @Enumerated(EnumType.STRING)
     private State state = State.NEW;
 
-    public void setPurpose(String purpose){
+    public void setPurpose(String purpose) {
         this.purpose = purpose;
     }
 
@@ -88,7 +90,7 @@ public class ExpenseReport {
 
     public void attachReceipt(Integer expenseId, String receipt, String key) {
         assertOpen();
-        getExpense(expenseId).attachReceipt(receipt  , key );
+        getExpense(expenseId).attachReceipt(receipt, key);
     }
 
     public void markInReview() {
