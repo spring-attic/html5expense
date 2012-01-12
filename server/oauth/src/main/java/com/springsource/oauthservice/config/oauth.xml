@@ -6,7 +6,8 @@
 
 	<authorization-server client-details-service-ref="clientDetails" token-services-ref="tokenServices">
 		<authorization-code />
-		<password />
+		<implicit /> <!-- does authorization redirect but spares client the need for authorization code exchange -->
+		<password /> 
 	</authorization-server>
 	<resource-server id="resourceServerFilter" resource-id="identityResource" token-services-ref="tokenServices" />
 

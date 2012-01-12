@@ -46,7 +46,7 @@ import java.util.Map;
  */
 @Configuration
 @EnableTransactionManagement
-@Import(LocalDataSourceConfig.class)
+@Import({LocalDataSourceConfig.class, SecurityConfig.class})
 @ComponentScan(basePackageClasses = JpaExpenseReportingService.class)
 public class ComponentConfig {
 
