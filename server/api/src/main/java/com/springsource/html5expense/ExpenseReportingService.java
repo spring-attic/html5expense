@@ -31,7 +31,7 @@ public interface ExpenseReportingService {
 
     void deleteExpenseReport(Long expenseReportId)  ;
 
-    File retreiveReceipt ( Integer  expenseId );
+    File retrieveReceipt(Integer expenseId);
 
     void updateExpenseReportPurpose(Long reportId, String title);
 

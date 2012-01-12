@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
 import com.springsource.html5expense.security.EndpointTokenServices;
 
 @Configuration
-@ImportResource("classpath:com/springsource/html5expense/config/security.xml")
+@ImportResource("classpath:security.xml")
 public class SecurityConfig {
 
 	@Bean

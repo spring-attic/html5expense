@@ -13,6 +13,5 @@ public class LoggingHttpSessionListener  implements HttpSessionListener
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

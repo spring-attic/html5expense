@@ -122,7 +122,7 @@ public class ExpenseReportingApiController {
         Expense expense = service.getExpense(expenseId);
         httpServletResponse.setContentType(buildMimeTypeForExpense(expense));
 
-        File f = service.retreiveReceipt(expenseId);
+        File f = service.retrieveReceipt(expenseId);
         InputStream is = null;
         try {
             is = new FileInputStream(f);
@@ -161,8 +161,7 @@ public class ExpenseReportingApiController {
             if (ext != null) {
                 ext = ext.trim().toLowerCase();
             }
-            String receiptKey = service.attachReceipt(reportId, expenseId, ext, bytesForImage);
-            return receiptKey;
+            return service.attachReceipt(reportId, expenseId, ext, bytesForImage);
         } catch (Throwable th) {
             if (log.isErrorEnabled()) {
                 log.error("Something went wrong trying to write the file out.", th);

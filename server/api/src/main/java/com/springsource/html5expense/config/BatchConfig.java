@@ -43,10 +43,12 @@ import com.springsource.html5expense.integrations.EligibleChargeProcessorHeaders
  * @author Josh Long
  */
 @Configuration
-@Import(ComponentConfig.class)
+@Import( {DataSourceConfig.class , ComponentConfig.class})
 @ImportResource("/ec-loader.xml")
 public class BatchConfig {
-    
+
+    @Inject private DataSourceConfig dataSourceConfig ;
+
     @Inject
     private ComponentConfig componentConfig;
 
@@ -106,8 +108,8 @@ public class BatchConfig {
     @Bean
     public JobRepositoryFactoryBean jobRepository(  ) throws Exception {
         JobRepositoryFactoryBean bean = new JobRepositoryFactoryBean();
-        bean.setTransactionManager(new DataSourceTransactionManager(componentConfig.dataSource()));
-        bean.setDataSource(componentConfig.dataSource());
+        bean.setTransactionManager(new DataSourceTransactionManager( dataSourceConfig.dataSource()));
+        bean.setDataSource( dataSourceConfig.dataSource());
         return bean;
     }
 

@@ -16,13 +16,13 @@
 package com.springsource.html5expense.services;
 
 import com.springsource.html5expense.*;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -39,52 +39,53 @@ import java.util.*;
  * @see ExpenseReportingService
  */
 @Service
+@Transactional
 public class JpaExpenseReportingService implements ExpenseReportingService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
 
     private Log log = LogFactory.getLog(getClass());
 
-    @Override
-    public File retreiveReceipt(Integer expenseId) {
-        Expense e = getExpense(expenseId);
-        return fileForExpense(e);
-    }
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Override
-    @Transactional
-    public void updateExpenseReportPurpose(Long reportId, String purpose) {
-        ExpenseReport expenseReport = getReport(reportId);
-        expenseReport.setPurpose(purpose);
-        entityManager.merge(expenseReport);
-    }
-
-    static private class ExpenseComparator implements Comparator<Expense> {
+    private static class ExpenseComparator implements Comparator<Expense> {
         @Override
         public int compare(Expense expense, Expense expense1) {
             return expense.getId().compareTo(expense1.getId());
         }
     }
 
-    @Override
+    @PostConstruct
+    public void begin() {
+        Assert.isTrue(tmpDir.exists() || tmpDir.mkdirs(),
+                "the directory " + tmpDir.getAbsolutePath() + " doesn't exist, and we couldn't create it. Please check permissions.");
+    }
+
+    public File retrieveReceipt(Integer expenseId) {
+        Expense e = getExpense(expenseId);
+        return fileForExpense(e);
+    }
+
+    public void updateExpenseReportPurpose(Long reportId, String purpose) {
+        ExpenseReport expenseReport = getReport(reportId);
+        expenseReport.setPurpose(purpose);
+        entityManager.merge(expenseReport);
+    }
+
     @Transactional(readOnly = true)
     public Collection<Expense> getExpensesForExpenseReport(Long reportId) {
-
         List<Expense> expenseCollection = this.entityManager.createQuery(
-                "from Expense e WHERE e.expenseReport.id  = :id", Expense.class)
+                "SELECT e FROM " + Expense.class.getName() + " e WHERE e.expenseReport.id  = :id", Expense.class)
                 .setParameter("id", reportId)
                 .getResultList();
 
-        // consistant sorting
+        // consistent sorting
         Collections.sort(expenseCollection, new ExpenseComparator());
 
         return expenseCollection;
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Expense getExpense(Integer expenseId) {
         return entityManager.find(Expense.class, expenseId);
@@ -92,11 +93,9 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @Transactional(readOnly = true)
     public Collection<EligibleCharge> getEligibleCharges() {
-        return entityManager.createQuery("from EligibleCharge", EligibleCharge.class).getResultList();
+        return entityManager.createQuery("SELECT er from " + EligibleCharge.class.getName() + " er ", EligibleCharge.class).getResultList();
     }
 
-
-    @Transactional
     public void deleteExpenseReport(Long expenseReportId) {
         Collection<Expense> expenses;
         expenses = getExpensesForExpenseReport(expenseReportId);
@@ -108,29 +107,23 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         }
         expenses = getExpensesForExpenseReport(expenseReportId);
         log.debug("there are " + expenses.size() + " expenses  in the report #" + expenseReportId);
-        ExpenseReport expenseReport = getExpenseReport( expenseReportId);
+        ExpenseReport expenseReport = getExpenseReport(expenseReportId);
         entityManager.remove(expenseReport);
         entityManager.flush();
-
     }
 
-    @Override
-    @Transactional
     public EligibleCharge createEligibleCharge(Date date, String merchant, String category, BigDecimal amt) {
         EligibleCharge charge = new EligibleCharge(date, merchant, category, amt);
         entityManager.persist(charge);
         return charge;
     }
 
-    @Transactional
     public Long createReport(String purpose) {
         ExpenseReport report = new ExpenseReport(purpose);
         entityManager.persist(report);
         return report.getId();
     }
 
-    @Transactional
-    @Override
     public void restoreEligibleCharges(List<Integer> expenseIds) {
         for (Integer l : expenseIds) {
             Expense e = getExpense(l);
@@ -142,7 +135,6 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         }
     }
 
-    @Transactional
     public Collection<Expense> createExpenses(Long reportId, List<Long> chargeIds) {
         ExpenseReport report = getReport(reportId);
         List<Expense> expenses = new ArrayList<Expense>();
@@ -156,16 +148,8 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return expenses;
     }
 
-    @PostConstruct
-    public void begin() {
-        if (!tmpDir.exists()) tmpDir.mkdirs();
-    }
-
-
     private String keyForExpenseReceipt(Long reportId, Integer expenseId) {
-
-        String reportAndExpenseKey = "receipt-" + reportId + "-" + (expenseId) + "";
-        return reportAndExpenseKey;
+        return "receipt-" + reportId + "-" + (expenseId) + "";
     }
 
     private String fileNameForReceipt(String key, String ext) {
@@ -176,7 +160,6 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return new File(this.tmpDir, fileNameForReceipt(ex.getReceipt(), ex.getReceiptExtension()));
     }
 
-    @Transactional
     public String attachReceipt(Long reportId, Integer expenseId, String ext, byte[] receiptBytes) {
 
         String reportAndExpenseKey = keyForExpenseReceipt(reportId, expenseId);
@@ -195,15 +178,14 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         } catch (Throwable th) {
             log.error(th);
         } finally {
-            if (out != null) IOUtils.closeQuietly(out);
-            if (in != null) IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
         }
 
         return reportAndExpenseKey;
 
     }
 
-    @Transactional
     public void submitReport(Long reportId) {
         ExpenseReport entity = getReport(reportId);
         entity.markInReview();
@@ -211,7 +193,6 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     }
 
     @Transactional(readOnly = true)
-    @Override
     public ExpenseReport getExpenseReport(Long reportId) {
         return entityManager.find(ExpenseReport.class, reportId);
     }
@@ -220,7 +201,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     public List<ExpenseReport> getOpenReports() {
         List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
         List<ExpenseReport> entities = entityManager.createQuery(
-                "from ExpenseReport where state = :new or state = :rejected", ExpenseReport.class)
+                "SELECT e from " + ExpenseReport.class.getName() + " e where e.state = :new or e.state = :rejected", ExpenseReport.class)
                 .setParameter("new", State.NEW)
                 .setParameter("rejected", State.REJECTED)
                 .getResultList();
@@ -231,15 +212,15 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
         return reports;
     }
-    
-    @Transactional(readOnly=true)
+
+    @Transactional(readOnly = true)
     public List<ExpenseReport> getSubmittedReports() {
         List<ExpenseReport> reports = new ArrayList<ExpenseReport>();
         List<ExpenseReport> entities = entityManager.createQuery(
-                "from ExpenseReport where state = :in_review or state = :approved", ExpenseReport.class)
-                 .setParameter("in_review", State.IN_REVIEW)
-                 .setParameter("approved", State.APPROVED)
-                 .getResultList();
+                "select er from " + ExpenseReport.class.getName() + " er where er.state = :in_review or er.state = :approved", ExpenseReport.class)
+                .setParameter("in_review", State.IN_REVIEW)
+                .setParameter("approved", State.APPROVED)
+                .getResultList();
 
         for (ExpenseReport report : entities) {
             reports.add(report);
@@ -247,18 +228,19 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return reports;
     }
 
+    @Transactional(readOnly = true)
     private ExpenseReport getReport(Long reportId) {
         return entityManager.find(ExpenseReport.class, reportId);
     }
 
     private List<EligibleCharge> getEligibleCharges(List<Long> chargeIds) {
-        return entityManager.createQuery("from EligibleCharge where id in :ids", EligibleCharge.class)
+        return entityManager.createQuery("select e from " + EligibleCharge.class.getName() + " e where e.id in :ids", EligibleCharge.class)
                 .setParameter("ids", chargeIds)
                 .getResultList();
     }
 
     private void removeAddedCharges(List<Long> chargeIds) {
-        entityManager.createQuery("delete from EligibleCharge where id in :ids")
+        entityManager.createQuery("delete from " + EligibleCharge.class.getName() + " e where e.id in :ids")
                 .setParameter("ids", chargeIds)
                 .executeUpdate();
     }

@@ -14,7 +14,278 @@
     <script type="text/javascript" th:src="@{/assets/js/jquery.editinplace.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/upload.js}"></script>
 
-    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css"/>
+    <!--<link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css"/>-->
+    <style type="text/css">
+
+    .previewDiv {
+        margin-top: 10px;
+
+    }
+
+    .preview {
+        border: 1px solid black;
+
+    }
+
+    .hideme {
+        display: none;
+    }
+
+    #expensesMenu {
+        padding: 5px;
+        margin-bottom: 5px;
+        vertical-align: baseline;
+    }
+
+    #expensesMenu form {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        vertical-align: baseline;
+    }
+
+    body {
+        font-family: sans-serif;
+        font-size: smaller;
+        padding: 0;
+        margin: 0;
+        margin: 0;
+        border: 0;
+    }
+
+    #dropzone {
+        position: absolute;
+        height: 5px;
+        width: 10px;
+        top: 200px;
+        left: 10px;
+        display: none;
+        border-top: 1px solid #f5fffa;
+        background-color: green;
+        text-align: center;
+        color: #90ee90;
+        border-bottom: 1px solid #f5fffa;
+        background-position: center;
+        background-repeat: no-repeat;
+
+    }
+
+    #ecs {
+        border: 1px solid gray;
+        border-top: 0 solid gray;
+        background-color: #d3d3d3;
+
+    }
+
+    #reportMenu {
+        margin: 5px;
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    #expenseReportPanel {
+
+        float: left;
+
+        margin-left: 10px;
+        float: left;
+    }
+
+    #expenseReportPanelTable {
+        border: 1px solid #90ee90;
+        width: 600px;
+        background-color: #f5fffa;
+    }
+
+    .ec {
+        padding: 5px;
+    }
+
+    #expensesBalance, #ecsBalance {
+
+        padding: 5px;
+        padding-left: 155px;
+        width: 60px;
+        display: inline-block;
+    }
+
+    .ec {
+        cursor: move;
+        border-top: 1px solid gray;
+        background-color: #d3d3d3;
+    }
+
+    .expense.ui-draggable-dragging {
+        border: 1px solid #f5fffa;
+    }
+
+    .ec.ui-draggable-dragging {
+        border: 1px solid gray;
+
+    }
+
+    .ec .merchant {
+        display: inline-block;
+        width: 150px;
+        font-size: inherit;
+    }
+
+    .ec .category {
+        font-size: smaller;
+        text-transform: uppercase;
+        color: gray;
+        letter-spacing: 1px;
+    }
+
+    .ec .amount {
+        display: inline-block;
+        width: 60px;
+    }
+
+    .expense {
+        cursor: move;
+        padding: 5px;
+        border-top: 1px solid #f5fffa;
+        background-color: #90ee90;
+    }
+
+    .expense .merchant {
+        display: inline-block;
+        width: 150px;
+        font-size: inherit;
+    }
+
+    .expense .category {
+        font-size: smaller;
+        text-transform: uppercase;
+        color: gray;
+        width: 150px;
+        display: inline-block;
+
+        letter-spacing: 1px;
+    }
+
+    .expense .progress {
+        width: 20px;
+        float: right;
+        display: none;
+
+    }
+
+    .expense .menu {
+        display: inline-block;
+        /*  float: right; */
+    }
+
+    .expense .amount {
+        display: inline-block;
+        width: 60px;
+    }
+
+    .dollar {
+        color: gray
+    }
+
+    #ecsPanel {
+        float: left;
+
+        display: inline-block;
+        width: 350px;
+    }
+
+    #reportPurpose {
+        display: inline-block;
+
+        height: 1em;
+        padding: 5px;
+        font-size: larger;
+        color: green;
+
+    }
+
+    a:link {
+        color: green;
+    }
+
+    #createNewReportButton {
+    }
+
+    #openExpensesForm {
+        float: left;
+        display: inline;
+    }
+
+    #ws {
+        padding: 10px;
+    }
+
+    .rowSpacer {
+        height: 20px;
+        display: inline-block;
+        /*border:1px solid black ;   */
+    }
+
+    .removeExpense {
+        display: inline-block;
+        width: 21px;
+    }
+
+    .trashIcon {
+        float: right;
+        margin: 5px;
+        width: 16px;
+        height: 20px;
+        display: inline-block;
+        background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
+    }
+
+    .trashIconOff {
+        background: url(/assets/images/trash_sprite.gif) no-repeat 0px 0px;
+    }
+
+    .trashIconOn {
+        background: url(/assets/images/trash_sprite.gif) no-repeat -16px 0px;
+    }
+
+    .addReceipt {
+        display: inline-block;
+        width: 26px;
+        height: 16px;
+    }
+
+    .hasReceiptIcon {
+        width: 25px;
+        height: 20px;
+        display: inline-block;
+        background: url(/assets/images/attachments/receipts.gif) no-repeat 0 0;
+    }
+
+    .hasReceiptFalse {
+        background: url(/assets/images/attachments/receipts-required.gif) no-repeat 0px 0px;
+    }
+
+    .hasReceiptTrue {
+        background: url(/assets/images/attachments/receipts-provided.gif) no-repeat 0px 0px;
+
+    }
+
+        /*.hasReceiptOff {*/
+        /*background: url(/assets/images/checkmark_sprite.gif) no-repeat 0px 0px;*/
+        /*}*/
+
+        /*.hasReceiptOn {*/
+        /*background: url(/assets/images/checkmark_sprite.gif) no-repeat -20px 0px;*/
+        /*}*/
+
+    .createNewReportLabel {
+        display: inline;
+        float: left;
+        padding-top: .3em;
+        margin-right: 5px;
+
+    }
+
+    </style>
 
 
 </head>
