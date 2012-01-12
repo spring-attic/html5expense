@@ -1,0 +1,17 @@
+Here's the sequence you need to setup the database on PostgreSQL, locally.
+
+/Library/PostgreSQL/9.1/scripts/runpsql.sh; exit
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Password for user postgres:
+psql (9.1.2)
+Type "help" for help.
+postgres=# create user expenses with password 'expenses' ; create database expenses ;
+CREATE ROLE
+CREATE DATABASE
+postgres=# grant all privileges on database expenses to expenses ;
+GRANT
+postgres=#
+
