@@ -14,7 +14,7 @@ import java.util.Date;
 @Table(name = "ELIGIBLE_CHARGE")
 public class EligibleCharge {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
     @Id
     private Long id;
 

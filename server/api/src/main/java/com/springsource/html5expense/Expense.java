@@ -24,7 +24,7 @@ import java.util.Date;
 @Table(name = "EXPENSE")
 public class Expense {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
     @Id
     private Integer id;
 

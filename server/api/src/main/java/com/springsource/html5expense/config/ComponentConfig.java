@@ -15,15 +15,13 @@
  */
 package com.springsource.html5expense.config;
 
-import com.springsource.html5expense.Expense;
+import com.springsource.html5expense.EligibleCharge;
 import com.springsource.html5expense.services.JpaExpenseReportingService;
-import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -57,18 +55,17 @@ public class ComponentConfig {
 
     @Bean
     public DataSourceInitializer dataSourceInitializer() {
-        DataSourceInitializer dsi = new DataSourceInitializer();
-        dsi.setDataSource(this.dataSourceConfig.dataSource());
-        dsi.setEnabled(true);
-        ResourceDatabasePopulator dp = new ResourceDatabasePopulator();
-        dp.setContinueOnError(true);
-        dp.setIgnoreFailedDrops(true);
-        dp.setScripts(new Resource[]{
-                new ClassPathResource("/setup/schema.sql"),
-                new ClassPathResource("/setup/demo-data.sql")
-        });
-        dsi.setDatabasePopulator(dp);
-        return dsi;
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.setContinueOnError(true);
+        databasePopulator.setIgnoreFailedDrops(true);
+        databasePopulator.addScript(new ClassPathResource("/setup/demo-data.sql"));
+
+        DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
+        dataSourceInitializer.setDataSource(this.dataSourceConfig.dataSource());
+        dataSourceInitializer.setEnabled(true);
+        dataSourceInitializer.setDatabasePopulator(databasePopulator);
+
+        return dataSourceInitializer;
     }
 
     @Bean
@@ -79,20 +76,26 @@ public class ComponentConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
+
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         jpaVendorAdapter.setGenerateDdl(true);
         jpaVendorAdapter.setShowSql(true);
 
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.put("hibernate.dialect", H2Dialect.class.getName());
+        Map<String, String> props = new HashMap<String, String>();
 
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setJpaVendorAdapter(jpaVendorAdapter);
-        factory.setJpaPropertyMap(properties);
-        factory.setDataSource(this.dataSourceConfig.dataSource());
-        factory.setPackagesToScan(Expense.class.getPackage().getName());
+        // validate or create
+        props.put("hibernate.hbm2ddl.auto", "create");
 
-        return factory;
+        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+        localContainerEntityManagerFactoryBean.setDataSource(dataSourceConfig.dataSource());
+        localContainerEntityManagerFactoryBean.setJpaPropertyMap(props);
+
+        String entityPackage = EligibleCharge.class.getPackage().getName();
+        localContainerEntityManagerFactoryBean.setPackagesToScan(entityPackage);
+
+        // look ma, no persistence.xml !
+        return localContainerEntityManagerFactoryBean;
     }
 
 }
