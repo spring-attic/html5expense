@@ -33,6 +33,7 @@
         <user name="demo" password="demo" authorities="ROLE_USER" />
         <user name="craig" password="demo" authorities="ROLE_USER" />
         <user name="roy" password="demo" authorities="ROLE_USER" />
+        <user name="josh" password="demo" authorities="ROLE_USER" />
     </user-service>
 
     <beans:import resource="oauth.xml" />
