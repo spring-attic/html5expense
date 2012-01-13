@@ -16,15 +16,18 @@
 package com.springsource.html5expense.services;
 
 import com.springsource.html5expense.*;
+import com.springsource.html5expense.services.utilities.MongoDbGridFsUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.*;
@@ -42,13 +45,17 @@ import java.util.*;
 @Transactional
 public class JpaExpenseReportingService implements ExpenseReportingService {
 
+    private String mongoDbGridFsFileBucket = "expenseReports" ;
+
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Inject private MongoTemplate mongoTemplate ;
 
     private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
 
     private Log log = LogFactory.getLog(getClass());
-
+    
     private static class ExpenseComparator implements Comparator<Expense> {
         @Override
         public int compare(Expense expense, Expense expense1) {
@@ -56,15 +63,10 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         }
     }
 
-    @PostConstruct
-    public void begin() {
-        Assert.isTrue(tmpDir.exists() || tmpDir.mkdirs(),
-                "the directory " + tmpDir.getAbsolutePath() + " doesn't exist, and we couldn't create it. Please check permissions.");
-    }
-
-    public File retrieveReceipt(Integer expenseId) {
+    public InputStream retrieveReceipt(Integer expenseId) {
         Expense e = getExpense(expenseId);
-        return fileForExpense(e);
+        String fn = fileNameForReceipt(e ) ;
+        return MongoDbGridFsUtils.read( this.mongoTemplate, this.mongoDbGridFsFileBucket, fn) ;
     }
 
     public void updateExpenseReportPurpose(Long reportId, String purpose) {
@@ -156,34 +158,24 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return key + "." + ext;
     }
 
-    private File fileForExpense(Expense ex) {
-        return new File(this.tmpDir, fileNameForReceipt(ex.getReceipt(), ex.getReceiptExtension()));
-    }
-
     public String attachReceipt(Long reportId, Integer expenseId, String ext, byte[] receiptBytes) {
-
         String reportAndExpenseKey = keyForExpenseReceipt(reportId, expenseId);
         Expense expense = getExpense(expenseId);
         ExpenseReport report = getReport(reportId);
         report.attachReceipt(expenseId, reportAndExpenseKey, ext);
         entityManager.merge(report);
-
-        OutputStream out = null;
-        InputStream in = null;
-        try {
-            File outputFile = fileForExpense(expense);
-            in = new ByteArrayInputStream(receiptBytes);
-            out = new FileOutputStream(outputFile);
-            IOUtils.copy(in, out);
-        } catch (Throwable th) {
-            log.error(th);
-        } finally {
-            IOUtils.closeQuietly(out);
-            IOUtils.closeQuietly(in);
-        }
-
+        writeExpense( expense, receiptBytes);
         return reportAndExpenseKey;
+    }
 
+    private void writeExpense(Expense expense, byte[] receiptBytes) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( receiptBytes) ;     
+        String fn = fileNameForReceipt( expense ); 
+        MongoDbGridFsUtils.write( this.mongoTemplate,  this.mongoDbGridFsFileBucket, byteArrayInputStream, fn , null );
+    }       
+    
+    private String fileNameForReceipt( Expense e ) {
+        return fileNameForReceipt( e.getReceipt(), e.getReceiptExtension()) ;
     }
 
     public void submitReport(Long reportId) {

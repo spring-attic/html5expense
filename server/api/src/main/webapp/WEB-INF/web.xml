@@ -8,7 +8,10 @@
         <param-name>contextClass</param-name>
         <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
     </context-param>
-
+    <context-param>
+        <param-name>contextInitializerClasses</param-name>
+        <param-value>com.springsource.html5expense.web.Html5ExpenseApplicationContextInitializer</param-value>
+    </context-param>
     <!-- Location of Java @Configuration classes that configure the components that makeup this application -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -24,7 +27,7 @@
         <url-pattern>/</url-pattern>
         <servlet-name>appServlet</servlet-name>
     </filter-mapping>
-
+<!--
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -34,7 +37,7 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
+    -->
 
     <!-- Creates the Spring Container shared by all Servlets and Filters -->
     <listener>

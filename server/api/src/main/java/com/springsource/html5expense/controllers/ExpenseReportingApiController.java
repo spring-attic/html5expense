@@ -30,8 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -113,9 +111,17 @@ public class ExpenseReportingApiController {
 
         Expense expense = service.getExpense(expenseId);
         httpServletResponse.setContentType(buildMimeTypeForExpense(expense));
+        InputStream is = service.retrieveReceipt(expenseId);
+        try {
+            IOUtils.copyLarge(is, os);
+        } catch (Exception e1) {
+            log.error(e1);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
+        }
 
-        File f = service.retrieveReceipt(expenseId);
-        InputStream is = null;
+        /* 
         try {
             is = new FileInputStream(f);
             httpServletResponse.setContentLength((int) f.length());
@@ -127,8 +133,9 @@ public class ExpenseReportingApiController {
                 IOUtils.closeQuietly(is);
             if (os != null)
                 IOUtils.closeQuietly(os);
-        }
+        }*/
     }
+
 
     @RequestMapping(value = "/{reportId}/expenses", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody

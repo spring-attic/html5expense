@@ -46,7 +46,7 @@ import java.util.Map;
  */
 @Configuration
 @EnableTransactionManagement
-@Import({LocalDataSourceConfig.class, SecurityConfig.class})
+@Import({LocalDataSourceConfig.class, CloudDataSourceConfig.class/*, SecurityConfig.class*/})
 @ComponentScan(basePackageClasses = JpaExpenseReportingService.class)
 public class ComponentConfig {
 
@@ -54,7 +54,7 @@ public class ComponentConfig {
     private DataSourceConfig dataSourceConfig;
 
     @Bean
-    public DataSourceInitializer dataSourceInitializer() {
+    public DataSourceInitializer dataSourceInitializer() throws Throwable {
         ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
         databasePopulator.setContinueOnError(true);
         databasePopulator.setIgnoreFailedDrops(true);
@@ -84,7 +84,7 @@ public class ComponentConfig {
         Map<String, String> props = new HashMap<String, String>();
 
         // validate or create
-        props.put("hibernate.hbm2ddl.auto", "create");
+        props.put("hibernate.hbm2ddl.auto", "create-update");
 
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);

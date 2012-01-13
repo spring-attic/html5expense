@@ -16,6 +16,7 @@
 package com.springsource.html5expense;
 
 import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
@@ -31,7 +32,7 @@ public interface ExpenseReportingService {
 
     void deleteExpenseReport(Long expenseReportId);
 
-    File retrieveReceipt(Integer expenseId);
+    InputStream retrieveReceipt(Integer expenseId);
 
     void updateExpenseReportPurpose(Long reportId, String title);
 

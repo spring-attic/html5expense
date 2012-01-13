@@ -15,31 +15,35 @@
  */
 package com.springsource.html5expense.config;
 
+import com.mongodb.Mongo;
 import org.postgresql.Driver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
 @Configuration
-//@Profile("local")
+@Profile("local")
 public class LocalDataSourceConfig implements DataSourceConfig {
 
     private Class<Driver> driverClass = Driver.class;
 
-    private String db = "expenses",
-            host = "127.0.0.1",
-            user = "expenses",
-            pw = "expenses";
+    private String postgresDb = "expenses", postgresHost = "127.0.0.1", user = "expenses", pw = "expenses";
 
-    private int port = 5432;
+    private int postgresPort = 5432;
 
-    private String url = String.format("jdbc:postgresql://%s:%s/%s", this.host, this.port, db);
+    private String mongoDatabaseName = "expensesfs";
+
+    private String mongoDbHost = "127.0.0.1";
+
+    private String url = String.format("jdbc:postgresql://%s:%s/%s", this.postgresHost, this.postgresPort, this.postgresDb);
 
     @Bean
     @Override
-    public DataSource dataSource() {
+    public DataSource dataSource() throws Exception {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setUrl(this.url);
         dataSource.setDriverClass(this.driverClass);
@@ -47,4 +51,11 @@ public class LocalDataSourceConfig implements DataSourceConfig {
         dataSource.setPassword(this.pw);
         return dataSource;
     }
+
+    @Bean
+    @Override
+    public MongoTemplate mongoTemplate() throws Exception {
+        return new MongoTemplate(new Mongo(this.mongoDbHost), this.mongoDatabaseName);
+    }
+
 }
