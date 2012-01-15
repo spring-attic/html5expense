@@ -16,17 +16,14 @@
 package com.springsource.html5expense.services;
 
 import com.springsource.html5expense.*;
-import com.springsource.html5expense.services.utilities.MongoDbGridFsUtils;
-import org.apache.commons.io.IOUtils;
+import com.springsource.html5expense.services.utilities.MongoDbGridFsUtilities;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -50,23 +47,25 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Inject private MongoDbGridFsUtilities mongoDbGridFsUtilities;
+
     @Inject private MongoTemplate mongoTemplate ;
 
     private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
 
     private Log log = LogFactory.getLog(getClass());
-    
     private static class ExpenseComparator implements Comparator<Expense> {
         @Override
         public int compare(Expense expense, Expense expense1) {
             return expense.getId().compareTo(expense1.getId());
         }
+
     }
 
     public InputStream retrieveReceipt(Integer expenseId) {
         Expense e = getExpense(expenseId);
         String fn = fileNameForReceipt(e ) ;
-        return MongoDbGridFsUtils.read( this.mongoTemplate, this.mongoDbGridFsFileBucket, fn) ;
+        return mongoDbGridFsUtilities.read(  this.mongoDbGridFsFileBucket, fn) ;
     }
 
     public void updateExpenseReportPurpose(Long reportId, String purpose) {
@@ -170,8 +169,8 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     private void writeExpense(Expense expense, byte[] receiptBytes) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( receiptBytes) ;     
-        String fn = fileNameForReceipt( expense ); 
-        MongoDbGridFsUtils.write( this.mongoTemplate,  this.mongoDbGridFsFileBucket, byteArrayInputStream, fn , null );
+        String fn = fileNameForReceipt(expense);
+        mongoDbGridFsUtilities.write( this.mongoDbGridFsFileBucket, byteArrayInputStream, fn, null);
     }       
     
     private String fileNameForReceipt( Expense e ) {
