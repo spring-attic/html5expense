@@ -24,14 +24,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * This is the gateway for all incoming eligible charges.
- * <p/>
- * There are lots of ways to submit eligible charges, but we'll assume that they all converge on this
+ * This is the gateway for all incoming eligible charges. There are lots of ways
+ * to submit eligible charges, but we'll assume that they all converge on this
  * endpoint thanks to Spring Integration's normalization and routing prowess.
  *
  * @author Josh Long
  */
-
 public class EligibleChargeProcessor {
 
     @Inject

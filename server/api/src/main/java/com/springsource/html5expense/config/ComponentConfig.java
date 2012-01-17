@@ -77,25 +77,16 @@ public class ComponentConfig {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
 
-        HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setGenerateDdl(true);
-        jpaVendorAdapter.setShowSql(true);
-
         Map<String, String> props = new HashMap<String, String>();
-
-        // validate or create
         props.put("hibernate.hbm2ddl.auto", "create-update");
 
-        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-        localContainerEntityManagerFactoryBean.setDataSource(dataSourceConfig.dataSource());
-        localContainerEntityManagerFactoryBean.setJpaPropertyMap(props);
+        LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
+        emfb.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        emfb.setDataSource(dataSourceConfig.dataSource());
+        emfb.setJpaPropertyMap(props);
+        emfb.setPackagesToScan(EligibleCharge.class.getPackage().getName());
 
-        String entityPackage = EligibleCharge.class.getPackage().getName();
-        localContainerEntityManagerFactoryBean.setPackagesToScan(entityPackage);
-
-        // look ma, no persistence.xml !
-        return localContainerEntityManagerFactoryBean;
+        return emfb;
     }
 
 }

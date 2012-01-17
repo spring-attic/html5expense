@@ -16,7 +16,8 @@
 package com.springsource.html5expense.integrations;
 
 /**
- * well known headers that need to be present when constructing {@link com.springsource.html5expense.EligibleCharge}
+ * well known headers that need to be present when constructing
+ * {@link com.springsource.html5expense.EligibleCharge}
  * contributions in routing code.
  *
  * @author Josh Long

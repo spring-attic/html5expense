@@ -27,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -42,18 +44,21 @@ import java.util.*;
 @Transactional
 public class JpaExpenseReportingService implements ExpenseReportingService {
 
-    private String mongoDbGridFsFileBucket = "expenseReports" ;
+    private String mongoDbGridFsFileBucket = "expenseReports";
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Inject private MongoDbGridFsUtilities mongoDbGridFsUtilities;
+    @Inject
+    private MongoDbGridFsUtilities mongoDbGridFsUtilities;
 
-    @Inject private MongoTemplate mongoTemplate ;
+    @Inject
+    private MongoTemplate mongoTemplate;
 
     private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
 
     private Log log = LogFactory.getLog(getClass());
+
     private static class ExpenseComparator implements Comparator<Expense> {
         @Override
         public int compare(Expense expense, Expense expense1) {
@@ -64,8 +69,8 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     public InputStream retrieveReceipt(Integer expenseId) {
         Expense e = getExpense(expenseId);
-        String fn = fileNameForReceipt(e ) ;
-        return mongoDbGridFsUtilities.read(  this.mongoDbGridFsFileBucket, fn) ;
+        String fn = fileNameForReceipt(e);
+        return mongoDbGridFsUtilities.read(this.mongoDbGridFsFileBucket, fn);
     }
 
     public void updateExpenseReportPurpose(Long reportId, String purpose) {
@@ -163,18 +168,18 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         ExpenseReport report = getReport(reportId);
         report.attachReceipt(expenseId, reportAndExpenseKey, ext);
         entityManager.merge(report);
-        writeExpense( expense, receiptBytes);
+        writeExpense(expense, receiptBytes);
         return reportAndExpenseKey;
     }
 
     private void writeExpense(Expense expense, byte[] receiptBytes) {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( receiptBytes) ;     
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receiptBytes);
         String fn = fileNameForReceipt(expense);
-        mongoDbGridFsUtilities.write( this.mongoDbGridFsFileBucket, byteArrayInputStream, fn, null);
-    }       
-    
-    private String fileNameForReceipt( Expense e ) {
-        return fileNameForReceipt( e.getReceipt(), e.getReceiptExtension()) ;
+        mongoDbGridFsUtilities.write(this.mongoDbGridFsFileBucket, byteArrayInputStream, fn, null);
+    }
+
+    private String fileNameForReceipt(Expense e) {
+        return fileNameForReceipt(e.getReceipt(), e.getReceiptExtension());
     }
 
     public void submitReport(Long reportId) {
