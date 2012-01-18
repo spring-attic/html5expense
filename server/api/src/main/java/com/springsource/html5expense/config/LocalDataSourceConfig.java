@@ -29,33 +29,21 @@ import javax.sql.DataSource;
 @Profile("local")
 public class LocalDataSourceConfig implements DataSourceConfig {
 
-    private Class<Driver> driverClass = Driver.class;
-
-    private String postgresDb = "expenses", postgresHost = "127.0.0.1", user = "expenses", pw = "expenses";
-
-    private int postgresPort = 5432;
-
-    private String mongoDatabaseName = "expensesfs";
-
-    private String mongoDbHost = "127.0.0.1";
-
-    private String url = String.format("jdbc:postgresql://%s:%s/%s", this.postgresHost, this.postgresPort, this.postgresDb);
-
     @Bean
     @Override
     public DataSource dataSource() throws Exception {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setUrl(this.url);
-        dataSource.setDriverClass(this.driverClass);
-        dataSource.setUsername(this.user);
-        dataSource.setPassword(this.pw);
+        dataSource.setUrl(String.format("jdbc:postgresql://%s:%s/%s", "127.0.0.1", 5432, "expenses"));
+        dataSource.setDriverClass(Driver.class);
+        dataSource.setUsername("expenses");
+        dataSource.setPassword("expenses");
         return dataSource;
     }
 
     @Bean
     @Override
     public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(new Mongo(this.mongoDbHost), this.mongoDatabaseName);
+        return new MongoTemplate(new Mongo("127.0.0.1"), "expensesfs");
     }
 
 }
