@@ -154,32 +154,14 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         return expenses;
     }
 
-    private String keyForExpenseReceipt(Long reportId, Integer expenseId) {
-        return "receipt-" + reportId + "-" + (expenseId) + "";
-    }
-
-    private String fileNameForReceipt(String key, String ext) {
-        return key + "." + ext;
-    }
-
     public String attachReceipt(Long reportId, Integer expenseId, String ext, byte[] receiptBytes) {
         String reportAndExpenseKey = keyForExpenseReceipt(reportId, expenseId);
         Expense expense = getExpense(expenseId);
         ExpenseReport report = getReport(reportId);
         report.attachReceipt(expenseId, reportAndExpenseKey, ext);
         entityManager.merge(report);
-        writeExpense(expense, receiptBytes);
+        writeExpenseReceiptToDurableMedia(expense, receiptBytes);
         return reportAndExpenseKey;
-    }
-
-    private void writeExpense(Expense expense, byte[] receiptBytes) {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receiptBytes);
-        String fn = fileNameForReceipt(expense);
-        mongoDbGridFsUtilities.write(this.mongoDbGridFsFileBucket, byteArrayInputStream, fn, null);
-    }
-
-    private String fileNameForReceipt(Expense e) {
-        return fileNameForReceipt(e.getReceipt(), e.getReceiptExtension());
     }
 
     public void submitReport(Long reportId) {
@@ -239,6 +221,30 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
         entityManager.createQuery("delete from " + EligibleCharge.class.getName() + " e where e.id in :ids")
                 .setParameter("ids", chargeIds)
                 .executeUpdate();
+    }
+
+    private String keyForExpenseReceipt(Long reportId, Integer expenseId) {
+        return "receipt-" + reportId + "-" + (expenseId) + "";
+    }
+
+    private String fileNameForReceipt(String key, String ext) {
+        return key + "." + ext;
+    }
+
+    /**
+     * Delegates to MongoDB gridfs to persist the receipts themselves.
+     *
+     * @param expense the expense to which the receipt was to be attached
+     * @param receiptBytes the bytes for the receipt image, itself.
+     */
+    private void writeExpenseReceiptToDurableMedia(Expense expense, byte[] receiptBytes) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receiptBytes);
+        String fileNameOfReceipt = fileNameForReceipt(expense);
+        mongoDbGridFsUtilities.write(this.mongoDbGridFsFileBucket, byteArrayInputStream, fileNameOfReceipt, null);
+    }
+
+    private String fileNameForReceipt(Expense e) {
+        return fileNameForReceipt(e.getReceipt(), e.getReceiptExtension());
     }
 
 }
