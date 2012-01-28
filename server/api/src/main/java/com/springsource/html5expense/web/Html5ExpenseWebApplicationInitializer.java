@@ -15,16 +15,24 @@
  */
 package com.springsource.html5expense.web;
 
+import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import java.util.Set;
 
 /**
  * Removing <CODE>web.xml</CODE>
  *
  * @author Josh Long
  */
-public class Html5ExpenseWebApplicationInitializer /*implements WebApplicationInitializer*/ {
+public class Html5ExpenseWebApplicationInitializer
+//        implements WebApplicationInitializer
+{
 
     private AnnotationConfigWebApplicationContext applicationContextForServletContext(ServletContext sc, String... pkgs) {
         final AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
@@ -34,7 +42,25 @@ public class Html5ExpenseWebApplicationInitializer /*implements WebApplicationIn
         return applicationContext;
     }
 
-    /*         
+ /*   @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+
+        AnnotationConfigWebApplicationContext servicesContext = applicationContextForServletContext(servletContext, CustomerService.class.getPackage().getName());
+        servletContext.addListener(new ContextLoaderListener(servicesContext));
+        servletContext.addFilter("hiddenMethodHttpFilter", new HiddenHttpMethodFilter());
+
+        AnnotationConfigWebApplicationContext webContext = applicationContextForServletContext(servletContext, CustomerController.class.getPackage().getName());
+        ServletRegistration.Dynamic servlet = servletContext.addServlet("spring", new DispatcherServlet(webContext));
+        servlet.setLoadOnStartup(1);
+        Set<String> conflicts = servlet.addMapping("/");
+
+        if (!conflicts.isEmpty())
+            throw new IllegalStateException("'appServlet' could not be mapped to '/' due "
+                    + "to an existing mapping. This is a known issue under Tomcat versions "
+                    + "<= 7.0.14; see https://issues.apache.org/bugzilla/show_bug.cgi?id=51278");
+
+    }*/
+/*
    <filter>
            <filter-name>hiddenHttpMethodFilter</filter-name>
            <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
