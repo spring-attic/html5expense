@@ -28,12 +28,24 @@ import javax.servlet.ServletException;
 import java.util.Set;
 
 /**
- * This class is a programmatic alternative to the <CODE>web.xml</CODE> manifest file.
+ * This class is a programmatic alternative to the <CODE>web.xml</CODE> configuration file.
+ * 
+ * This works with Servlet 3 environments (GlassFish 3.1, Tomcat 7.0.15x or better, etc.).
+ * 
+ * This class is an implementation of {@link WebApplicationInitializer} which is a Spring SPI.
+ * Spring will locate implementations of this SPI at servlet container startup and automatically give them a
+ * chance to run. 
+ * 
+ * Here, we setup a root Spring {@link org.springframework.context.ApplicationContext}, as well as an instance of
+ * {@link DispatcherServlet} and a filter, which transforms requests to a RESTful URL using one HTTP verb into a request
+ * using another type of verb. It does this by relying on metadata in the request to tell Spring which HTTP verb.
+ * This is handy for the situation where you want to make a RESTful request against a URL that requires an HTTP
+ * verb that the client environment doesn't support, like <CODE>DELETE</CODE> and <CODE>PUT</CODE> methods, from a browser.
+ *
  *
  * @author Josh Long
  */
-public class WebApplicationInitializer
-        implements org.springframework.web.WebApplicationInitializer {
+public class WebApplicationInitializer implements org.springframework.web.WebApplicationInitializer {
 
     private String servletName = "appServlet";
 

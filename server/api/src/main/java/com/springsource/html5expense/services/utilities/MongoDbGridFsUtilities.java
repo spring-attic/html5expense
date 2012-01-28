@@ -21,6 +21,9 @@ import java.io.InputStream;
  * Simple utility class to interface with MongoDB's GridFS
  * abstraction, which can be quite handy for storing files.
  *
+ * NB: it's expected that more mature support will eventually be available in the Spring Data Mongo
+ * project, so this is expected to be phased out, at some point.
+ *
  * @author Josh Long
  */
 @Component
