@@ -29,7 +29,7 @@ public class ExpenseReportingViewController {
     @Inject
     private ExpenseReportingService expenseReportingService;
 
-    @RequestMapping(value = "/foo", method = RequestMethod.GET)
+    @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String showExpenses(ModelMap map) throws Exception {
 
         return "receipts";

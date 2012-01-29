@@ -19,29 +19,30 @@ import com.springsource.html5expense.config.WebConfig;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import java.util.Set;
 
 /**
  * This class is a programmatic alternative to the <CODE>web.xml</CODE> configuration file.
- * 
+ * <p/>
  * This works with Servlet 3 environments (GlassFish 3.1, Tomcat 7.0.15x or better, etc.).
- * 
+ * <p/>
  * This class is an implementation of {@link WebApplicationInitializer} which is a Spring SPI.
  * Spring will locate implementations of this SPI at servlet container startup and automatically give them a
- * chance to run. 
- * 
+ * chance to run.
+ * <p/>
  * Here, we setup a root Spring {@link org.springframework.context.ApplicationContext}, as well as an instance of
  * {@link DispatcherServlet} and a filter, which transforms requests to a RESTful URL using one HTTP verb into a request
  * using another type of verb. It does this by relying on metadata in the request to tell Spring which HTTP verb.
  * This is handy for the situation where you want to make a RESTful request against a URL that requires an HTTP
  * verb that the client environment doesn't support, like <CODE>DELETE</CODE> and <CODE>PUT</CODE> methods, from a browser.
- *
  *
  * @author Josh Long
  */
@@ -54,9 +55,8 @@ public class WebApplicationInitializer implements org.springframework.web.WebApp
 
 
         // listener (root)
-        AnnotationConfigWebApplicationContext applicationContext = buildApplicationContext(
+        WebApplicationContext applicationContext = buildApplicationContext(
                 servletContext,
-                new String[0],
                 new Class<?>[]{WebConfig.class},
                 new CloudAwareApplicationContextInitializer());
         servletContext.addListener(new ContextLoaderListener(applicationContext));
@@ -64,8 +64,11 @@ public class WebApplicationInitializer implements org.springframework.web.WebApp
         // filter
         servletContext.addFilter("hiddenHttpMethodFilter", new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/");
 
-        // web endpoint
-        Set<String> conflicts = servletContext.addServlet(servletName, new DispatcherServlet()).addMapping("/");
+        // dispatcher servlet          
+        ServletRegistration.Dynamic dynamic = servletContext.addServlet(servletName, new DispatcherServlet());
+        dynamic.setInitParameter("contextConfigLocation", "");
+        Set<String> conflicts = dynamic.addMapping("/");
+
         if (!conflicts.isEmpty()) {
             throw new IllegalStateException("'" + servletName + "' could not be mapped to '/' due "
                     + "to an existing mapping. This is a known issue under Tomcat versions "
@@ -74,24 +77,14 @@ public class WebApplicationInitializer implements org.springframework.web.WebApp
 
     }
 
-    private AnnotationConfigWebApplicationContext buildApplicationContext(ServletContext sc,
-                                                                          String[] pkgs,
-                                                                          Class<?>[] configClasses,
-                                                                          ApplicationContextInitializer<ConfigurableWebApplicationContext> applicationContextInitializer
-    ) {
-        final AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
+    private AnnotationConfigWebApplicationContext buildApplicationContext(ServletContext sc, Class<?>[] configClasses, ApplicationContextInitializer<ConfigurableWebApplicationContext> initializer) {
+        AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
         applicationContext.setServletContext(sc);
-
-        if (pkgs != null && pkgs.length > 0)
-            applicationContext.scan(pkgs);
-
         if (configClasses != null && configClasses.length > 0)
             for (Class<?> c : configClasses)
                 applicationContext.register(c);
-
-        if (null != applicationContextInitializer)
-            applicationContextInitializer.initialize(applicationContext);
-
+        if (null != initializer)
+            initializer.initialize(applicationContext);
         return applicationContext;
     }
 
