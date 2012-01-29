@@ -68,7 +68,6 @@ public class WebApplicationInitializer implements org.springframework.web.WebApp
         ServletRegistration.Dynamic dynamic = servletContext.addServlet(servletName, new DispatcherServlet());
         dynamic.setInitParameter("contextConfigLocation", "");
         Set<String> conflicts = dynamic.addMapping("/");
-
         if (!conflicts.isEmpty()) {
             throw new IllegalStateException("'" + servletName + "' could not be mapped to '/' due "
                     + "to an existing mapping. This is a known issue under Tomcat versions "
