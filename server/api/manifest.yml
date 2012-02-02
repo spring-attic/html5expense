@@ -1,0 +1,18 @@
+--- 
+applications: 
+  target: 
+    name: html5expenses
+    url: ${name}.${target-base}
+    framework: 
+      name: spring
+      info: 
+        mem: 512M
+        description: Java SpringSource Spring Application
+        exec: 
+    mem: 512M
+    instances: 1
+    services: 
+      expenses-mongo: 
+        type: :mongodb
+      expenses-postgresql: 
+        type: :postgresql
