@@ -16,31 +16,59 @@
 package com.springsource.html5expense.config;
 
 import com.springsource.html5expense.controllers.ExpenseReportingApiController;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.TemplateMode;
 import org.thymeleaf.spring3.SpringTemplateEngine;
 import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import java.util.List;
-
 @Configuration
 @ComponentScan(basePackageClasses = ExpenseReportingApiController.class)
 @Import(ComponentConfig.class)
-@PropertySource("/config.properties")
+//@PropertySource("/config.properties")
 @EnableWebMvc
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig  /*extends WebMvcConfigurerAdapter*/ {
 
+    @Bean
+    public SpringTemplateEngine templateEngine() {
+        SpringTemplateEngine springTemplateEngine = new SpringTemplateEngine();
+        springTemplateEngine.setTemplateResolver(this.servletContextTemplateResolver());
+        return springTemplateEngine;
+    }
+
+    @Bean
+    public ThymeleafViewResolver viewResolver() {
+        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
+        thymeleafViewResolver.setTemplateEngine(this.templateEngine());
+        return thymeleafViewResolver;
+    }   
+    
+    @Bean 
+    public MessageSource messageSource() {
+        ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
+        resourceBundleMessageSource.setBasenames(new String[] {"messages" , "errors" });
+        return resourceBundleMessageSource;
+    }
+
+
+    @Bean
+    public ServletContextTemplateResolver servletContextTemplateResolver() {
+        ServletContextTemplateResolver servletContextTemplateResolver = new ServletContextTemplateResolver();
+        servletContextTemplateResolver.setPrefix("/WEB-INF/views/");
+        servletContextTemplateResolver.setCacheable(true);
+        servletContextTemplateResolver.setSuffix(".xhtml");
+        servletContextTemplateResolver.setTemplateMode(TemplateMode.HTML5);
+        return servletContextTemplateResolver;
+    }
+
+
+/*
     @Value("${debug}")
     private boolean debug;
 
@@ -71,14 +99,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return thymeleafViewResolver;
     }
 
-    @Bean
-    public MessageSource messageSource() {
-        String[] baseNames = "messages,errors".split(",");
-        ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-        resourceBundleMessageSource.setBasenames(baseNames);
-        return resourceBundleMessageSource;
-    }
-
+   
     @Bean
     public ServletContextTemplateResolver servletContextTemplateResolver() {
         ServletContextTemplateResolver servletContextTemplateResolver = new ServletContextTemplateResolver();
@@ -102,11 +123,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+*/
 
-    @Override
-    public void addReturnValueHandlers(
-            List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-
-    }
 
 }

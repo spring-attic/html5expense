@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.inject.Inject;
+import java.util.Date;
 
 @Controller
 public class ExpenseReportingViewController {
@@ -29,10 +30,16 @@ public class ExpenseReportingViewController {
     @Inject
     private ExpenseReportingService expenseReportingService;
 
-    @RequestMapping(value = "/home", method = RequestMethod.GET)
-    public String showExpenses(ModelMap map) throws Exception {
+    @RequestMapping(value = "/receipts", method = RequestMethod.GET)
+    public String prepareReceiptsView(ModelMap map) throws Exception {
 
+        int eligibleChargesSize = expenseReportingService.getEligibleCharges().size();
+        int expenseReportsSize = expenseReportingService.getOpenReports().size();
+        Date dateOfGeneration = new Date();
 
+        map.addAttribute(dateOfGeneration);
+        map.addAttribute("eligibleChargesCount", eligibleChargesSize);
+        map.addAttribute("expenseReportsCount", expenseReportsSize);
 
         return "receipts";
     }
