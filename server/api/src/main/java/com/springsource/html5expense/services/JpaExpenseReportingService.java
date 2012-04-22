@@ -15,23 +15,31 @@
  */
 package com.springsource.html5expense.services;
 
-import com.springsource.html5expense.*;
-import com.springsource.html5expense.services.utilities.MongoDbGridFsUtilities;
-import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.*;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.springsource.html5expense.EligibleCharge;
+import com.springsource.html5expense.Expense;
+import com.springsource.html5expense.ExpenseReport;
+import com.springsource.html5expense.ExpenseReportingService;
+import com.springsource.html5expense.State;
+import com.springsource.html5expense.services.utilities.MongoDbGridFsUtilities;
 
 /**
  * Implementation of the business logic for the expense reports and expense report charges.
@@ -51,12 +59,7 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
 
     @Inject
     private MongoDbGridFsUtilities mongoDbGridFsUtilities;
-
-    @Inject
-    private MongoTemplate mongoTemplate;
-
-    private File tmpDir = new File(SystemUtils.getUserHome(), "receipts");
-
+    
     private Log log = LogFactory.getLog(getClass());
 
     private static class ExpenseComparator implements Comparator<Expense> {
@@ -133,7 +136,6 @@ public class JpaExpenseReportingService implements ExpenseReportingService {
     public void restoreEligibleCharges(List<Integer> expenseIds) {
         for (Integer l : expenseIds) {
             Expense e = getExpense(l);
-            ExpenseReport expenseReport = e.getExpenseReport();
             EligibleCharge eligibleCharge = createEligibleCharge(e.getDate(), e.getMerchant(), e.getCategory(), e.getAmount());
             if (eligibleCharge != null) {
                 entityManager.remove(e);

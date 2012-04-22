@@ -92,9 +92,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine springTemplateEngine = new SpringTemplateEngine();
-        springTemplateEngine.setTemplateResolver(this
-                .servletContextTemplateResolver());
-
+        springTemplateEngine.setTemplateResolver(this.servletContextTemplateResolver());
         return springTemplateEngine;
     }
 
@@ -102,11 +100,4 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-    @Override
-    public void addReturnValueHandlers(
-            List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-
-    }
-
 }

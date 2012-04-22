@@ -31,9 +31,6 @@ public class ExpenseReportingViewController {
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String showExpenses(ModelMap map) throws Exception {
-
-
-
         return "receipts";
     }
 }

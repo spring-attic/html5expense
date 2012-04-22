@@ -57,12 +57,6 @@ public class ExpenseReportingApiController {
     }
 
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{reportId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteReport(@PathVariable("reportId") Long reportId) {
-        this.service.deleteExpenseReport(reportId);
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "/{reportId}/expenses", produces = "application/json")
     @ResponseBody
     public Collection<Expense> expenseForExpenseReport(HttpServletRequest request, @PathVariable("reportId") Long reportId) {
@@ -176,14 +170,21 @@ public class ExpenseReportingApiController {
      * @param reportId the ID of the {@link com.springsource.html5expense.ExpenseReport}
      */
     @RequestMapping(value = "/{reportId}", method = RequestMethod.POST)
-    public void submitReport(@PathVariable Long reportId) {
+    @ResponseStatus(value = HttpStatus.OK)
+    public void submitReport(@PathVariable("reportId") Long reportId) {
         service.submitReport(reportId);
     }
 
     @RequestMapping(value = "/{reportId}", method = RequestMethod.GET)
     @ResponseBody
-    public ExpenseReport getReport(@PathVariable Long reportId) {
+    public ExpenseReport getReport(@PathVariable("reportId") Long reportId) {
         return service.getExpenseReport(reportId);
+    }
+
+    @RequestMapping(value = "/{reportId}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteReport(@PathVariable("reportId") Long reportId) {
+        this.service.deleteExpenseReport(reportId);
     }
 
     /**
