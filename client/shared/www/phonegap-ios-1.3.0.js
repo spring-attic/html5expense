@@ -1,6 +1,6 @@
 /*
  * PhoneGap v1.3.0 is available under *either* the terms of the modified BSD license *or* the
- * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * MIT License (2008). See https://opensource.org/licenses/alphabetical for full text.
  *
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010-2011, IBM Corporation
@@ -991,7 +991,7 @@ PhoneGap.addConstructor(Accelerometer.installDeviceMotionHandler);
 
 };/*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
- * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * MIT License (2008). See https://opensource.org/licenses/alphabetical for full text.
  *
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010-2011, IBM Corporation
@@ -2055,7 +2055,7 @@ FileReader.prototype.abort = function() {
  * Read text file.
  *
  * @param file          The name of the file
- * @param encoding      [Optional] (see http://www.iana.org/assignments/character-sets)
+ * @param encoding      [Optional] (see https://www.iana.org/assignments/character-sets)
  */
 FileReader.prototype.readAsText = function(file, encoding) {
     this.fileName = "";
@@ -3046,7 +3046,7 @@ PhoneGap.addConstructor(function() {
 
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
- * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * MIT License (2008). See https://opensource.org/licenses/alphabetical for full text.
  *
  * Copyright (c) 2005-2011, Nitobi Software Inc.
  * Copyright (c) 2011, Matt Kane
@@ -3613,7 +3613,7 @@ if (!PhoneGap.hasResource("media")) {
 
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
- * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * MIT License (2008). See https://opensource.org/licenses/alphabetical for full text.
  *
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010,2011 IBM Corporation

@@ -8,10 +8,10 @@
  * Copyright (c) 2010 Resopollution
  * 
  * Licensed under the MIT license:
- *   http://www.opensource.org/licenses/mit-license.php
+ *   https://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   http://www.github.com/weixiyen/jquery-filedrop
+ *   https://www.github.com/weixiyen/jquery-filedrop
  *
  * Version:  0.1.0
  *

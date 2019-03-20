@@ -10,13 +10,13 @@ Building iOS projects with PhoneGap requires Apple OS X.
 
 #### Xcode ####
 
-Install Xcode from the [Mac App Store](http://itunes.apple.com/us/app/xcode/id448457090?mt=12).
+Install Xcode from the [Mac App Store](https://itunes.apple.com/us/app/xcode/id448457090?mt=12).
 
 #### PhoneGap ####
 
 The PhoneGap installer will create a new Xcode project template, which you can use to create new iOS PhoneGap projects.  The HTML5 Expense client was created with this template.
 
-1. Download version 1.3.0 or newer of [PhoneGap](http://www.phonegap.com/).
+1. Download version 1.3.0 or newer of [PhoneGap](https://www.phonegap.com/).
 2. Unzip the PhoneGap package.
 3. From the iOS directory, open the PhoneGap-1.3.0.dmg disk image.
 4. Double click the PhoneGap-1.3.0.pkg from within the disk image contents to install.
@@ -27,15 +27,15 @@ Building Android projects is supported on Windows, OS X, and Linux.
 
 #### Eclipse ####
 
-Download and install [Eclipse](http://www.eclipse.org/downloads/). The [SpringSource Tool Suite](http://www.springsource.com/landing/best-development-tool-enterprise-java) also works quite nicely.
+Download and install [Eclipse](https://www.eclipse.org/downloads/). The [SpringSource Tool Suite](https://www.springsource.com/landing/best-development-tool-enterprise-java) also works quite nicely.
 
 #### Android SDK ####
 
-Download and install the [Android SDK](http://developer.android.com/sdk/index.html).
+Download and install the [Android SDK](https://developer.android.com/sdk/index.html).
 
 #### Android Development Tools (ADT) Plugin for Eclipse ####
 
-Install the [ADT Plugin](http://developer.android.com/sdk/eclipse-adt.html#installing) in Eclipse.
+Install the [ADT Plugin](https://developer.android.com/sdk/eclipse-adt.html#installing) in Eclipse.
 
 #### PhoneGap ####
 
@@ -43,7 +43,7 @@ PhoneGap does not provide an installer for Android projects, however when you cr
 
 ## Project Structure ##
 
-The 'shared/www' directory contains the HTML, CSS, and JavaScript that is being used within the iOS and Android Phonegap projects.  A symbolic link (symlink) is used within each project to point back to this folder.  In the iOS project, the symlink is 'ios/www'.  In the Android project it is located at 'android/assets/www'.  Symlinks are supported in Mac OS X, Linux, Windows Vista, and Windows 7.  This PhoneGap [wiki page](http://wiki.phonegap.com/w/page/28103995/phonegap%20project%20structure) describes this solution for shared web resources across device types.
+The 'shared/www' directory contains the HTML, CSS, and JavaScript that is being used within the iOS and Android Phonegap projects.  A symbolic link (symlink) is used within each project to point back to this folder.  In the iOS project, the symlink is 'ios/www'.  In the Android project it is located at 'android/assets/www'.  Symlinks are supported in Mac OS X, Linux, Windows Vista, and Windows 7.  This PhoneGap [wiki page](https://github.com/phonegap/phonegap/wiki) describes this solution for shared web resources across device types.
 
 ## Open the Client Projects ##
 
