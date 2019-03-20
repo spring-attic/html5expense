@@ -1221,7 +1221,7 @@ App.prototype.clearCache = function() {
  *      openExternal: boolean              => open in a new browser (default=false)
  *
  * Example:
- *      navigator.app.loadUrl("http://server/myapp/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
+ *      navigator.app.loadUrl("https://server/myapp/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
  */
 App.prototype.loadUrl = function(url, props) {
     PhoneGap.exec(null, null, "App", "loadUrl", [url, props]);
@@ -2444,7 +2444,7 @@ FileReader.prototype.abort = function() {
  * Read text file.
  *
  * @param file          {File} File object containing file properties
- * @param encoding      [Optional] (see http://www.iana.org/assignments/character-sets)
+ * @param encoding      [Optional] (see https://www.iana.org/assignments/character-sets)
  */
 FileReader.prototype.readAsText = function(file, encoding) {
     this.fileName = "";

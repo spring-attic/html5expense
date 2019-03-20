@@ -9,13 +9,13 @@
  Martin Häcker <spamfaenger [at] gmx [dot] de>
 
  Project home:
- http://code.google.com/p/jquery-in-place-editor/
+ https://code.google.com/p/jquery-in-place-editor/
 
  Patches with tests welcomed! For guidance see the tests  </spec/unit/>. To submit, attach them to the bug tracker.
 
  License:
  This source file is subject to the BSD license bundled with this package.
- Available online: {@link http://www.opensource.org/licenses/bsd-license.php}
+ Available online: {@link https://www.opensource.org/licenses/bsd-license.php}
  If you did not receive a copy of the license, and are unable to obtain it,
  learn to use a search engine.
 

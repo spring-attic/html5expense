@@ -1,10 +1,10 @@
 /*
 * jQuery Mobile Framework 1.0
-* http://jquerymobile.com
+* https://jquerymobile.com
 *
 * Copyright 2011 (c) jQuery Project
 * Dual licensed under the MIT or GPL Version 2 licenses.
-* http://jquery.org/license
+* https://jquery.org/license
 *
 */
 /* Swatches */
@@ -1275,7 +1275,7 @@ div.ui-mobile-viewport { overflow-x: hidden; }
 	to {-webkit-transform: rotate(360deg);}
 }
 
-/* Transitions from jQtouch (with small modifications): http://www.jqtouch.com/
+/* Transitions from jQtouch (with small modifications): http://jqtjs.com
 Built by David Kaneda and maintained by Jonathan Stark.
 */
 .in, .out {
