@@ -6,7 +6,7 @@ repositories {
     mavenRepo urls: 'http://maven.springframework.org/release'
     mavenRepo urls: 'http://maven.springframework.org/milestone'
     mavenRepo urls: 'http://maven.springframework.org/snapshot'
-    mavenCentral()
+    maven { url 'https://repo.maven.apache.org/maven2/' }
     mavenLocal()
 }
 
