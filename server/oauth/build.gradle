@@ -7,7 +7,6 @@ repositories {
     mavenRepo urls: 'https://maven.springframework.org/milestone'
     mavenRepo urls: 'https://maven.springframework.org/snapshot'
     mavenCentral()
-    mavenLocal()
 }
 
 configurations {
