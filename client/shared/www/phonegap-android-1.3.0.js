@@ -7,7 +7,7 @@
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -929,7 +929,7 @@ PhoneGap.includeJavascript = function(jsfile, successCallback) {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -1045,7 +1045,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -1182,7 +1182,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -1221,7 +1221,7 @@ App.prototype.clearCache = function() {
  *      openExternal: boolean              => open in a new browser (default=false)
  *
  * Example:
- *      navigator.app.loadUrl("http://server/myapp/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
+ *      navigator.app.loadUrl("https://server/myapp/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
  */
 App.prototype.loadUrl = function(url, props) {
     PhoneGap.exec(null, null, "App", "loadUrl", [url, props]);
@@ -1284,7 +1284,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -1418,7 +1418,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -1586,7 +1586,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -1785,7 +1785,7 @@ PhoneGap.addConstructor(function(){
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -1938,7 +1938,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -2259,7 +2259,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -2313,7 +2313,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -2444,7 +2444,7 @@ FileReader.prototype.abort = function() {
  * Read text file.
  *
  * @param file          {File} File object containing file properties
- * @param encoding      [Optional] (see http://www.iana.org/assignments/character-sets)
+ * @param encoding      [Optional] (see https://www.iana.org/assignments/character-sets)
  */
 FileReader.prototype.readAsText = function(file, encoding) {
     this.fileName = "";
@@ -3318,7 +3318,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -3429,7 +3429,7 @@ var FileUploadOptions = function(fileKey, fileName, mimeType, params) {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -3638,7 +3638,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -3871,7 +3871,7 @@ PhoneGap.Media.onStatus = function(id, msg, value) {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -3971,7 +3971,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -4104,7 +4104,7 @@ PhoneGap.addConstructor(function() {
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an
@@ -4204,7 +4204,7 @@ PositionError.TIMEOUT = 3;
  *     "License"); you may not use this file except in compliance
  *     with the License.  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *     Unless required by applicable law or agreed to in writing,
  *     software distributed under the License is distributed on an

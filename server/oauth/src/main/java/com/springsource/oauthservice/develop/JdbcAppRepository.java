@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -110,7 +110,7 @@ public class JdbcAppRepository implements AppRepository {
 	private RowMapper<AppSummary> appSummaryMapper = new RowMapper<AppSummary>() {
 		public AppSummary mapRow(ResultSet rs, int rowNum) throws SQLException {
 			// TODO this is currently hardcoded
-			String iconUrl = "http://images.greenhouse.springsource.org/apps/icon-default-app.png";
+			String iconUrl = "https://images.greenhouse.springsource.org/apps/icon-default-app.png";
 			return new AppSummary(rs.getString("name"), iconUrl, rs.getString("description"), rs.getString("slug"));
 		}
 	};

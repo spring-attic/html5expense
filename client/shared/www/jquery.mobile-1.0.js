@@ -1,20 +1,20 @@
 /*
 * jQuery Mobile Framework 1.0
-* http://jquerymobile.com
+* https://jquerymobile.com
 *
 * Copyright 2011 (c) jQuery Project
 * Dual licensed under the MIT or GPL Version 2 licenses.
-* http://jquery.org/license
+* https://jquery.org/license
 *
 */
 /*!
  * jQuery UI Widget @VERSION
  *
- * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2010, AUTHORS.txt (https://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ * https://jquery.org/license
  *
- * http://docs.jquery.com/UI/Widget
+ * https://docs.jquery.com/UI/Widget
  */
 
 (function( $, undefined ) {
@@ -414,7 +414,7 @@ function baseTagTest() {
 }
 
 
-// non-UA-based IE version check by James Padolsey, modified by jdalton - from http://gist.github.com/527683
+// non-UA-based IE version check by James Padolsey, modified by jdalton - from https://gist.github.com/527683
 // allows for inclusion of IE 6+, including Windows Mobile 7
 $.mobile.browser = {};
 $.mobile.browser.ie = (function() {
@@ -1300,9 +1300,9 @@ $.each({
 // *Version: 1.3, Last updated: 7/21/2010*
 //
 // Project Home - http://benalman.com/projects/jquery-hashchange-plugin/
-// GitHub       - http://github.com/cowboy/jquery-hashchange/
-// Source       - http://github.com/cowboy/jquery-hashchange/raw/master/jquery.ba-hashchange.js
-// (Minified)   - http://github.com/cowboy/jquery-hashchange/raw/master/jquery.ba-hashchange.min.js (0.8kb gzipped)
+// GitHub       - https://github.com/cowboy/jquery-hashchange/
+// Source       - https://github.com/cowboy/jquery-hashchange/raw/master/jquery.ba-hashchange.js
+// (Minified)   - https://github.com/cowboy/jquery-hashchange/raw/master/jquery.ba-hashchange.min.js (0.8kb gzipped)
 //
 // About: License
 //
@@ -1350,7 +1350,7 @@ $.each({
 // 1.3   - (7/21/2010) Reorganized IE6/7 Iframe code to make it more
 //         "removable" for mobile-only development. Added IE6/7 document.title
 //         support. Attempted to make Iframe as hidden as possible by using
-//         techniques from http://www.paciellogroup.com/blog/?p=604. Added
+//         techniques from https://www.paciellogroup.com/blog/?p=604. Added
 //         support for the "shortcut" format $(window).hashchange( fn ) and
 //         $(window).hashchange() like jQuery provides for built-in events.
 //         Renamed jQuery.hashchangeDelay to <jQuery.fn.hashchange.delay> and
@@ -1600,7 +1600,7 @@ $.each({
           iframe_src = iframe_src && iframe_src + get_fragment();
 
           // Create hidden Iframe. Attempt to make Iframe as hidden as possible
-          // by using techniques from http://www.paciellogroup.com/blog/?p=604.
+          // by using techniques from https://www.paciellogroup.com/blog/?p=604.
           iframe = $('<iframe tabindex="-1" title="empty"/>').hide()
 
             // When Iframe has completely loaded, initialize the history and
@@ -1967,10 +1967,10 @@ $.widget( "mobile.page", $.mobile.widget, {
 			// URL as well as some other commonly used sub-parts. When used with RegExp.exec()
 			// or String.match, it parses the URL into a results array that looks like this:
 			//
-			//     [0]: http://jblas:password@mycompany.com:8080/mail/inbox?msg=1234&type=unread#msg-content
-			//     [1]: http://jblas:password@mycompany.com:8080/mail/inbox?msg=1234&type=unread
-			//     [2]: http://jblas:password@mycompany.com:8080/mail/inbox
-			//     [3]: http://jblas:password@mycompany.com:8080
+			//     [0]: https://jblas:password@mycompany.com:8080/mail/inbox?msg=1234&type=unread#msg-content
+			//     [1]: https://jblas:password@mycompany.com:8080/mail/inbox?msg=1234&type=unread
+			//     [2]: https://jblas:password@mycompany.com:8080/mail/inbox
+			//     [3]: https://jblas:password@mycompany.com:8080
 			//     [4]: http:
 			//     [5]: //
 			//     [6]: jblas:password@mycompany.com:8080

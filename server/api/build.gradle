@@ -4,8 +4,8 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 repositories {
-    mavenRepo urls: 'http://repo.springsource.org/libs-snapshot'
-    maven { url 'https://repo.maven.apache.org/maven2/' }
+    mavenRepo urls: 'https://repo.springsource.org/libs-snapshot'
+    mavenCentral()
 }
 
 configurations {

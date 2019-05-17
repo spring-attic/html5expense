@@ -3,11 +3,10 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 repositories {
-    mavenRepo urls: 'http://maven.springframework.org/release'
-    mavenRepo urls: 'http://maven.springframework.org/milestone'
-    mavenRepo urls: 'http://maven.springframework.org/snapshot'
-    maven { url 'https://repo.maven.apache.org/maven2/' }
-    mavenLocal()
+    mavenRepo urls: 'https://maven.springframework.org/release'
+    mavenRepo urls: 'https://maven.springframework.org/milestone'
+    mavenRepo urls: 'https://maven.springframework.org/snapshot'
+    mavenCentral()
 }
 
 configurations {
