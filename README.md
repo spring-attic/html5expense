@@ -1,4 +1,4 @@
-# HTML5 EXPENSE #
+# HTML5 EXPENSE is no longer actively maintained by VMware, Inc. #
 
 ## Overview ##
 
